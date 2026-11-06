@@ -1,0 +1,20 @@
+[project]
+name = "vex-ai"
+version = "1.0.0"
+description = "VEX AI - Web Intelligence Assistant"
+requires-python = ">=3.10"
+dependencies = [
+    "flet==1.0.5",
+    "requests",
+    "beautifulsoup4",
+    "ddgs"
+]
+
+[tool.flet]
+org = "com.aveesharma"
+product = "VEX AI"
+company = "Avee Sharma"
+description = "Independent Web Intelligence Assistant"
+
+[tool.flet.app]
+module = "vex_ui"
