@@ -5,10 +5,15 @@ version = "1.0.0"
 description = "VEX AI - Web Intelligence Assistant"
 requires-python = ">=3.10"
 dependencies = [
-    "flet[cli]==1.1.0",
+    "flet==1.1.0",
     "requests",
     "beautifulsoup4",
     "ddgs"
+]
+
+[dependency-groups]
+dev = [
+    "flet-cli==1.1.0"
 ]
 
 [tool.flet]
