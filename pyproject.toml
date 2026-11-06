@@ -1,6 +1,6 @@
 [project]
 name = "vex-ai"
-version = "1.0.0"
+version = "1.1.0"
 description = "VEX AI - Web Intelligence Assistant"
 requires-python = ">=3.10"
 dependencies = [
