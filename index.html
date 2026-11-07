@@ -3,54 +3,89 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#080808">
 <title>VEX AI</title>
 
 <style>
 *{box-sizing:border-box}
 body{
- margin:0;background:#080808;color:#eee;
- font-family:Segoe UI,Arial,sans-serif;height:100dvh;
- overflow:hidden
+ margin:0;background:#080808;color:#f5f5f5;
+ font-family:"Segoe UI",Arial,sans-serif;
+ height:100dvh;overflow:hidden
 }
-.app{height:100dvh;max-width:950px;margin:auto;display:flex;flex-direction:column}
+.app{
+ height:100dvh;max-width:950px;margin:auto;
+ display:flex;flex-direction:column
+}
 header{
- height:65px;flex-shrink:0;border-bottom:1px solid #242424;
- display:flex;align-items:center;padding:0 20px
+ height:65px;min-height:65px;
+ display:flex;align-items:center;
+ padding:0 18px;border-bottom:1px solid #252525
 }
-.logo{font-size:23px;font-weight:900;letter-spacing:3px}
+.logo{
+ font-size:23px;font-weight:900;
+ letter-spacing:3px
+}
 .status{margin-left:auto;color:#888;font-size:11px}
-#chat{flex:1;overflow-y:auto;padding:22px 17px}
-.welcome{text-align:center;margin:18vh auto}
-.welcome h1{font-size:40px;letter-spacing:5px}
-.welcome p{color:#888}
-.message{margin:20px 0;line-height:1.7;font-size:15px;overflow-wrap:anywhere}
+#chat{
+ flex:1;overflow-y:auto;
+ padding:24px 18px 35px;scroll-behavior:smooth
+}
+.welcome{text-align:center;margin:18vh auto 30px}
+.welcome h1{font-size:38px;letter-spacing:5px;margin:0 0 12px}
+.welcome p{color:#888;font-size:14px}
+.message{
+ max-width:90%;padding:13px 17px;
+ margin:17px 0;border-radius:17px;
+ line-height:1.7;font-size:15px;
+ overflow-wrap:anywhere
+}
 .user{
- margin-left:auto;max-width:85%;width:fit-content;
- background:#242424;padding:12px 17px;border-radius:17px
+ background:#222;margin-left:auto;
+ border-bottom-right-radius:5px;
+ white-space:pre-wrap
 }
-.bot{max-width:100%;padding:5px 2px}
-.label{font-size:11px;color:#999;font-weight:bold;letter-spacing:2px;margin-bottom:10px}
-.sources{display:grid;gap:9px;margin-top:17px}
+.bot{margin-right:auto;padding-left:3px}
+.sources{margin-top:15px;display:flex;flex-direction:column;gap:9px}
 .source{
- display:block;padding:12px;background:#151515;
+ display:block;background:#151515;
  border:1px solid #292929;border-radius:11px;
- color:#eee;text-decoration:none;font-size:13px
+ padding:11px;color:#ddd;text-decoration:none;
+ font-size:13px
 }
+.source:hover{background:#222}
 .source small{display:block;color:#888;margin-top:5px}
-.source:hover{background:#242424}
-.images{display:flex;gap:10px;overflow-x:auto;margin-top:15px}
-.images img{width:145px;height:115px;object-fit:cover;border-radius:12px}
-.composer{padding:12px 14px 20px;border-top:1px solid #242424}
-.inputbox{display:flex;gap:10px;align-items:center;background:#171717;border:1px solid #333;border-radius:22px;padding:8px 9px 8px 16px}
-textarea{flex:1;background:transparent;border:0;outline:0;color:white;resize:none;font:15px inherit;min-height:28px;max-height:120px}
-button{border:0;cursor:pointer}
-.send{width:42px;height:42px;border-radius:50%;background:white;color:black;font-size:23px}
+.images{display:flex;gap:10px;overflow-x:auto;margin-top:14px}
+.images img{width:145px;height:120px;object-fit:cover;border-radius:12px}
+.label{font-size:11px;color:#999;letter-spacing:1px;margin:16px 0 8px}
+.composer{
+ padding:12px 14px 20px;
+ border-top:1px solid #222;background:#080808
+}
+.inputbox{
+ display:flex;align-items:center;
+ background:#171717;border:1px solid #333;
+ border-radius:22px;padding:7px 8px 7px 16px;gap:10px
+}
+textarea{
+ flex:1;background:transparent;color:white;
+ border:none;outline:none;resize:none;
+ font-family:inherit;font-size:15px;
+ min-height:28px;max-height:120px;padding-top:6px
+}
+textarea::placeholder{color:#777}
+.send{
+ width:40px;height:40px;border-radius:50%;
+ background:white;color:black;font-size:22px;font-weight:bold
+}
 .send:disabled{opacity:.5}
 .footer{text-align:center;color:#555;font-size:10px;padding-top:10px}
-.typing{color:#999}
-@media(max-width:600px){.welcome h1{font-size:32px}.user{max-width:95%}}
+.typing{color:#888;font-size:13px}
+@media(max-width:600px){
+ .message{max-width:96%}
+ .welcome h1{font-size:31px}
+}
 </style>
 </head>
 
@@ -71,7 +106,7 @@ button{border:0;cursor:pointer}
 
 <div class="composer">
  <div class="inputbox">
-  <textarea id="question" rows="1" placeholder="Ask VEX anything..."></textarea>
+  <textarea id="question" placeholder="Ask VEX anything..." rows="1"></textarea>
   <button class="send" id="send">↑</button>
  </div>
  <div class="footer">VEX AI · Independent AI Assistant</div>
@@ -82,41 +117,56 @@ button{border:0;cursor:pointer}
 <script>
 const chat=document.getElementById("chat");
 const input=document.getElementById("question");
-const send=document.getElementById("send");
+const sendButton=document.getElementById("send");
 
 function addMessage(text,type){
  document.getElementById("welcome")?.remove();
+
  const div=document.createElement("div");
  div.className="message "+type;
  div.textContent=text;
+
  chat.appendChild(div);
  chat.scrollTop=chat.scrollHeight;
  return div;
 }
 
-function addLink(container,title,url,snippet=""){
+function addSource(container,title,url,snippet){
  if(!url || !/^https?:\/\//i.test(url))return;
+
  const a=document.createElement("a");
  a.className="source";
  a.href=url;
  a.target="_blank";
  a.rel="noopener noreferrer";
+
  const strong=document.createElement("strong");
- strong.textContent=title;
+ strong.textContent=title || "Web result";
+
  const small=document.createElement("small");
- small.textContent=snippet;
+ small.textContent=snippet || "";
+
  a.append(strong,small);
  container.appendChild(a);
 }
 
 async function searchWeb(query){
- // DuckDuckGo Instant Answer API
- const url="https://api.allorigins.win/raw?url="+
-  encodeURIComponent("https://api.duckduckgo.com/?q="+
-  encodeURIComponent(query)+"&format=json&no_html=1&skip_disambig=1");
+ const params=new URLSearchParams({
+  q:query,
+  format:"json",
+  no_html:"1",
+  skip_disambig:"1"
+ });
 
- const response=await fetch(url);
- if(!response.ok)throw new Error("Search unavailable");
+ const response=await fetch(
+  "https://api.duckduckgo.com/?"+params.toString(),
+  {method:"GET"}
+ );
+
+ if(!response.ok){
+  throw new Error("Search failed: HTTP "+response.status);
+ }
+
  return await response.json();
 }
 
@@ -133,27 +183,59 @@ function collectResults(data){
   }
  }
 
- (data.RelatedTopics||[]).forEach(item=>{
-  if(item.Topics)item.Topics.forEach(add);
-  else add(item);
+ (data.RelatedTopics || []).forEach(item=>{
+  if(item.Topics){
+   item.Topics.forEach(add);
+  }else{
+   add(item);
+  }
  });
 
- return results.slice(0,10);
+ return results;
+}
+
+function showImages(container,data){
+ const urls=[];
+
+ if(data.Image)urls.push(data.Image);
+
+ if(!urls.length)return;
+
+ const heading=document.createElement("div");
+ heading.className="label";
+ heading.textContent="RELATED IMAGES";
+ container.appendChild(heading);
+
+ const gallery=document.createElement("div");
+ gallery.className="images";
+
+ urls.forEach(url=>{
+  const img=document.createElement("img");
+  img.src=url;
+  img.alt="Related image";
+  img.loading="lazy";
+  img.onerror=()=>img.remove();
+  gallery.appendChild(img);
+ });
+
+ container.appendChild(gallery);
 }
 
 async function sendMessage(){
- const q=input.value.trim();
- if(!q)return;
+ const query=input.value.trim();
+ if(!query)return;
 
- addMessage(q,"user");
+ addMessage(query,"user");
+
  input.value="";
  input.style.height="28px";
- send.disabled=true;
+ sendButton.disabled=true;
 
- const reply=addMessage("VEX is searching the web...","bot typing");
+ const reply=addMessage("VEX is searching...","bot typing");
 
  try{
-  const data=await searchWeb(q);
+  const data=await searchWeb(query);
+
   reply.classList.remove("typing");
   reply.textContent="";
 
@@ -165,69 +247,87 @@ async function sendMessage(){
   const answer=document.createElement("div");
   answer.style.whiteSpace="pre-wrap";
 
-  const abstract=data.AbstractText || data.Answer || data.Definition || "";
+  const abstract=
+   data.AbstractText ||
+   data.Answer ||
+   data.Definition ||
+   "";
+
   answer.textContent=abstract ||
-   "I found some related web results. Open the sources below to explore the information. DuckDuckGo Instant Answers did not return a generated answer for this query.";
+   "I couldn't find a direct answer. Here are the related search results.";
 
   reply.appendChild(answer);
 
   if(data.AbstractURL){
-   const sources=document.createElement("div");
-   sources.className="sources";
-   addLink(sources,data.Heading||"Main source",data.AbstractURL,abstract);
-   reply.appendChild(sources);
+   const heading=document.createElement("div");
+   heading.className="label";
+   heading.textContent="MAIN SOURCE";
+   reply.appendChild(heading);
+
+   const sourceBox=document.createElement("div");
+   sourceBox.className="sources";
+
+   addSource(
+    sourceBox,
+    data.Heading || "Read more",
+    data.AbstractURL,
+    abstract
+   );
+
+   reply.appendChild(sourceBox);
   }
 
   const results=collectResults(data);
+
   if(results.length){
    const heading=document.createElement("div");
    heading.className="label";
-   heading.style.marginTop="18px";
    heading.textContent="RELATED WEB RESULTS";
    reply.appendChild(heading);
 
-   const sources=document.createElement("div");
-   sources.className="sources";
-   results.forEach(r=>addLink(sources,r.title,r.url,r.snippet));
-   reply.appendChild(sources);
+   const sourceBox=document.createElement("div");
+   sourceBox.className="sources";
+
+   results.slice(0,10).forEach(item=>{
+    addSource(sourceBox,item.title,item.url,item.snippet);
+   });
+
+   reply.appendChild(sourceBox);
   }
 
-  if(data.Image && data.AbstractURL){
-   const imageBox=document.createElement("div");
-   imageBox.className="images";
-   const img=document.createElement("img");
-   img.src=data.Image;
-   img.alt=data.Heading||"Related image";
-   img.loading="lazy";
-   imageBox.appendChild(img);
-   reply.appendChild(imageBox);
-  }
+  showImages(reply,data);
 
-  if(!abstract && !results.length && !data.Answer){
-   answer.textContent="No instant answer was available. Try a more specific question.";
+  if(!abstract && !results.length){
+   answer.textContent=
+    "No instant answer was returned by DuckDuckGo. Try another search query.";
   }
 
  }catch(error){
   reply.classList.remove("typing");
-  reply.textContent="VEX could not access the search service right now. Please try again.";
+  reply.textContent=
+   "Search connection failed: "+error.message+
+   "\n\nDuckDuckGo may be unavailable or may block this browser request.";
  }
 
- send.disabled=false;
- input.focus();
+ sendButton.disabled=false;
  chat.scrollTop=chat.scrollHeight;
+ input.focus();
 }
 
-send.addEventListener("click",sendMessage);
-input.addEventListener("keydown",e=>{
- if(e.key==="Enter"&&!e.shiftKey){
-  e.preventDefault();
+sendButton.addEventListener("click",sendMessage);
+
+input.addEventListener("keydown",event=>{
+ if(event.key==="Enter" && !event.shiftKey){
+  event.preventDefault();
   sendMessage();
  }
 });
-input.addEventListener("input",()=>{
- input.style.height="auto";
- input.style.height=Math.min(input.scrollHeight,120)+"px";
+
+input.addEventListener("input",function(){
+ this.style.height="auto";
+ this.style.height=Math.min(this.scrollHeight,120)+"px";
 });
 </script>
+
 </body>
 </html>
