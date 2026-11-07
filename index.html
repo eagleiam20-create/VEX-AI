@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,444 +5,425 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#000000">
 <title>VEX AI</title>
-
 <style>
-:root{
- --black:#000000;
- --white:#ffffff;
- --border:#202020;
- --soft:#a0a0a0;
-}
+:root{--black:#000;--white:#fff;--border:#202020}
 *{box-sizing:border-box}
-html,body{
- margin:0;width:100%;height:100%;
- background:#000;color:#fff;
- font-family:Inter,"Segoe UI",Arial,sans-serif;
-}
+html,body{margin:0;width:100%;height:100%;background:#000;color:#fff;font-family:Inter,"Segoe UI",Arial,sans-serif}
 body{height:100dvh;overflow:hidden}
 button,textarea{font:inherit}
 .app{height:100dvh;display:flex;background:#000}
-.sidebar{
- width:265px;background:#000;
- border-right:1px solid var(--border);
- display:flex;flex-direction:column;
- padding:14px;flex-shrink:0
-}
-.side-top{
- display:flex;align-items:center;
- justify-content:space-between;
- padding:8px 5px 22px
-}
-.brand{font-size:22px;font-weight:900;letter-spacing:3px;color:#fff}
-.icon-btn{
- background:transparent;border:0;color:#fff;
- font-size:21px;cursor:pointer;padding:9px;
- border-radius:10px
-}
+.sidebar{width:265px;background:#000;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:14px;flex-shrink:0}
+.side-top{display:flex;align-items:center;justify-content:space-between;padding:8px 5px 22px}
+.brand{font-size:22px;font-weight:900;letter-spacing:3px}
+.icon-btn{background:transparent;border:0;color:#fff;font-size:21px;cursor:pointer;padding:9px;border-radius:10px}
 .icon-btn:hover{background:#171717}
-.new-chat{
- background:#000;border:1px solid #333;
- color:#fff;border-radius:12px;padding:13px;
- text-align:left;cursor:pointer;transition:.2s
-}
+.new-chat{background:#000;border:1px solid #333;color:#fff;border-radius:12px;padding:13px;text-align:left;cursor:pointer}
 .new-chat:hover{background:#151515;border-color:#777}
-.history-title{
- font-size:10px;color:#888;
- margin:25px 8px 10px;letter-spacing:2px
-}
+.history-title{font-size:10px;color:#888;margin:25px 8px 10px;letter-spacing:2px}
 .history{overflow-y:auto;flex:1}
-.history-item{
- padding:11px;border-radius:9px;color:#ddd;
- font-size:13px;white-space:nowrap;
- overflow:hidden;text-overflow:ellipsis;cursor:pointer
-}
+.history-item{padding:11px;border-radius:9px;color:#ddd;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
 .history-item:hover{background:#151515}
-.profile{
- border-top:1px solid #202020;
- padding:15px 6px 5px
-}
-.profile-name{font-size:13px;font-weight:800;color:white}
+.profile{border-top:1px solid #202020;padding:15px 6px 5px}
+.profile-name{font-size:13px;font-weight:800}
 .profile-info{font-size:11px;color:#888;margin-top:6px;line-height:1.8}
-.main{
- flex:1;min-width:0;display:flex;
- flex-direction:column;height:100dvh;background:#000
-}
-.topbar{
- height:60px;min-height:60px;
- display:flex;align-items:center;
- padding:0 22px;border-bottom:1px solid #171717;
- background:#000
-}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;height:100dvh;background:#000}
+.topbar{height:60px;min-height:60px;display:flex;align-items:center;padding:0 22px;border-bottom:1px solid #171717}
 .mobile-brand{display:none;font-weight:900;letter-spacing:2px}
-.model-label{font-size:14px;color:#fff;font-weight:600}
+.model-label{font-size:14px;font-weight:600}
 .model-label span{color:#777;font-size:11px;margin-left:8px}
-#chat{
- flex:1;overflow-y:auto;
- padding:26px 20px 165px;
- scroll-behavior:smooth;background:#000
-}
-.welcome{
- max-width:700px;margin:20vh auto 30px;
- text-align:center
-}
-.welcome h1{
- font-size:39px;letter-spacing:4px;
- font-weight:750;margin:0 0 14px;color:#fff
-}
+#chat{flex:1;overflow-y:auto;padding:26px 20px 165px;scroll-behavior:smooth;background:#000}
+.welcome{max-width:700px;margin:20vh auto 30px;text-align:center}
+.welcome h1{font-size:39px;letter-spacing:4px;font-weight:750;margin:0 0 14px}
 .welcome p{color:#888;font-size:14px}
-.suggestions{
- display:flex;flex-wrap:wrap;
- justify-content:center;gap:10px;margin-top:30px
-}
-.suggestions button{
- background:#000;border:1px solid #292929;
- color:#ddd;border-radius:22px;
- padding:12px 17px;font-size:12px;cursor:pointer;
- transition:.2s
-}
-.suggestions button:hover{
- background:#fff;color:#000;border-color:#fff
-}
-.message{
- max-width:790px;width:100%;
- margin:0 auto 28px;line-height:1.8;
- font-size:15px;overflow-wrap:anywhere
-}
+.suggestions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:30px}
+.suggestions button{background:#000;border:1px solid #292929;color:#ddd;border-radius:22px;padding:12px 17px;font-size:12px;cursor:pointer}
+.suggestions button:hover{background:#fff;color:#000}
+.message{max-width:790px;width:100%;margin:0 auto 28px;line-height:1.8;font-size:15px;overflow-wrap:anywhere}
 .user-wrap{display:flex;justify-content:flex-end}
-.user{
- background:#fff;color:#000;
- padding:12px 18px;border-radius:21px;
- max-width:80%;white-space:pre-wrap
-}
+.user{background:#fff;color:#000;padding:12px 18px;border-radius:21px;max-width:80%;white-space:pre-wrap}
 .bot{padding:6px 0;color:#fff}
 .answer{white-space:pre-wrap;line-height:1.9;color:#fff}
-.label{
- font-size:10px;letter-spacing:2px;
- color:#888;margin:20px 0 10px;font-weight:700
-}
-.sources{
- display:grid;grid-template-columns:
- repeat(auto-fit,minmax(220px,1fr));gap:10px
-}
-.source{
- display:block;background:#000;
- border:1px solid #292929;
- padding:14px;border-radius:12px;
- text-decoration:none;color:#fff;transition:.2s
-}
+.label{font-size:10px;letter-spacing:2px;color:#888;margin:20px 0 10px;font-weight:700}
+.sources{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.source{display:block;background:#000;border:1px solid #292929;padding:14px;border-radius:12px;text-decoration:none;color:#fff}
 .source:hover{border-color:#fff}
 .source strong{font-size:13px;display:block}
-.source small{
- font-size:11px;color:#999;
- display:block;margin-top:6px;line-height:1.6
-}
-.tag{
- font-size:9px;color:#888;
- display:block;margin-bottom:7px;letter-spacing:1.5px
-}
-.images{
- display:grid;grid-template-columns:
- repeat(auto-fit,minmax(130px,1fr));gap:10px
-}
-.images img{
- width:100%;height:130px;object-fit:cover;
- border-radius:10px;background:#080808
-}
+.source small{font-size:11px;color:#999;display:block;margin-top:6px;line-height:1.6}
+.tag{font-size:9px;color:#888;display:block;margin-bottom:7px;letter-spacing:1.5px}
+.images{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.images img{width:100%;height:130px;object-fit:cover;border-radius:10px;background:#080808}
 .images a{font-size:11px;color:#ddd;text-decoration:none}
-.composer-area{
- position:absolute;bottom:0;left:265px;right:0;
- background:linear-gradient(transparent,#000 22%);
- padding:30px 20px 17px
-}
-.composer{
- max-width:790px;margin:auto;
- background:#000;border:1px solid #454545;
- border-radius:26px;padding:10px 12px;
- display:flex;gap:10px;align-items:flex-end;
- transition:.2s
-}
+.composer-area{position:absolute;bottom:0;left:265px;right:0;background:linear-gradient(transparent,#000 22%);padding:30px 20px 17px}
+.composer{max-width:790px;margin:auto;background:#000;border:1px solid #454545;border-radius:26px;padding:10px 12px;display:flex;gap:10px;align-items:flex-end}
 .composer:focus-within{border-color:#aaa}
-textarea{
- background:transparent;color:#fff;
- border:0;outline:0;resize:none;flex:1;
- min-height:30px;max-height:130px;
- font-size:15px;padding:7px 3px
-}
+textarea{background:transparent;color:#fff;border:0;outline:0;resize:none;flex:1;min-height:30px;max-height:130px;font-size:15px;padding:7px 3px}
 textarea::placeholder{color:#777}
-.send{
- width:39px;height:39px;border:0;
- border-radius:50%;background:#fff;
- color:#000;font-size:23px;
- font-weight:900;cursor:pointer
-}
-.send:hover{background:#ddd}
+.send{width:39px;height:39px;border:0;border-radius:50%;background:#fff;color:#000;font-size:23px;font-weight:900;cursor:pointer}
 .send:disabled{opacity:.4}
-.bottom-note{
- text-align:center;color:#666;
- font-size:10px;margin-top:11px
-}
+.bottom-note{text-align:center;color:#666;font-size:10px;margin-top:11px}
 .actions{display:flex;gap:9px;margin-top:12px}
-.actions button{
- background:transparent;border:0;
- color:#888;padding:7px;cursor:pointer;font-size:12px
-}
-.actions button:hover{color:#fff}
+.actions button{background:transparent;border:0;color:#888;padding:7px;cursor:pointer;font-size:12px}
 .progress{color:#aaa;font-size:13px}
-.progress:before{
- content:"";display:inline-block;
- width:7px;height:7px;border-radius:50%;
- background:#fff;margin-right:10px;
- animation:pulse 1s infinite
-}
+.progress:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#fff;margin-right:10px;animation:pulse 1s infinite}
 @keyframes pulse{50%{opacity:.2}}
 #chat::-webkit-scrollbar,.history::-webkit-scrollbar{width:5px}
 #chat::-webkit-scrollbar-thumb,.history::-webkit-scrollbar-thumb{background:#292929;border-radius:10px}
 @media(max-width:700px){
- .sidebar{
-  position:fixed;z-index:5;left:-275px;top:0;bottom:0;
-  transition:left .2s
- }
- .sidebar.open{left:0}
- .main{width:100%}
- .mobile-brand{display:block;margin-right:15px}
- .topbar{padding:0 12px}
- #chat{padding:20px 15px 155px}
- .composer-area{left:0;padding:22px 12px 12px}
- .welcome{margin-top:18vh}
- .welcome h1{font-size:31px}
- .user{max-width:90%}
- .sources{grid-template-columns:1fr}
+.sidebar{position:fixed;z-index:5;left:-275px;top:0;bottom:0;transition:left .2s}
+.sidebar.open{left:0}
+.main{width:100%}
+.mobile-brand{display:block;margin-right:15px}
+.topbar{padding:0 12px}
+#chat{padding:20px 15px 155px}
+.composer-area{left:0;padding:22px 12px 12px}
+.welcome{margin-top:18vh}
+.welcome h1{font-size:31px}
+.user{max-width:90%}
+.sources{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 <div class="app">
-
 <aside class="sidebar" id="sidebar">
- <div class="side-top">
-  <div class="brand">VEX AI</div>
-  <button class="icon-btn" onclick="toggleSidebar()">×</button>
- </div>
- <button class="new-chat" onclick="newChat()">＋ &nbsp; New chat</button>
- <div class="history-title">YOUR CHATS</div>
- <div class="history" id="history"></div>
- <div class="profile">
-  <div class="profile-name">VEX AI</div>
-  <div class="profile-info">
-   Owner & Creator: Avee Sharma<br>
-   Experimental model: VEX V6<br>
-   Knowledge: Public web sources<br>
-   Independent AI project
-  </div>
- </div>
+<div class="side-top">
+<div class="brand">VEX AI</div>
+<button class="icon-btn" onclick="toggleSidebar()">×</button>
+</div>
+<button class="new-chat" onclick="newChat()">＋ &nbsp; New chat</button>
+<div class="history-title">YOUR CHATS</div>
+<div class="history" id="history"></div>
+<div class="profile">
+<div class="profile-name">VEX AI</div>
+<div class="profile-info">
+Owner &amp; Creator: Avee Sharma<br>
+Experimental model: VEX V6<br>
+Knowledge: Public web sources<br>
+Independent AI project
+</div>
+</div>
 </aside>
 
 <main class="main">
- <div class="topbar">
-  <button class="icon-btn" onclick="toggleSidebar()">☰</button>
-  <div class="mobile-brand">VEX AI</div>
-  <div class="model-label">VEX AI <span>Knowledge Assistant</span></div>
- </div>
+<div class="topbar">
+<button class="icon-btn" onclick="toggleSidebar()">☰</button>
+<div class="mobile-brand">VEX AI</div>
+<div class="model-label">VEX AI <span>Knowledge Assistant</span></div>
+</div>
 
- <section id="chat">
-  <div class="welcome" id="welcome">
-   <h1>What can I help with?</h1>
-   <p>Explore knowledge. Discover ideas. Ask VEX anything.</p>
-   <div class="suggestions">
-    <button onclick="quickAsk('Explain artificial intelligence')">Explain AI</button>
-    <button onclick="quickAsk('Latest space discoveries')">Space</button>
-    <button onclick="quickAsk('How does the internet work?')">Technology</button>
-    <button onclick="quickAsk('Explain quantum computing')">Science</button>
-   </div>
-  </div>
- </section>
+<section id="chat">
+<div class="welcome" id="welcome">
+<h1>What can I help with?</h1>
+<p>Explore knowledge. Discover ideas. Ask VEX anything.</p>
+<div class="suggestions">
+<button onclick="quickAsk('Explain artificial intelligence')">Explain AI</button>
+<button onclick="quickAsk('Latest space discoveries')">Space</button>
+<button onclick="quickAsk('How does the internet work?')">Technology</button>
+<button onclick="quickAsk('Explain quantum computing')">Science</button>
+</div>
+</div>
+</section>
 
- <div class="composer-area">
-  <div class="composer">
-   <textarea id="question" rows="1" placeholder="Message VEX AI..."></textarea>
-   <button class="send" id="send">↑</button>
-  </div>
-  <div class="bottom-note">VEX AI · Built by Avee Sharma</div>
- </div>
+<div class="composer-area">
+<div class="composer">
+<textarea id="question" rows="1" placeholder="Message VEX AI..."></textarea>
+<button class="send" id="send">↑</button>
+</div>
+<div class="bottom-note">VEX AI · Built by Avee Sharma</div>
+</div>
 </main>
 </div>
 
 <script>
-const API="https://puri.li";
 const chat=document.getElementById("chat");
 const input=document.getElementById("question");
 const sendButton=document.getElementById("send");
 const historyBox=document.getElementById("history");
-let conversations=[],activeId=null,searching=false;
+
+let conversations=[],activeId=null,searching=false,requestCounter=0;
+const pending=new Map();
 
 function saveHistory(){
- try{localStorage.setItem("vex_chats",JSON.stringify(conversations))}catch(e){}
+try{localStorage.setItem("vex_chats",JSON.stringify(conversations))}
+catch(e){}
 }
+
 function loadHistory(){
- try{conversations=JSON.parse(localStorage.getItem("vex_chats")||"[]")}catch(e){conversations=[]}
- renderHistory();
+try{
+conversations=JSON.parse(localStorage.getItem("vex_chats")||"[]");
+if(!Array.isArray(conversations))conversations=[];
+}catch(e){conversations=[]}
+renderHistory();
 }
+
 function renderHistory(){
- historyBox.textContent="";
- conversations.forEach(c=>{
-  const el=document.createElement("div");
-  el.className="history-item";el.textContent=c.title;
-  el.onclick=()=>openChat(c.id);historyBox.appendChild(el);
- });
+historyBox.textContent="";
+conversations.forEach(c=>{
+const el=document.createElement("div");
+el.className="history-item";
+el.textContent=c.title||"New chat";
+el.onclick=()=>openChat(c.id);
+historyBox.appendChild(el);
+});
 }
+
 function newChat(){
- activeId=null;
- chat.innerHTML=`
- <div class="welcome" id="welcome">
- <h1>What can I help with?</h1>
- <p>Explore knowledge. Discover ideas. Ask VEX anything.</p>
- <div class="suggestions">
- <button onclick="quickAsk('Explain artificial intelligence')">Explain AI</button>
- <button onclick="quickAsk('Latest space discoveries')">Space</button>
- <button onclick="quickAsk('How does the internet work?')">Technology</button>
- <button onclick="quickAsk('Explain quantum computing')">Science</button>
- </div></div>`;
- input.value="";input.focus();
- document.getElementById("sidebar").classList.remove("open");
+activeId=null;
+chat.innerHTML=`
+<div class="welcome" id="welcome">
+<h1>What can I help with?</h1>
+<p>Explore knowledge. Discover ideas. Ask VEX anything.</p>
+<div class="suggestions">
+<button onclick="quickAsk('Explain artificial intelligence')">Explain AI</button>
+<button onclick="quickAsk('Latest space discoveries')">Space</button>
+<button onclick="quickAsk('How does the internet work?')">Technology</button>
+<button onclick="quickAsk('Explain quantum computing')">Science</button>
+</div></div>`;
+input.value="";
+input.focus();
+document.getElementById("sidebar").classList.remove("open");
 }
-function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open")}
+
+function toggleSidebar(){
+document.getElementById("sidebar").classList.toggle("open");
+}
+
 function openChat(id){
- const c=conversations.find(x=>x.id===id);if(!c)return;
- activeId=id;chat.innerHTML="";
- c.messages.forEach(m=>{
-  if(m.type==="user")addUser(m.text,false);
-  else renderBot(m.data,false);
- });
- document.getElementById("sidebar").classList.remove("open");
+const c=conversations.find(x=>x.id===id);
+if(!c)return;
+activeId=id;
+chat.innerHTML="";
+c.messages.forEach(m=>{
+if(m.type==="user")addUser(m.text,false);
+else renderBot(m.data,false);
+});
+document.getElementById("sidebar").classList.remove("open");
 }
+
 function storeMessage(m){
- if(!activeId){
-  activeId=String(Date.now());
-  conversations.unshift({id:activeId,title:m.type==="user"?m.text.slice(0,45):"New chat",messages:[]});
- }
- const c=conversations.find(x=>x.id===activeId);
- if(c)c.messages.push(m);
- saveHistory();renderHistory();
+if(!activeId){
+activeId=String(Date.now());
+conversations.unshift({
+id:activeId,
+title:m.type==="user"?m.text.slice(0,45):"New chat",
+messages:[]
+});
 }
+const c=conversations.find(x=>x.id===activeId);
+if(c)c.messages.push(m);
+saveHistory();
+renderHistory();
+}
+
 function addUser(text,save=true){
- document.getElementById("welcome")?.remove();
- const wrap=document.createElement("div");wrap.className="message user-wrap";
- const bubble=document.createElement("div");bubble.className="user";bubble.textContent=text;
- wrap.appendChild(bubble);chat.appendChild(wrap);
- if(save)storeMessage({type:"user",text});
- scrollDown();
+document.getElementById("welcome")?.remove();
+const wrap=document.createElement("div");
+wrap.className="message user-wrap";
+const bubble=document.createElement("div");
+bubble.className="user";
+bubble.textContent=text;
+wrap.appendChild(bubble);
+chat.appendChild(wrap);
+if(save)storeMessage({type:"user",text});
+scrollDown();
 }
-function addLabel(p,t){
- const el=document.createElement("div");el.className="label";el.textContent=t;p.appendChild(el);
+
+function addLabel(parent,text){
+const el=document.createElement("div");
+el.className="label";
+el.textContent=text;
+parent.appendChild(el);
 }
+
 function validURL(url){
- try{const u=new URL(url);return u.protocol==="https:"||u.protocol==="http:"}catch(e){return false}
+try{
+const u=new URL(url);
+return u.protocol==="https:"||u.protocol==="http:";
+}catch(e){return false}
 }
+
 function addSource(parent,item){
- if(!validURL(item.url))return;
- const a=document.createElement("a");a.className="source";
- a.href=item.url;a.target="_blank";a.rel="noopener noreferrer";
- const tag=document.createElement("span");tag.className="tag";tag.textContent=item.source||"WEB SOURCE";
- const title=document.createElement("strong");title.textContent=item.title||"Web result";
- const small=document.createElement("small");small.textContent=item.description||"";
- a.append(tag,title,small);parent.appendChild(a);
+const url=item.url||item.href||"";
+if(!validURL(url))return;
+const a=document.createElement("a");
+a.className="source";
+a.href=url;
+a.target="_blank";
+a.rel="noopener noreferrer";
+const tag=document.createElement("span");
+tag.className="tag";
+tag.textContent=item.source||"WEB SOURCE";
+const title=document.createElement("strong");
+title.textContent=item.title||"Web result";
+const small=document.createElement("small");
+small.textContent=item.description||item.snippet||"";
+a.append(tag,title,small);
+parent.appendChild(a);
 }
-async function api(path){
- const r=await fetch(API+path);if(!r.ok)throw new Error("HTTP "+r.status);
- return r.json();
-}
-function extractText(text,query){
- if(!text)return "";
- const words=query.toLowerCase().split(/\s+/).filter(w=>w.length>2);
- const paragraphs=text.replace(/\r/g,"").split(/\n+/).map(x=>x.trim()).filter(x=>x.length>70);
- paragraphs.sort((a,b)=>{
-  const score=s=>words.reduce((n,w)=>n+(s.toLowerCase().includes(w)?1:0),0);
-  return score(b)-score(a);
- });
- return paragraphs.slice(0,3).join("\n\n").slice(0,2200);
-}
-async function getContext(item){
- try{
-  const d=await api("/api/context?url="+encodeURIComponent(item.url));
-  return {text:d.content||d.summary||item.description||""};
- }catch(e){return {text:item.description||""}}
-}
+
 function renderBot(data,save=true){
- const reply=document.createElement("div");reply.className="message bot";
- addLabel(reply,"VEX AI");
- const answer=document.createElement("div");answer.className="answer";
- answer.textContent=data.answer||"No information found.";reply.appendChild(answer);
- if(data.results?.length){
-  addLabel(reply,"WEB SOURCES");
-  const grid=document.createElement("div");grid.className="sources";
-  data.results.forEach(item=>addSource(grid,item));reply.appendChild(grid);
- }
- if(data.images?.length){
-  addLabel(reply,"RELATED IMAGES");
-  const gallery=document.createElement("div");gallery.className="images";
-  data.images.forEach(item=>{
-   if(!validURL(item.url)||!validURL(item.image))return;
-   const a=document.createElement("a");a.href=item.url;a.target="_blank";a.rel="noopener noreferrer";
-   const img=document.createElement("img");img.src=item.image;img.alt=item.title||"Image";img.loading="lazy";img.onerror=()=>a.remove();
-   const caption=document.createElement("div");caption.textContent=item.title||"Image";
-   a.append(img,caption);gallery.appendChild(a);
-  });
-  reply.appendChild(gallery);
- }
- const actions=document.createElement("div");actions.className="actions";
- const copy=document.createElement("button");copy.textContent="Copy";
- copy.onclick=()=>navigator.clipboard?.writeText(data.answer||"");
- actions.appendChild(copy);reply.appendChild(actions);
- chat.appendChild(reply);
- if(save)storeMessage({type:"bot",data});
- scrollDown();
+const reply=document.createElement("div");
+reply.className="message bot";
+addLabel(reply,"VEX AI");
+
+const answer=document.createElement("div");
+answer.className="answer";
+answer.textContent=data.answer||"No information found.";
+reply.appendChild(answer);
+
+const results=data.results||data.sources||[];
+if(results.length){
+addLabel(reply,"WEB SOURCES");
+const grid=document.createElement("div");
+grid.className="sources";
+results.forEach(item=>addSource(grid,item));
+reply.appendChild(grid);
 }
-async function searchImages(query){
- try{
-  const d=await api("/api/images?q="+encodeURIComponent(query)+"&page=1");
-  return (d.images||[]).map(x=>({title:x.title||"Image",image:x.thumbUrl||x.url,url:x.url}));
- }catch(e){return []}
+
+if(data.images?.length){
+addLabel(reply,"RELATED IMAGES");
+const gallery=document.createElement("div");
+gallery.className="images";
+
+data.images.forEach(item=>{
+const imageUrl=item.image||item.url||"";
+const pageUrl=item.page_url||item.source_url||item.url||imageUrl;
+if(!validURL(imageUrl))return;
+
+const a=document.createElement("a");
+a.href=validURL(pageUrl)?pageUrl:imageUrl;
+a.target="_blank";
+a.rel="noopener noreferrer";
+
+const img=document.createElement("img");
+img.src=imageUrl;
+img.alt=item.title||"Image";
+img.loading="lazy";
+img.onerror=()=>a.remove();
+
+const caption=document.createElement("div");
+caption.textContent=item.title||"Image";
+a.append(img,caption);
+gallery.appendChild(a);
+});
+
+if(gallery.children.length)reply.appendChild(gallery);
 }
-async function runSearch(query,progress){
- progress.textContent="Searching the web index...";
- const d=await api("/api/search?q="+encodeURIComponent(query)+"&page=1&exact=0");
- const results=d.results||[];
- if(!results.length)return {answer:"I couldn't find matching pages. Try different keywords.",results:[],images:[]};
- progress.textContent="Reading available information from relevant pages...";
- const selected=results.slice(0,5);
- const contexts=await Promise.all(selected.map(getContext));
- const parts=contexts.map((c,i)=>({
-  title:selected[i].title,text:extractText(c.text,query)
- })).filter(x=>x.text);
- progress.textContent="Organizing information and sources...";
- const images=await searchImages(query);
- const answer=parts.length?parts.map(p=>p.title+"\n"+p.text).join("\n\n"):"Matching pages were found, but detailed page information was unavailable. Open the sources below.";
- return {
-  answer,
-  results:results.map(x=>({title:x.title,url:x.url,description:x.description||"",source:"WEB RESULT"})),
-  images
- };
+
+const actions=document.createElement("div");
+actions.className="actions";
+const copy=document.createElement("button");
+copy.textContent="Copy";
+copy.onclick=()=>navigator.clipboard?.writeText(data.answer||"");
+actions.appendChild(copy);
+reply.appendChild(actions);
+chat.appendChild(reply);
+
+if(save)storeMessage({type:"bot",data});
+scrollDown();
 }
+
+function scrollDown(){
+chat.scrollTop=chat.scrollHeight;
+}
+
+function nativeSearch(query){
+return new Promise((resolve,reject)=>{
+const id="vex_"+Date.now()+"_"+(++requestCounter);
+const timer=setTimeout(()=>{
+pending.delete(id);
+reject(new Error("VEX app did not respond. Close and reopen the Android app."));
+},120000);
+
+pending.set(id,{resolve,reject,timer});
+
+try{
+console.log("VEX_NATIVE_SEARCH:"+JSON.stringify({id,query}));
+}catch(error){
+clearTimeout(timer);
+pending.delete(id);
+reject(error);
+}
+});
+}
+
+window.addEventListener("vex-native-progress",event=>{
+const d=event.detail||{};
+if(pending.has(String(d.id||""))){
+const el=document.getElementById("vex-progress");
+if(el)el.textContent=d.stage||"VEX is working...";
+}
+});
+
+window.addEventListener("vex-native-result",event=>{
+const d=event.detail||{};
+const id=String(d.id||"");
+const p=pending.get(id);
+if(!p)return;
+
+clearTimeout(p.timer);
+pending.delete(id);
+
+if(d.error)p.reject(new Error(d.error));
+else p.resolve(d.data||{});
+});
+
 async function sendMessage(){
- const query=input.value.trim();if(!query||searching)return;
- searching=true;sendButton.disabled=true;
- addUser(query);input.value="";input.style.height="30px";
- const progress=document.createElement("div");progress.className="message bot progress";
- progress.textContent="Preparing your search...";chat.appendChild(progress);scrollDown();
- try{
-  const data=await runSearch(query,progress);
-  progress.remove();renderBot(data,true);
- }catch(e){progress.textContent="VEX search connection failed: "+e.message}
- finally{searching=false;sendButton.disabled=false;input.focus()}
+const query=input.value.trim();
+if(!query||searching)return;
+
+searching=true;
+sendButton.disabled=true;
+addUser(query);
+input.value="";
+input.style.height="30px";
+
+const progress=document.createElement("div");
+progress.className="message bot progress";
+progress.id="vex-progress";
+progress.textContent="Sending your question to VEX...";
+chat.appendChild(progress);
+scrollDown();
+
+try{
+const data=await nativeSearch(query);
+progress.remove();
+
+renderBot({
+answer:data.answer||"VEX could not prepare an answer.",
+results:data.results||data.sources||[],
+images:data.images||[]
+},true);
+
+}catch(error){
+progress.classList.remove("progress");
+progress.textContent="VEX search error: "+(error.message||"Please try again.");
+}finally{
+searching=false;
+sendButton.disabled=false;
+input.focus();
 }
-function quickAsk(text){input.value=text;sendMessage()}
+}
+
+function quickAsk(text){
+input.value=text;
+sendMessage();
+}
+
 sendButton.addEventListener("click",sendMessage);
+
 input.addEventListener("keydown",e=>{
- if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage()}
+if(e.key==="Enter"&&!e.shiftKey){
+e.preventDefault();
+sendMessage();
+}
 });
+
 input.addEventListener("input",function(){
- this.style.height="auto";this.style.height=Math.min(this.scrollHeight,130)+"px";
+this.style.height="auto";
+this.style.height=Math.min(this.scrollHeight,130)+"px";
 });
+
 loadHistory();
 </script>
 </body>
