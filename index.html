@@ -4,80 +4,215 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#212121">
+<meta name="theme-color" content="#000000">
 <title>VEX AI</title>
+
 <style>
+:root{
+ --black:#000000;
+ --white:#ffffff;
+ --border:#202020;
+ --soft:#a0a0a0;
+}
 *{box-sizing:border-box}
-:root{--bg:#212121;--side:#171717;--panel:#2f2f2f;--text:#ececec;--muted:#999}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,"Segoe UI",Arial,sans-serif;height:100dvh;overflow:hidden}
+html,body{
+ margin:0;width:100%;height:100%;
+ background:#000;color:#fff;
+ font-family:Inter,"Segoe UI",Arial,sans-serif;
+}
+body{height:100dvh;overflow:hidden}
 button,textarea{font:inherit}
-.app{height:100dvh;display:flex}
-.sidebar{width:260px;background:var(--side);display:flex;flex-direction:column;padding:12px;flex-shrink:0}
-.side-top{display:flex;align-items:center;justify-content:space-between;padding:8px 5px 20px}
-.brand{font-size:21px;font-weight:850;letter-spacing:2px}
-.brand span{color:#aaa}
-.icon-btn{background:transparent;border:0;color:#ddd;font-size:21px;cursor:pointer;padding:8px;border-radius:9px}
-.icon-btn:hover{background:#303030}
-.new-chat{background:transparent;border:1px solid #444;color:#eee;border-radius:12px;padding:12px;text-align:left;cursor:pointer}
-.new-chat:hover{background:#292929}
-.history-title{font-size:11px;color:#888;margin:24px 7px 10px;letter-spacing:1px}
+.app{height:100dvh;display:flex;background:#000}
+.sidebar{
+ width:265px;background:#000;
+ border-right:1px solid var(--border);
+ display:flex;flex-direction:column;
+ padding:14px;flex-shrink:0
+}
+.side-top{
+ display:flex;align-items:center;
+ justify-content:space-between;
+ padding:8px 5px 22px
+}
+.brand{font-size:22px;font-weight:900;letter-spacing:3px;color:#fff}
+.icon-btn{
+ background:transparent;border:0;color:#fff;
+ font-size:21px;cursor:pointer;padding:9px;
+ border-radius:10px
+}
+.icon-btn:hover{background:#171717}
+.new-chat{
+ background:#000;border:1px solid #333;
+ color:#fff;border-radius:12px;padding:13px;
+ text-align:left;cursor:pointer;transition:.2s
+}
+.new-chat:hover{background:#151515;border-color:#777}
+.history-title{
+ font-size:10px;color:#888;
+ margin:25px 8px 10px;letter-spacing:2px
+}
 .history{overflow-y:auto;flex:1}
-.history-item{padding:10px;border-radius:9px;color:#ccc;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
-.history-item:hover{background:#292929}
-.profile{border-top:1px solid #333;padding:14px 6px 5px}
-.profile-name{font-size:13px;font-weight:700}
-.profile-info{font-size:11px;color:#888;margin-top:5px;line-height:1.6}
-.main{flex:1;min-width:0;display:flex;flex-direction:column;height:100dvh}
-.topbar{height:58px;min-height:58px;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid #333}
-.mobile-brand{display:none;font-weight:800;letter-spacing:2px}
-.model-label{font-size:14px;color:#ddd}
-.model-label span{color:#888;font-size:11px;margin-left:7px}
-#chat{flex:1;overflow-y:auto;padding:24px 20px 160px;scroll-behavior:smooth}
-.welcome{max-width:680px;margin:19vh auto 30px;text-align:center}
-.welcome h1{font-size:35px;letter-spacing:3px;margin:0 0 12px}
-.welcome p{color:#999;font-size:14px}
-.suggestions{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin-top:28px}
-.suggestions button{background:#292929;border:1px solid #414141;color:#ddd;border-radius:18px;padding:11px 14px;font-size:12px;cursor:pointer}
-.suggestions button:hover{background:#383838}
-.message{max-width:780px;width:100%;margin:0 auto 26px;line-height:1.75;font-size:15px;overflow-wrap:anywhere}
+.history-item{
+ padding:11px;border-radius:9px;color:#ddd;
+ font-size:13px;white-space:nowrap;
+ overflow:hidden;text-overflow:ellipsis;cursor:pointer
+}
+.history-item:hover{background:#151515}
+.profile{
+ border-top:1px solid #202020;
+ padding:15px 6px 5px
+}
+.profile-name{font-size:13px;font-weight:800;color:white}
+.profile-info{font-size:11px;color:#888;margin-top:6px;line-height:1.8}
+.main{
+ flex:1;min-width:0;display:flex;
+ flex-direction:column;height:100dvh;background:#000
+}
+.topbar{
+ height:60px;min-height:60px;
+ display:flex;align-items:center;
+ padding:0 22px;border-bottom:1px solid #171717;
+ background:#000
+}
+.mobile-brand{display:none;font-weight:900;letter-spacing:2px}
+.model-label{font-size:14px;color:#fff;font-weight:600}
+.model-label span{color:#777;font-size:11px;margin-left:8px}
+#chat{
+ flex:1;overflow-y:auto;
+ padding:26px 20px 165px;
+ scroll-behavior:smooth;background:#000
+}
+.welcome{
+ max-width:700px;margin:20vh auto 30px;
+ text-align:center
+}
+.welcome h1{
+ font-size:39px;letter-spacing:4px;
+ font-weight:750;margin:0 0 14px;color:#fff
+}
+.welcome p{color:#888;font-size:14px}
+.suggestions{
+ display:flex;flex-wrap:wrap;
+ justify-content:center;gap:10px;margin-top:30px
+}
+.suggestions button{
+ background:#000;border:1px solid #292929;
+ color:#ddd;border-radius:22px;
+ padding:12px 17px;font-size:12px;cursor:pointer;
+ transition:.2s
+}
+.suggestions button:hover{
+ background:#fff;color:#000;border-color:#fff
+}
+.message{
+ max-width:790px;width:100%;
+ margin:0 auto 28px;line-height:1.8;
+ font-size:15px;overflow-wrap:anywhere
+}
 .user-wrap{display:flex;justify-content:flex-end}
-.user{background:#303030;padding:12px 17px;border-radius:20px;max-width:80%;white-space:pre-wrap}
-.bot{padding:5px 0}
-.answer{white-space:pre-wrap;line-height:1.85}
-.label{font-size:10px;letter-spacing:1.5px;color:#999;margin:19px 0 9px;font-weight:700}
-.sources{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:9px}
-.source{display:block;background:#292929;border:1px solid #404040;padding:12px;border-radius:12px;text-decoration:none;color:#eee}
-.source:hover{background:#343434}
+.user{
+ background:#fff;color:#000;
+ padding:12px 18px;border-radius:21px;
+ max-width:80%;white-space:pre-wrap
+}
+.bot{padding:6px 0;color:#fff}
+.answer{white-space:pre-wrap;line-height:1.9;color:#fff}
+.label{
+ font-size:10px;letter-spacing:2px;
+ color:#888;margin:20px 0 10px;font-weight:700
+}
+.sources{
+ display:grid;grid-template-columns:
+ repeat(auto-fit,minmax(220px,1fr));gap:10px
+}
+.source{
+ display:block;background:#000;
+ border:1px solid #292929;
+ padding:14px;border-radius:12px;
+ text-decoration:none;color:#fff;transition:.2s
+}
+.source:hover{border-color:#fff}
 .source strong{font-size:13px;display:block}
-.source small{font-size:11px;color:#aaa;display:block;margin-top:5px;line-height:1.5}
-.tag{font-size:9px;color:#999;display:block;margin-bottom:6px;letter-spacing:1px}
-.images{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
-.images img{width:100%;height:125px;object-fit:cover;border-radius:10px;background:#292929}
-.images a{font-size:11px;color:#aaa;text-decoration:none}
-.composer-area{position:absolute;bottom:0;left:260px;right:0;background:linear-gradient(transparent,#212121 20%);padding:28px 20px 17px}
-.composer{max-width:780px;margin:auto;background:#303030;border:1px solid #484848;border-radius:25px;padding:10px 12px;display:flex;gap:10px;align-items:flex-end}
-textarea{background:transparent;color:white;border:0;outline:0;resize:none;flex:1;min-height:29px;max-height:130px;font-size:15px;padding:7px 3px}
-textarea::placeholder{color:#aaa}
-.send{width:38px;height:38px;border:0;border-radius:50%;background:#eee;color:#111;font-size:22px;font-weight:800;cursor:pointer}
+.source small{
+ font-size:11px;color:#999;
+ display:block;margin-top:6px;line-height:1.6
+}
+.tag{
+ font-size:9px;color:#888;
+ display:block;margin-bottom:7px;letter-spacing:1.5px
+}
+.images{
+ display:grid;grid-template-columns:
+ repeat(auto-fit,minmax(130px,1fr));gap:10px
+}
+.images img{
+ width:100%;height:130px;object-fit:cover;
+ border-radius:10px;background:#080808
+}
+.images a{font-size:11px;color:#ddd;text-decoration:none}
+.composer-area{
+ position:absolute;bottom:0;left:265px;right:0;
+ background:linear-gradient(transparent,#000 22%);
+ padding:30px 20px 17px
+}
+.composer{
+ max-width:790px;margin:auto;
+ background:#000;border:1px solid #454545;
+ border-radius:26px;padding:10px 12px;
+ display:flex;gap:10px;align-items:flex-end;
+ transition:.2s
+}
+.composer:focus-within{border-color:#aaa}
+textarea{
+ background:transparent;color:#fff;
+ border:0;outline:0;resize:none;flex:1;
+ min-height:30px;max-height:130px;
+ font-size:15px;padding:7px 3px
+}
+textarea::placeholder{color:#777}
+.send{
+ width:39px;height:39px;border:0;
+ border-radius:50%;background:#fff;
+ color:#000;font-size:23px;
+ font-weight:900;cursor:pointer
+}
+.send:hover{background:#ddd}
 .send:disabled{opacity:.4}
-.bottom-note{text-align:center;color:#888;font-size:10px;margin-top:10px}
-.actions{display:flex;gap:8px;margin-top:12px}
-.actions button{background:transparent;border:0;color:#888;padding:6px;cursor:pointer;font-size:12px}
-.actions button:hover{color:white}
-.progress{color:#aaa;font-size:13px;padding:9px 0}
-.progress:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#aaa;margin-right:9px;animation:pulse 1s infinite}
+.bottom-note{
+ text-align:center;color:#666;
+ font-size:10px;margin-top:11px
+}
+.actions{display:flex;gap:9px;margin-top:12px}
+.actions button{
+ background:transparent;border:0;
+ color:#888;padding:7px;cursor:pointer;font-size:12px
+}
+.actions button:hover{color:#fff}
+.progress{color:#aaa;font-size:13px}
+.progress:before{
+ content:"";display:inline-block;
+ width:7px;height:7px;border-radius:50%;
+ background:#fff;margin-right:10px;
+ animation:pulse 1s infinite
+}
 @keyframes pulse{50%{opacity:.2}}
+#chat::-webkit-scrollbar,.history::-webkit-scrollbar{width:5px}
+#chat::-webkit-scrollbar-thumb,.history::-webkit-scrollbar-thumb{background:#292929;border-radius:10px}
 @media(max-width:700px){
- .sidebar{position:fixed;z-index:5;left:-270px;top:0;bottom:0;transition:left .2s}
+ .sidebar{
+  position:fixed;z-index:5;left:-275px;top:0;bottom:0;
+  transition:left .2s
+ }
  .sidebar.open{left:0}
  .main{width:100%}
  .mobile-brand{display:block;margin-right:15px}
  .topbar{padding:0 12px}
  #chat{padding:20px 15px 155px}
  .composer-area{left:0;padding:22px 12px 12px}
- .welcome{margin-top:17vh}
- .welcome h1{font-size:30px}
+ .welcome{margin-top:18vh}
+ .welcome h1{font-size:31px}
  .user{max-width:90%}
+ .sources{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -86,22 +221,19 @@ textarea::placeholder{color:#aaa}
 
 <aside class="sidebar" id="sidebar">
  <div class="side-top">
-  <div class="brand">VEX <span>AI</span></div>
+  <div class="brand">VEX AI</div>
   <button class="icon-btn" onclick="toggleSidebar()">×</button>
  </div>
-
  <button class="new-chat" onclick="newChat()">＋ &nbsp; New chat</button>
-
  <div class="history-title">YOUR CHATS</div>
  <div class="history" id="history"></div>
-
  <div class="profile">
   <div class="profile-name">VEX AI</div>
   <div class="profile-info">
    Owner & Creator: Avee Sharma<br>
-   VEX V6: Experimental trained model<br>
-   Current knowledge: Public web sources<br>
-   VEX V6 is not connected to this web page yet.
+   Experimental model: VEX V6<br>
+   Knowledge: Public web sources<br>
+   Independent AI project
   </div>
  </div>
 </aside>
@@ -116,12 +248,12 @@ textarea::placeholder{color:#aaa}
  <section id="chat">
   <div class="welcome" id="welcome">
    <h1>What can I help with?</h1>
-   <p>Welcome to VEX AI. Ask anything and explore the world.</p>
+   <p>Explore knowledge. Discover ideas. Ask VEX anything.</p>
    <div class="suggestions">
     <button onclick="quickAsk('Explain artificial intelligence')">Explain AI</button>
-    <button onclick="quickAsk('Latest developments in space exploration')">Space exploration</button>
+    <button onclick="quickAsk('Latest space discoveries')">Space</button>
     <button onclick="quickAsk('How does the internet work?')">Technology</button>
-    <button onclick="quickAsk('Tell me about quantum computing')">Quantum computing</button>
+    <button onclick="quickAsk('Explain quantum computing')">Science</button>
    </div>
   </div>
  </section>
@@ -131,7 +263,7 @@ textarea::placeholder{color:#aaa}
    <textarea id="question" rows="1" placeholder="Message VEX AI..."></textarea>
    <button class="send" id="send">↑</button>
   </div>
-  <div class="bottom-note">VEX AI can make mistakes. Check important information from its sources.</div>
+  <div class="bottom-note">VEX AI · Built by Avee Sharma</div>
  </div>
 </main>
 </div>
@@ -142,323 +274,176 @@ const chat=document.getElementById("chat");
 const input=document.getElementById("question");
 const sendButton=document.getElementById("send");
 const historyBox=document.getElementById("history");
-
-let conversations=[];
-let activeId=null;
-let searching=false;
+let conversations=[],activeId=null,searching=false;
 
 function saveHistory(){
- try{localStorage.setItem("vex_chats",JSON.stringify(conversations))}
- catch(e){}
+ try{localStorage.setItem("vex_chats",JSON.stringify(conversations))}catch(e){}
 }
-
 function loadHistory(){
- try{
-  conversations=JSON.parse(localStorage.getItem("vex_chats")||"[]");
-  if(!Array.isArray(conversations))conversations=[];
- }catch(e){conversations=[]}
+ try{conversations=JSON.parse(localStorage.getItem("vex_chats")||"[]")}catch(e){conversations=[]}
  renderHistory();
 }
-
 function renderHistory(){
  historyBox.textContent="";
  conversations.forEach(c=>{
-  const item=document.createElement("div");
-  item.className="history-item";
-  item.textContent=c.title;
-  item.onclick=()=>openChat(c.id);
-  historyBox.appendChild(item);
+  const el=document.createElement("div");
+  el.className="history-item";el.textContent=c.title;
+  el.onclick=()=>openChat(c.id);historyBox.appendChild(el);
  });
 }
-
 function newChat(){
  activeId=null;
  chat.innerHTML=`
  <div class="welcome" id="welcome">
-  <h1>What can I help with?</h1>
-  <p>Welcome to VEX AI. Ask anything and explore the world.</p>
-  <div class="suggestions">
-   <button onclick="quickAsk('Explain artificial intelligence')">Explain AI</button>
-   <button onclick="quickAsk('Latest developments in space exploration')">Space exploration</button>
-   <button onclick="quickAsk('How does the internet work?')">Technology</button>
-   <button onclick="quickAsk('Tell me about quantum computing')">Quantum computing</button>
-  </div>
- </div>`;
- input.value="";
- input.focus();
+ <h1>What can I help with?</h1>
+ <p>Explore knowledge. Discover ideas. Ask VEX anything.</p>
+ <div class="suggestions">
+ <button onclick="quickAsk('Explain artificial intelligence')">Explain AI</button>
+ <button onclick="quickAsk('Latest space discoveries')">Space</button>
+ <button onclick="quickAsk('How does the internet work?')">Technology</button>
+ <button onclick="quickAsk('Explain quantum computing')">Science</button>
+ </div></div>`;
+ input.value="";input.focus();
  document.getElementById("sidebar").classList.remove("open");
 }
-
-function toggleSidebar(){
- document.getElementById("sidebar").classList.toggle("open");
-}
-
+function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open")}
 function openChat(id){
- const c=conversations.find(x=>x.id===id);
- if(!c)return;
- activeId=id;
- chat.innerHTML="";
+ const c=conversations.find(x=>x.id===id);if(!c)return;
+ activeId=id;chat.innerHTML="";
  c.messages.forEach(m=>{
   if(m.type==="user")addUser(m.text,false);
-  else addBot(m.data,false);
+  else renderBot(m.data,false);
  });
  document.getElementById("sidebar").classList.remove("open");
 }
-
+function storeMessage(m){
+ if(!activeId){
+  activeId=String(Date.now());
+  conversations.unshift({id:activeId,title:m.type==="user"?m.text.slice(0,45):"New chat",messages:[]});
+ }
+ const c=conversations.find(x=>x.id===activeId);
+ if(c)c.messages.push(m);
+ saveHistory();renderHistory();
+}
 function addUser(text,save=true){
  document.getElementById("welcome")?.remove();
- const wrap=document.createElement("div");
- wrap.className="message user-wrap";
- const bubble=document.createElement("div");
- bubble.className="user";
- bubble.textContent=text;
- wrap.appendChild(bubble);
- chat.appendChild(wrap);
+ const wrap=document.createElement("div");wrap.className="message user-wrap";
+ const bubble=document.createElement("div");bubble.className="user";bubble.textContent=text;
+ wrap.appendChild(bubble);chat.appendChild(wrap);
  if(save)storeMessage({type:"user",text});
  scrollDown();
 }
-
-function storeMessage(message){
- if(!activeId){
-  activeId=String(Date.now())+Math.random().toString(16).slice(2);
-  conversations.unshift({
-   id:activeId,
-   title:message.type==="user"?message.text.slice(0,45):"New chat",
-   messages:[]
-  });
- }
- const c=conversations.find(x=>x.id===activeId);
- if(c){
-  c.messages.push(message);
-  saveHistory();
-  renderHistory();
- }
+function addLabel(p,t){
+ const el=document.createElement("div");el.className="label";el.textContent=t;p.appendChild(el);
 }
-
-function addLabel(parent,text){
- const el=document.createElement("div");
- el.className="label";
- el.textContent=text;
- parent.appendChild(el);
-}
-
 function validURL(url){
- try{
-  const u=new URL(url);
-  return u.protocol==="https:"||u.protocol==="http:";
- }catch(e){return false}
+ try{const u=new URL(url);return u.protocol==="https:"||u.protocol==="http:"}catch(e){return false}
 }
-
-function addSource(parent,item,description){
+function addSource(parent,item){
  if(!validURL(item.url))return;
- const a=document.createElement("a");
- a.className="source";
- a.href=item.url;
- a.target="_blank";
- a.rel="noopener noreferrer";
- const tag=document.createElement("span");
- tag.className="tag";
- tag.textContent=item.source||"WEB SOURCE";
- const title=document.createElement("strong");
- title.textContent=item.title||"Web result";
- const small=document.createElement("small");
- small.textContent=description||item.description||"";
- a.append(tag,title,small);
- parent.appendChild(a);
+ const a=document.createElement("a");a.className="source";
+ a.href=item.url;a.target="_blank";a.rel="noopener noreferrer";
+ const tag=document.createElement("span");tag.className="tag";tag.textContent=item.source||"WEB SOURCE";
+ const title=document.createElement("strong");title.textContent=item.title||"Web result";
+ const small=document.createElement("small");small.textContent=item.description||"";
+ a.append(tag,title,small);parent.appendChild(a);
 }
-
 async function api(path){
- const r=await fetch(API+path);
- if(!r.ok)throw new Error("HTTP "+r.status);
- return await r.json();
+ const r=await fetch(API+path);if(!r.ok)throw new Error("HTTP "+r.status);
+ return r.json();
 }
-
 function extractText(text,query){
  if(!text)return "";
  const words=query.toLowerCase().split(/\s+/).filter(w=>w.length>2);
- const paragraphs=text.replace(/\r/g,"").split(/\n+/)
-  .map(x=>x.trim()).filter(x=>x.length>70);
+ const paragraphs=text.replace(/\r/g,"").split(/\n+/).map(x=>x.trim()).filter(x=>x.length>70);
  paragraphs.sort((a,b)=>{
   const score=s=>words.reduce((n,w)=>n+(s.toLowerCase().includes(w)?1:0),0);
   return score(b)-score(a);
  });
  return paragraphs.slice(0,3).join("\n\n").slice(0,2200);
 }
-
 async function getContext(item){
  try{
   const d=await api("/api/context?url="+encodeURIComponent(item.url));
-  return {
-   text:d.content||d.summary||item.description||"",
-   coverage:d.coverage||"unknown"
-  };
- }catch(e){
-  return {text:item.description||"",coverage:"snippet"};
- }
+  return {text:d.content||d.summary||item.description||""};
+ }catch(e){return {text:item.description||""}}
 }
-
-function addActions(parent,text){
- const row=document.createElement("div");
- row.className="actions";
- const copy=document.createElement("button");
- copy.textContent="Copy";
- copy.onclick=()=>navigator.clipboard?.writeText(text);
- row.appendChild(copy);
- parent.appendChild(row);
-}
-
 function renderBot(data,save=true){
- const reply=document.createElement("div");
- reply.className="message bot";
-
+ const reply=document.createElement("div");reply.className="message bot";
  addLabel(reply,"VEX AI");
-
- const answer=document.createElement("div");
- answer.className="answer";
- answer.textContent=data.answer||"No information found.";
- reply.appendChild(answer);
-
+ const answer=document.createElement("div");answer.className="answer";
+ answer.textContent=data.answer||"No information found.";reply.appendChild(answer);
  if(data.results?.length){
   addLabel(reply,"WEB SOURCES");
-  const grid=document.createElement("div");
-  grid.className="sources";
-  data.results.forEach(item=>addSource(grid,item,item.description));
-  reply.appendChild(grid);
+  const grid=document.createElement("div");grid.className="sources";
+  data.results.forEach(item=>addSource(grid,item));reply.appendChild(grid);
  }
-
  if(data.images?.length){
   addLabel(reply,"RELATED IMAGES");
-  const gallery=document.createElement("div");
-  gallery.className="images";
+  const gallery=document.createElement("div");gallery.className="images";
   data.images.forEach(item=>{
-   if(!validURL(item.url))return;
-   const a=document.createElement("a");
-   a.href=item.url;a.target="_blank";a.rel="noopener noreferrer";
-   const img=document.createElement("img");
-   img.src=item.image;img.alt=item.title||"Image";img.loading="lazy";
-   img.onerror=()=>a.remove();
-   const caption=document.createElement("div");
-   caption.textContent=item.title||"Image";
-   a.append(img,caption);
-   gallery.appendChild(a);
+   if(!validURL(item.url)||!validURL(item.image))return;
+   const a=document.createElement("a");a.href=item.url;a.target="_blank";a.rel="noopener noreferrer";
+   const img=document.createElement("img");img.src=item.image;img.alt=item.title||"Image";img.loading="lazy";img.onerror=()=>a.remove();
+   const caption=document.createElement("div");caption.textContent=item.title||"Image";
+   a.append(img,caption);gallery.appendChild(a);
   });
   reply.appendChild(gallery);
  }
-
- addActions(reply,data.answer||"");
+ const actions=document.createElement("div");actions.className="actions";
+ const copy=document.createElement("button");copy.textContent="Copy";
+ copy.onclick=()=>navigator.clipboard?.writeText(data.answer||"");
+ actions.appendChild(copy);reply.appendChild(actions);
  chat.appendChild(reply);
  if(save)storeMessage({type:"bot",data});
  scrollDown();
 }
-
-function addBot(data,scroll=true){
- renderBot(data,false);
-}
-
-function scrollDown(){
- chat.scrollTop=chat.scrollHeight;
-}
-
 async function searchImages(query){
  try{
   const d=await api("/api/images?q="+encodeURIComponent(query)+"&page=1");
-  return (d.images||[]).map(x=>({
-   title:x.title||"Image",
-   image:x.thumbUrl||x.url,
-   url:x.url
-  }));
+  return (d.images||[]).map(x=>({title:x.title||"Image",image:x.thumbUrl||x.url,url:x.url}));
  }catch(e){return []}
 }
-
 async function runSearch(query,progress){
- const update=text=>progress.textContent=text;
-
- update("Searching the web index...");
+ progress.textContent="Searching the web index...";
  const d=await api("/api/search?q="+encodeURIComponent(query)+"&page=1&exact=0");
  const results=d.results||[];
-
- if(!results.length){
-  return {answer:"I couldn't find matching pages. Try different keywords.",results:[],images:[]};
- }
-
- update("Reading available information from relevant pages...");
+ if(!results.length)return {answer:"I couldn't find matching pages. Try different keywords.",results:[],images:[]};
+ progress.textContent="Reading available information from relevant pages...";
  const selected=results.slice(0,5);
  const contexts=await Promise.all(selected.map(getContext));
-
  const parts=contexts.map((c,i)=>({
-  title:selected[i].title,
-  url:selected[i].url,
-  text:extractText(c.text,query),
-  coverage:c.coverage
+  title:selected[i].title,text:extractText(c.text,query)
  })).filter(x=>x.text);
-
- update("Organizing information and sources...");
+ progress.textContent="Organizing information and sources...";
  const images=await searchImages(query);
-
- let answer="";
- if(parts.length){
-  answer=parts.map(p=>p.title+"\n"+p.text).join("\n\n");
- }else{
-  answer="I found matching web pages, but only limited page information was available. Open the sources below to read more.";
- }
-
+ const answer=parts.length?parts.map(p=>p.title+"\n"+p.text).join("\n\n"):"Matching pages were found, but detailed page information was unavailable. Open the sources below.";
  return {
   answer,
-  results:results.map(x=>({
-   title:x.title,url:x.url,
-   description:x.description||"",
-   source:"WEB RESULT"
-  })),
+  results:results.map(x=>({title:x.title,url:x.url,description:x.description||"",source:"WEB RESULT"})),
   images
  };
 }
-
 async function sendMessage(){
- const query=input.value.trim();
- if(!query||searching)return;
- searching=true;
- sendButton.disabled=true;
-
- addUser(query);
- input.value="";
- input.style.height="29px";
-
- const progress=document.createElement("div");
- progress.className="message bot progress";
- progress.textContent="Preparing your search...";
- chat.appendChild(progress);
- scrollDown();
-
+ const query=input.value.trim();if(!query||searching)return;
+ searching=true;sendButton.disabled=true;
+ addUser(query);input.value="";input.style.height="30px";
+ const progress=document.createElement("div");progress.className="message bot progress";
+ progress.textContent="Preparing your search...";chat.appendChild(progress);scrollDown();
  try{
   const data=await runSearch(query,progress);
-  progress.remove();
-  renderBot(data,true);
- }catch(e){
-  progress.textContent="VEX couldn't reach the search service: "+e.message;
- }finally{
-  searching=false;
-  sendButton.disabled=false;
-  input.focus();
- }
+  progress.remove();renderBot(data,true);
+ }catch(e){progress.textContent="VEX search connection failed: "+e.message}
+ finally{searching=false;sendButton.disabled=false;input.focus()}
 }
-
-function quickAsk(text){
- input.value=text;
- sendMessage();
-}
-
+function quickAsk(text){input.value=text;sendMessage()}
 sendButton.addEventListener("click",sendMessage);
 input.addEventListener("keydown",e=>{
- if(e.key==="Enter"&&!e.shiftKey){
-  e.preventDefault();
-  sendMessage();
- }
+ if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage()}
 });
 input.addEventListener("input",function(){
- this.style.height="auto";
- this.style.height=Math.min(this.scrollHeight,130)+"px";
+ this.style.height="auto";this.style.height=Math.min(this.scrollHeight,130)+"px";
 });
-
 loadHistory();
 </script>
 </body>
