@@ -4,47 +4,7 @@ import json
 import flet as ft
 import flet_webview as fwv
 
-from vex_search import ask_vex
-
-
-def normalize_result(raw):
-    raw = raw if isinstance(raw, dict) else {}
-
-    sources = raw.get("results") or raw.get("sources") or []
-    results = []
-    for item in sources:
-        if not isinstance(item, dict):
-            continue
-        url = item.get("url") or item.get("href") or ""
-        if not url.startswith(("https://", "http://")):
-            continue
-        results.append({
-            "title": item.get("title") or "Web result",
-            "url": url,
-            "description": item.get("description") or item.get("snippet") or "",
-            "source": item.get("source") or "WEB SOURCE",
-        })
-
-    raw_images = raw.get("images") or []
-    images = []
-    for item in raw_images:
-        if not isinstance(item, dict):
-            continue
-        image_url = item.get("image") or item.get("url") or ""
-        if not image_url.startswith(("https://", "http://")):
-            continue
-        # vex_search.py currently returns image URLs without a separate page URL.
-        images.append({
-            "title": item.get("title") or "Related image",
-            "image": image_url,
-            "url": item.get("page_url") or item.get("source_url") or image_url,
-        })
-
-    return {
-        "answer": raw.get("answer") or "No information found.",
-        "results": results,
-        "images": images,
-    }
+from vex_search import search_web, read_page, make_answer, search_images
 
 
 def main(page: ft.Page):
@@ -57,56 +17,153 @@ def main(page: ft.Page):
 
     webview = None
 
+    async def dispatch(event_name, payload):
+        javascript = (
+            "window.dispatchEvent(new CustomEvent("
+            + json.dumps(event_name)
+            + ",{detail:"
+            + json.dumps(payload, ensure_ascii=False)
+            + "}));"
+        )
+        await webview.run_javascript(javascript)
+
     async def handle_console_message(e):
-        message = getattr(e, "message", "") or ""
+        message = e.message or ""
         prefix = "VEX_NATIVE_SEARCH:"
+
         if not message.startswith(prefix):
             return
 
         request_id = ""
+
         try:
             request = json.loads(message[len(prefix):])
             request_id = str(request.get("id", ""))
             query = str(request.get("query", "")).strip()
 
             if not request_id:
-                return
-            if not query or len(query) > 500:
-                raise ValueError("Please enter a search query under 500 characters.")
+                raise ValueError("Missing request ID.")
 
-            raw_result = await asyncio.to_thread(ask_vex, query)
-            response = {
+            if not query or len(query) > 500:
+                raise ValueError(
+                    "Enter a question between 1 and 500 characters."
+                )
+
+            async def progress(stage):
+                await dispatch("vex-native-progress", {
+                    "id": request_id,
+                    "stage": stage
+                })
+
+            await progress("Understanding your question...")
+
+            await progress("Searching the web...")
+            results = await asyncio.to_thread(
+                search_web, query, 5
+            )
+
+            if not results:
+                await dispatch("vex-native-result", {
+                    "id": request_id,
+                    "data": {
+                        "answer": (
+                            "I couldn't find web results for this question. "
+                            "Please try different keywords."
+                        ),
+                        "results": [],
+                        "images": []
+                    }
+                })
+                return
+
+            await progress("Reading relevant web pages...")
+
+            pages = await asyncio.gather(*[
+                asyncio.to_thread(
+                    read_page,
+                    item.get("url", "")
+                )
+                for item in results
+            ])
+
+            await progress("Analyzing the collected information...")
+
+            answer = await asyncio.to_thread(
+                make_answer, query, results, pages
+            )
+
+            await progress("Finding related images...")
+
+            images = await asyncio.to_thread(
+                search_images, query, 4
+            )
+
+            normalized_results = []
+
+            for item in results:
+                url = item.get("url") or item.get("href") or ""
+
+                if url:
+                    normalized_results.append({
+                        "title": item.get("title") or "Web result",
+                        "url": url,
+                        "description": (
+                            item.get("snippet")
+                            or item.get("description")
+                            or ""
+                        ),
+                        "source": "WEB RESULT"
+                    })
+
+            normalized_images = []
+
+            for item in images:
+                image_url = (
+                    item.get("image")
+                    or item.get("url")
+                    or ""
+                )
+
+                if image_url:
+                    normalized_images.append({
+                        "title": item.get("title") or "Related image",
+                        "image": image_url,
+                        "url": image_url
+                    })
+
+            await progress("Preparing your answer...")
+
+            await dispatch("vex-native-result", {
                 "id": request_id,
-                "data": normalize_result(raw_result),
-            }
+                "data": {
+                    "answer": (
+                        answer
+                        or "I found sources, but couldn't extract a useful answer."
+                    ),
+                    "results": normalized_results,
+                    "images": normalized_images
+                }
+            })
 
         except Exception as error:
-            response = {
+            await dispatch("vex-native-result", {
                 "id": request_id,
-                "error": str(error),
-            }
-
-        javascript = (
-            "window.dispatchEvent(new CustomEvent("
-            "'vex-native-result',{detail:"
-            + json.dumps(response, ensure_ascii=False)
-            + "}));"
-        )
-
-        if webview is not None:
-            await webview.run_javascript(javascript)
+                "error": str(error)
+            })
 
     webview = fwv.WebView(
         url="https://eagleiam20-create.github.io/VEX-AI/",
         expand=True,
         on_console_message=handle_console_message,
-        on_web_resource_error=lambda e: print("WebView error:", e.data),
+        on_web_resource_error=lambda e: print(
+            "WebView error:", e.data
+        ),
     )
 
     page.add(
         ft.SafeArea(
             content=webview,
-            expand=True,
+            expand=True
         )
     )
 
