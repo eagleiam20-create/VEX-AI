@@ -1,5 +1,6 @@
-fastapi
-uvicorn
+
+flet
+flet-webview
 requests
 beautifulsoup4
 ddgs
