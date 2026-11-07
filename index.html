@@ -3,394 +3,231 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#080808">
-
 <title>VEX AI</title>
 
 <style>
-* {
-    box-sizing: border-box;
+*{box-sizing:border-box}
+body{
+ margin:0;background:#080808;color:#eee;
+ font-family:Segoe UI,Arial,sans-serif;height:100dvh;
+ overflow:hidden
 }
-
-body {
-    margin: 0;
-    background: #080808;
-    color: #f5f5f5;
-    font-family: "Segoe UI", Arial, sans-serif;
-    height: 100dvh;
-    overflow: hidden;
+.app{height:100dvh;max-width:950px;margin:auto;display:flex;flex-direction:column}
+header{
+ height:65px;flex-shrink:0;border-bottom:1px solid #242424;
+ display:flex;align-items:center;padding:0 20px
 }
-
-.app {
-    height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    max-width: 950px;
-    margin: auto;
+.logo{font-size:23px;font-weight:900;letter-spacing:3px}
+.status{margin-left:auto;color:#888;font-size:11px}
+#chat{flex:1;overflow-y:auto;padding:22px 17px}
+.welcome{text-align:center;margin:18vh auto}
+.welcome h1{font-size:40px;letter-spacing:5px}
+.welcome p{color:#888}
+.message{margin:20px 0;line-height:1.7;font-size:15px;overflow-wrap:anywhere}
+.user{
+ margin-left:auto;max-width:85%;width:fit-content;
+ background:#242424;padding:12px 17px;border-radius:17px
 }
-
-header {
-    height: 65px;
-    min-height: 65px;
-    display: flex;
-    align-items: center;
-    padding: 0 18px;
-    border-bottom: 1px solid #222;
-    gap: 12px;
+.bot{max-width:100%;padding:5px 2px}
+.label{font-size:11px;color:#999;font-weight:bold;letter-spacing:2px;margin-bottom:10px}
+.sources{display:grid;gap:9px;margin-top:17px}
+.source{
+ display:block;padding:12px;background:#151515;
+ border:1px solid #292929;border-radius:11px;
+ color:#eee;text-decoration:none;font-size:13px
 }
-
-.logo {
-    font-size: 23px;
-    font-weight: 900;
-    letter-spacing: 3px;
-    background: linear-gradient(90deg, #fff, #777);
-    color: transparent;
-    background-clip: text;
-}
-
-.status {
-    margin-left: auto;
-    color: #777;
-    font-size: 11px;
-}
-
-#chat {
-    flex: 1;
-    overflow-y: auto;
-    padding: 25px 18px 35px;
-    scroll-behavior: smooth;
-}
-
-.welcome {
-    text-align: center;
-    margin: 18vh auto 30px;
-}
-
-.welcome h1 {
-    font-size: 38px;
-    letter-spacing: 5px;
-    margin: 0 0 12px;
-}
-
-.welcome p {
-    color: #888;
-    font-size: 14px;
-}
-
-.message {
-    max-width: 88%;
-    padding: 13px 17px;
-    margin: 17px 0;
-    border-radius: 17px;
-    line-height: 1.7;
-    font-size: 15px;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-}
-
-.user {
-    background: #222;
-    margin-left: auto;
-    border-bottom-right-radius: 5px;
-}
-
-.bot {
-    background: transparent;
-    margin-right: auto;
-    padding-left: 3px;
-}
-
-.sources {
-    margin-top: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-}
-
-.source {
-    display: block;
-    background: #151515;
-    border: 1px solid #292929;
-    border-radius: 11px;
-    padding: 11px;
-    color: #ddd;
-    text-decoration: none;
-    font-size: 13px;
-}
-
-.source:hover {
-    background: #222;
-}
-
-.source small {
-    display: block;
-    color: #888;
-    margin-top: 5px;
-}
-
-.composer {
-    padding: 12px 14px 20px;
-    border-top: 1px solid #222;
-    background: #080808;
-}
-
-.inputbox {
-    display: flex;
-    align-items: center;
-    background: #171717;
-    border: 1px solid #333;
-    border-radius: 22px;
-    padding: 7px 8px 7px 16px;
-    gap: 10px;
-}
-
-textarea {
-    flex: 1;
-    background: transparent;
-    color: white;
-    border: none;
-    outline: none;
-    resize: none;
-    font-family: inherit;
-    font-size: 15px;
-    min-height: 28px;
-    max-height: 120px;
-    padding-top: 6px;
-}
-
-textarea::placeholder {
-    color: #777;
-}
-
-.send {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: white;
-    color: black;
-    font-size: 22px;
-    font-weight: bold;
-}
-
-.send:disabled {
-    opacity: .5;
-}
-
-.footer {
-    text-align: center;
-    color: #555;
-    font-size: 10px;
-    padding-top: 10px;
-}
-
-.typing {
-    color: #888;
-    font-size: 13px;
-}
-
-@media(max-width:600px) {
-    .message {
-        max-width: 95%;
-    }
-
-    .welcome h1 {
-        font-size: 31px;
-    }
-}
+.source small{display:block;color:#888;margin-top:5px}
+.source:hover{background:#242424}
+.images{display:flex;gap:10px;overflow-x:auto;margin-top:15px}
+.images img{width:145px;height:115px;object-fit:cover;border-radius:12px}
+.composer{padding:12px 14px 20px;border-top:1px solid #242424}
+.inputbox{display:flex;gap:10px;align-items:center;background:#171717;border:1px solid #333;border-radius:22px;padding:8px 9px 8px 16px}
+textarea{flex:1;background:transparent;border:0;outline:0;color:white;resize:none;font:15px inherit;min-height:28px;max-height:120px}
+button{border:0;cursor:pointer}
+.send{width:42px;height:42px;border-radius:50%;background:white;color:black;font-size:23px}
+.send:disabled{opacity:.5}
+.footer{text-align:center;color:#555;font-size:10px;padding-top:10px}
+.typing{color:#999}
+@media(max-width:600px){.welcome h1{font-size:32px}.user{max-width:95%}}
 </style>
 </head>
 
 <body>
-
 <div class="app">
 
 <header>
-    <div class="logo">VEX AI</div>
-    <div class="status">● AI ASSISTANT</div>
+ <div class="logo">VEX AI</div>
+ <div class="status">● WEB SEARCH</div>
 </header>
 
 <main id="chat">
-
-    <div class="welcome" id="welcome">
-        <h1>HELLO.</h1>
-        <p>What would you like to explore today?</p>
-    </div>
-
+ <div class="welcome" id="welcome">
+  <h1>HELLO.</h1>
+  <p>What would you like to explore today?</p>
+ </div>
 </main>
 
 <div class="composer">
-
-    <div class="inputbox">
-
-        <textarea
-            id="question"
-            placeholder="Ask VEX anything..."
-            rows="1"
-        ></textarea>
-
-        <button
-            class="send"
-            id="send"
-            onclick="sendMessage()"
-        >↑</button>
-
-    </div>
-
-    <div class="footer">
-        VEX AI · Independent AI Assistant
-    </div>
-
+ <div class="inputbox">
+  <textarea id="question" rows="1" placeholder="Ask VEX anything..."></textarea>
+  <button class="send" id="send">↑</button>
+ </div>
+ <div class="footer">VEX AI · Independent AI Assistant</div>
 </div>
 
 </div>
 
 <script>
+const chat=document.getElementById("chat");
+const input=document.getElementById("question");
+const send=document.getElementById("send");
 
-// Backend URL: replace after hosting server.py
-const API_URL = "YOUR_BACKEND_URL";
-
-const chat = document.getElementById("chat");
-const input = document.getElementById("question");
-const sendButton = document.getElementById("send");
-
-function addMessage(text, type) {
-
-    document.getElementById("welcome")?.remove();
-
-    const div = document.createElement("div");
-    div.className = "message " + type;
-    div.textContent = text;
-
-    chat.appendChild(div);
-    chat.scrollTop = chat.scrollHeight;
-
-    return div;
+function addMessage(text,type){
+ document.getElementById("welcome")?.remove();
+ const div=document.createElement("div");
+ div.className="message "+type;
+ div.textContent=text;
+ chat.appendChild(div);
+ chat.scrollTop=chat.scrollHeight;
+ return div;
 }
 
-function addSources(container, sources) {
-
-    if (!Array.isArray(sources) || !sources.length) {
-        return;
-    }
-
-    const section = document.createElement("div");
-    section.className = "sources";
-
-    sources.forEach(source => {
-
-        if (!source.url) return;
-
-        const link = document.createElement("a");
-        link.className = "source";
-        link.href = source.url;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-
-        const title = document.createElement("strong");
-        title.textContent = source.title || "Web source";
-
-        const snippet = document.createElement("small");
-        snippet.textContent = source.snippet || "";
-
-        link.appendChild(title);
-        link.appendChild(snippet);
-
-        section.appendChild(link);
-    });
-
-    container.appendChild(section);
+function addLink(container,title,url,snippet=""){
+ if(!url || !/^https?:\/\//i.test(url))return;
+ const a=document.createElement("a");
+ a.className="source";
+ a.href=url;
+ a.target="_blank";
+ a.rel="noopener noreferrer";
+ const strong=document.createElement("strong");
+ strong.textContent=title;
+ const small=document.createElement("small");
+ small.textContent=snippet;
+ a.append(strong,small);
+ container.appendChild(a);
 }
 
-async function sendMessage() {
+async function searchWeb(query){
+ // DuckDuckGo Instant Answer API
+ const url="https://api.allorigins.win/raw?url="+
+  encodeURIComponent("https://api.duckduckgo.com/?q="+
+  encodeURIComponent(query)+"&format=json&no_html=1&skip_disambig=1");
 
-    const question = input.value.trim();
-
-    if (!question) return;
-
-    addMessage(question, "user");
-
-    input.value = "";
-    input.style.height = "28px";
-
-    sendButton.disabled = true;
-
-    const reply = addMessage("VEX is thinking...", "bot");
-    reply.classList.add("typing");
-
-    try {
-
-        if (API_URL === "YOUR_BACKEND_URL") {
-            throw new Error("Backend not configured");
-        }
-
-        const response = await fetch(API_URL + "/ask", {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-                question: question
-            })
-
-        });
-
-        if (!response.ok) {
-            throw new Error("Server error: " + response.status);
-        }
-
-        const data = await response.json();
-
-        reply.classList.remove("typing");
-
-        if (data.error) {
-            reply.textContent = data.error;
-        } else {
-            reply.textContent = data.answer || "No answer received.";
-            addSources(reply, data.sources);
-        }
-
-    } catch (error) {
-
-        reply.classList.remove("typing");
-
-        reply.textContent =
-            error.message === "Backend not configured"
-            ? "VEX AI backend is not configured yet. Please connect the server."
-            : "Unable to connect to VEX AI server. Please try again.";
-
-    } finally {
-
-        sendButton.disabled = false;
-        chat.scrollTop = chat.scrollHeight;
-
-    }
+ const response=await fetch(url);
+ if(!response.ok)throw new Error("Search unavailable");
+ return await response.json();
 }
 
-input.addEventListener("keydown", function(event) {
+function collectResults(data){
+ const results=[];
 
-    if (event.key === "Enter" && !event.shiftKey) {
+ function add(item){
+  if(item.FirstURL){
+   results.push({
+    title:item.Text || "Web result",
+    url:item.FirstURL,
+    snippet:item.Text || ""
+   });
+  }
+ }
 
-        event.preventDefault();
-        sendMessage();
+ (data.RelatedTopics||[]).forEach(item=>{
+  if(item.Topics)item.Topics.forEach(add);
+  else add(item);
+ });
 
-    }
+ return results.slice(0,10);
+}
 
+async function sendMessage(){
+ const q=input.value.trim();
+ if(!q)return;
+
+ addMessage(q,"user");
+ input.value="";
+ input.style.height="28px";
+ send.disabled=true;
+
+ const reply=addMessage("VEX is searching the web...","bot typing");
+
+ try{
+  const data=await searchWeb(q);
+  reply.classList.remove("typing");
+  reply.textContent="";
+
+  const label=document.createElement("div");
+  label.className="label";
+  label.textContent="VEX AI";
+  reply.appendChild(label);
+
+  const answer=document.createElement("div");
+  answer.style.whiteSpace="pre-wrap";
+
+  const abstract=data.AbstractText || data.Answer || data.Definition || "";
+  answer.textContent=abstract ||
+   "I found some related web results. Open the sources below to explore the information. DuckDuckGo Instant Answers did not return a generated answer for this query.";
+
+  reply.appendChild(answer);
+
+  if(data.AbstractURL){
+   const sources=document.createElement("div");
+   sources.className="sources";
+   addLink(sources,data.Heading||"Main source",data.AbstractURL,abstract);
+   reply.appendChild(sources);
+  }
+
+  const results=collectResults(data);
+  if(results.length){
+   const heading=document.createElement("div");
+   heading.className="label";
+   heading.style.marginTop="18px";
+   heading.textContent="RELATED WEB RESULTS";
+   reply.appendChild(heading);
+
+   const sources=document.createElement("div");
+   sources.className="sources";
+   results.forEach(r=>addLink(sources,r.title,r.url,r.snippet));
+   reply.appendChild(sources);
+  }
+
+  if(data.Image && data.AbstractURL){
+   const imageBox=document.createElement("div");
+   imageBox.className="images";
+   const img=document.createElement("img");
+   img.src=data.Image;
+   img.alt=data.Heading||"Related image";
+   img.loading="lazy";
+   imageBox.appendChild(img);
+   reply.appendChild(imageBox);
+  }
+
+  if(!abstract && !results.length && !data.Answer){
+   answer.textContent="No instant answer was available. Try a more specific question.";
+  }
+
+ }catch(error){
+  reply.classList.remove("typing");
+  reply.textContent="VEX could not access the search service right now. Please try again.";
+ }
+
+ send.disabled=false;
+ input.focus();
+ chat.scrollTop=chat.scrollHeight;
+}
+
+send.addEventListener("click",sendMessage);
+input.addEventListener("keydown",e=>{
+ if(e.key==="Enter"&&!e.shiftKey){
+  e.preventDefault();
+  sendMessage();
+ }
 });
-
-input.addEventListener("input", function() {
-
-    this.style.height = "auto";
-
-    this.style.height =
-        Math.min(this.scrollHeight, 120) + "px";
-
+input.addEventListener("input",()=>{
+ input.style.height="auto";
+ input.style.height=Math.min(input.scrollHeight,120)+"px";
 });
-
 </script>
-
 </body>
 </html>
