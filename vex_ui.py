@@ -1,25 +1,30 @@
-name: Test VEX AI Backend
+```python
+import flet as ft
+import flet_webview as fwv
 
-on:
-  workflow_dispatch:
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
+def main(page: ft.Page):
+    page.title = "VEX AI"
+    page.padding = 0
+    page.spacing = 0
+    page.bgcolor = "#080808"
+    page.theme_mode = ft.ThemeMode.DARK
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    page.window_full_screen = True
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+    webview = fwv.WebView(
+        url="https://eagleiam20-create.github.io/VEX-AI/",
+        expand=True,
+    )
 
-      - name: Install dependencies
-        run: pip install fastapi uvicorn requests beautifulsoup4 ddgs
+    page.add(
+        ft.SafeArea(
+            content=webview,
+            expand=True,
+        )
+    )
 
-      - name: Test VEX AI
-        run: |
-          python -c "from vex_search import ask_vex; print(ask_vex('What is artificial intelligence?'))"
 
+if __name__ == "__main__":
+    ft.run(main)
+```
