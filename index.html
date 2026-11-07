@@ -11,132 +11,63 @@
 *{box-sizing:border-box}
 body{
  margin:0;background:#080808;color:#f5f5f5;
- font-family:Inter,"Segoe UI",Arial,sans-serif;
+ font-family:"Segoe UI",Arial,sans-serif;
  height:100dvh;overflow:hidden
 }
-.app{
- height:100dvh;max-width:1000px;margin:auto;
- display:flex;flex-direction:column
-}
+.app{height:100dvh;max-width:1000px;margin:auto;display:flex;flex-direction:column}
 header{
- height:66px;min-height:66px;
- display:flex;align-items:center;padding:0 20px;
- border-bottom:1px solid #252525;background:#090909
+ height:65px;min-height:65px;display:flex;align-items:center;
+ padding:0 18px;border-bottom:1px solid #252525
 }
 .logo{font-size:23px;font-weight:900;letter-spacing:3px}
-.logo span{color:#888}
 .status{margin-left:auto;color:#888;font-size:11px}
-.status i{color:#62d99b;font-style:normal}
-#chat{
- flex:1;overflow-y:auto;padding:25px 18px 40px;
- scroll-behavior:smooth
-}
+#chat{flex:1;overflow-y:auto;padding:24px 18px 35px;scroll-behavior:smooth}
 .welcome{text-align:center;margin:17vh auto 30px}
-.welcome h1{font-size:42px;letter-spacing:7px;margin:0 0 12px}
+.welcome h1{font-size:40px;letter-spacing:6px;margin:0 0 12px}
 .welcome p{color:#888;font-size:14px}
-.suggestions{
- display:flex;flex-wrap:wrap;justify-content:center;
- gap:9px;margin-top:25px
-}
-.suggestions button{
- background:#151515;color:#ccc;border:1px solid #303030;
- padding:10px 14px;border-radius:20px;cursor:pointer
-}
-.message{
- max-width:94%;margin:18px 0;
- line-height:1.7;font-size:15px;overflow-wrap:anywhere
-}
-.user{
- background:#202020;margin-left:auto;
- padding:13px 17px;border-radius:18px 18px 5px 18px;
- white-space:pre-wrap;width:fit-content
-}
-.bot{margin-right:auto;padding:5px 2px;width:100%}
-.label{
- font-size:10px;color:#999;letter-spacing:1.7px;
- margin:17px 0 9px;font-weight:700
-}
-.answer{white-space:pre-wrap;line-height:1.85}
-.sources{
- display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
- gap:10px;margin-top:8px
-}
+.message{max-width:96%;padding:13px 17px;margin:17px 0;border-radius:17px;line-height:1.7;font-size:15px;overflow-wrap:anywhere}
+.user{background:#222;margin-left:auto;width:fit-content;border-bottom-right-radius:5px;white-space:pre-wrap}
+.bot{margin-right:auto;padding-left:3px;width:100%}
+.label{font-size:10px;color:#999;letter-spacing:1.5px;margin:17px 0 9px;font-weight:bold}
+.answer{white-space:pre-wrap;line-height:1.8}
+.sources{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
 .source{
- display:block;background:#121212;border:1px solid #292929;
- border-radius:13px;padding:13px;color:#eee;
- text-decoration:none;transition:.2s;min-width:0
+ display:block;background:#141414;border:1px solid #292929;
+ border-radius:12px;padding:13px;color:#eee;text-decoration:none
 }
-.source:hover{background:#1d1d1d;border-color:#555}
+.source:hover{background:#222}
 .source strong{font-size:13px;display:block}
-.source small{
- display:block;color:#888;margin-top:6px;
- font-size:12px;line-height:1.5
+.source small{display:block;color:#999;margin-top:6px;font-size:12px;line-height:1.5}
+.tag{font-size:9px;color:#aaa;margin-bottom:7px;display:block;letter-spacing:1px}
+.images{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.images img{width:100%;height:130px;object-fit:cover;border-radius:10px;background:#171717}
+.images a{color:#aaa;text-decoration:none;font-size:11px}
+.more{
+ margin-top:15px;padding:10px 16px;border-radius:20px;
+ background:#202020;border:1px solid #444;color:white;cursor:pointer
 }
-.tag{
- display:inline-block;color:#aaa;font-size:9px;
- border:1px solid #383838;padding:3px 7px;
- border-radius:10px;margin-bottom:8px
-}
-.images{
- display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
- gap:10px;margin-top:10px
-}
-.images a{color:#ccc;text-decoration:none;font-size:11px}
-.images img{
- width:100%;height:135px;object-fit:cover;
- border-radius:12px;background:#171717
-}
-.composer{
- padding:12px 14px 18px;border-top:1px solid #222;
- background:#080808
-}
-.inputbox{
- display:flex;align-items:center;background:#171717;
- border:1px solid #333;border-radius:24px;
- padding:7px 8px 7px 17px;gap:10px
-}
-textarea{
- flex:1;background:transparent;color:white;
- border:none;outline:none;resize:none;
- font-family:inherit;font-size:15px;
- min-height:28px;max-height:120px;padding-top:6px
-}
+.composer{padding:12px 14px 18px;border-top:1px solid #222;background:#080808}
+.inputbox{display:flex;align-items:center;background:#171717;border:1px solid #333;border-radius:22px;padding:7px 8px 7px 16px;gap:10px}
+textarea{flex:1;background:transparent;color:white;border:none;outline:none;resize:none;font-family:inherit;font-size:15px;min-height:28px;max-height:120px;padding-top:6px}
 textarea::placeholder{color:#777}
-.send{
- width:42px;height:42px;border:0;border-radius:50%;
- background:white;color:black;font-size:23px;
- font-weight:bold;cursor:pointer
-}
+.send{width:42px;height:42px;border:0;border-radius:50%;background:white;color:black;font-size:23px;font-weight:bold;cursor:pointer}
 .send:disabled{opacity:.4}
 .footer{text-align:center;color:#555;font-size:10px;padding-top:10px}
-.typing{color:#999;font-size:13px}
-.dot{display:inline-block;animation:blink 1s infinite}
-@keyframes blink{50%{opacity:.2}}
-@media(max-width:600px){
- .message{max-width:100%}
- .welcome h1{font-size:34px}
- .sources{grid-template-columns:1fr}
-}
+@media(max-width:600px){.message{max-width:100%}.sources{grid-template-columns:1fr}.welcome h1{font-size:32px}}
 </style>
 </head>
 
 <body>
 <div class="app">
-
 <header>
- <div class="logo">VEX <span>AI</span></div>
- <div class="status"><i>●</i> KNOWLEDGE SEARCH</div>
+ <div class="logo">VEX AI</div>
+ <div class="status">● LIVE WEB INDEX</div>
 </header>
 
 <main id="chat">
  <div class="welcome" id="welcome">
   <h1>VEX AI</h1>
-  <p>Explore knowledge. Discover ideas. Find answers.</p>
-  <div class="suggestions">
-   <button onclick="quickAsk('What is artificial intelligence?')">Artificial Intelligence</button>
-   <button onclick="quickAsk('Explain space exploration')">Space exploration</button>
-   <button onclick="quickAsk('Who invented the internet?')">Technology</button>
-  </div>
+  <p>Search the web. Explore knowledge. Discover more.</p>
  </div>
 </main>
 
@@ -145,23 +76,28 @@ textarea::placeholder{color:#777}
   <textarea id="question" placeholder="Ask VEX anything..." rows="1"></textarea>
   <button class="send" id="send">↑</button>
  </div>
- <div class="footer">VEX AI · Independent Knowledge Assistant</div>
+ <div class="footer">VEX AI · Independent Web Search Assistant</div>
 </div>
 </div>
 
 <script>
+const API="https://puri.li";
 const chat=document.getElementById("chat");
 const input=document.getElementById("question");
 const sendButton=document.getElementById("send");
 
+let currentQuery="";
+let currentPage=1;
+let searching=false;
+
 function addMessage(text,type){
  document.getElementById("welcome")?.remove();
- const div=document.createElement("div");
- div.className="message "+type;
- div.textContent=text;
- chat.appendChild(div);
+ const el=document.createElement("div");
+ el.className="message "+type;
+ el.textContent=text;
+ chat.appendChild(el);
  chat.scrollTop=chat.scrollHeight;
- return div;
+ return el;
 }
 
 function section(parent,title){
@@ -172,303 +108,268 @@ function section(parent,title){
  return el;
 }
 
-function addCard(parent,title,url,description,tag){
- if(!url || !/^https?:\/\//i.test(url))return;
- const a=document.createElement("a");
- a.className="source";
- a.href=url;
- a.target="_blank";
- a.rel="noopener noreferrer";
-
- const badge=document.createElement("span");
- badge.className="tag";
- badge.textContent=tag || "SOURCE";
-
- const strong=document.createElement("strong");
- strong.textContent=title || "Open source";
-
- const small=document.createElement("small");
- small.textContent=description || "";
-
- a.append(badge,strong,small);
- parent.appendChild(a);
+function validURL(url){
+ try{
+  const u=new URL(url);
+  return u.protocol==="https:" || u.protocol==="http:";
+ }catch(e){return false}
 }
 
-async function getJSON(url){
- const response=await fetch(url);
+async function api(path){
+ const response=await fetch(API+path);
  if(!response.ok)throw new Error("HTTP "+response.status);
  return await response.json();
 }
 
-// 1. Wikipedia knowledge search
-async function wikipediaSearch(query){
- const params=new URLSearchParams({
-  action:"query",
-  list:"search",
-  srsearch:query,
-  srlimit:"6",
-  format:"json",
-  origin:"*"
+function addSource(parent,item,context){
+ if(!validURL(item.url))return;
+
+ const a=document.createElement("a");
+ a.className="source";
+ a.href=item.url;
+ a.target="_blank";
+ a.rel="noopener noreferrer";
+
+ const tag=document.createElement("span");
+ tag.className="tag";
+ tag.textContent=item.source || "WEB RESULT";
+
+ const title=document.createElement("strong");
+ title.textContent=item.title || "Web page";
+
+ const description=document.createElement("small");
+ description.textContent=
+  context || item.description || item.displayUrl || "";
+
+ a.append(tag,title,description);
+ parent.appendChild(a);
+}
+
+function relevantText(content,query){
+ if(!content)return "";
+ const words=query.toLowerCase().split(/\s+/).filter(x=>x.length>2);
+ const paragraphs=content
+  .replace(/\r/g,"")
+  .split(/\n+/)
+  .map(x=>x.trim())
+  .filter(x=>x.length>70);
+
+ const scored=paragraphs.map(p=>{
+  const lower=p.toLowerCase();
+  const score=words.reduce((n,w)=>n+(lower.includes(w)?1:0),0);
+  return {text:p,score};
  });
- const data=await getJSON(
-  "https://en.wikipedia.org/w/api.php?"+params
- );
- const items=data.query?.search || [];
 
- const pages=await Promise.all(items.slice(0,5).map(async item=>{
-  try{
-   const p=new URLSearchParams({
-    action:"query",
-    prop:"extracts|pageimages",
-    exintro:"1",
-    explaintext:"1",
-    piprop:"thumbnail",
-    pithumbsize:"500",
-    titles:item.title,
-    format:"json",
-    origin:"*"
-   });
-   const result=await getJSON(
-    "https://en.wikipedia.org/w/api.php?"+p
-   );
-   const page=Object.values(result.query.pages)[0];
-   return {
-    title:item.title,
-    url:"https://en.wikipedia.org/wiki/"+encodeURIComponent(item.title.replace(/ /g,"_")),
-    extract:page.extract || item.snippet || "",
-    image:page.thumbnail?.source || ""
-   };
-  }catch(e){
-   return {
-    title:item.title,
-    url:"https://en.wikipedia.org/wiki/"+encodeURIComponent(item.title.replace(/ /g,"_")),
-    extract:item.snippet || "",
-    image:""
-   };
-  }
- }));
- return pages;
+ scored.sort((a,b)=>b.score-a.score);
+ const selected=scored.slice(0,3).map(x=>x.text);
+ return selected.join("\n\n").slice(0,2200);
 }
 
-// 2. Wikidata factual search
-async function wikidataSearch(query){
- const params=new URLSearchParams({
-  action:"wbsearchentities",
-  search:query,
-  language:"en",
-  limit:"5",
-  format:"json",
-  origin:"*"
- });
- const data=await getJSON(
-  "https://www.wikidata.org/w/api.php?"+params
- );
- return (data.search || []).map(item=>({
-  title:item.label || "Wikidata item",
-  description:item.description || "Knowledge database entry",
-  url:item.concepturi || ("https://www.wikidata.org/wiki/"+item.id)
- }));
-}
-
-// 3. Open Library book search
-async function bookSearch(query){
- const params=new URLSearchParams({
-  q:query,
-  limit:"5",
-  fields:"title,author_name,first_publish_year,key"
- });
- const data=await getJSON(
-  "https://openlibrary.org/search.json?"+params
- );
- return (data.docs || []).map(book=>({
-  title:book.title || "Book",
-  author:(book.author_name || []).slice(0,2).join(", "),
-  year:book.first_publish_year || "",
-  url:"https://openlibrary.org"+book.key
- }));
-}
-
-// 4. Wikimedia Commons image search
-async function imageSearch(query){
- const params=new URLSearchParams({
-  action:"query",
-  generator:"search",
-  gsrsearch:"filetype:bitmap "+query,
-  gsrnamespace:"6",
-  gsrlimit:"8",
-  prop:"imageinfo",
-  iiprop:"url",
-  iiurlwidth:"400",
-  format:"json",
-  origin:"*"
- });
- const data=await getJSON(
-  "https://commons.wikimedia.org/w/api.php?"+params
- );
- return Object.values(data.query?.pages || {}).map(page=>({
-  title:page.title.replace("File:",""),
-  image:page.imageinfo?.[0]?.thumburl || page.imageinfo?.[0]?.url || "",
-  url:"https://commons.wikimedia.org/wiki/"+encodeURIComponent(page.title.replace(/ /g,"_"))
- })).filter(x=>x.image);
-}
-
-function cleanText(text){
- const temp=document.createElement("div");
- temp.innerHTML=text || "";
- return (temp.textContent || "").replace(/\s+/g," ").trim();
-}
-
-function showWikipedia(reply,pages){
- if(!pages.length)return false;
-
- section(reply,"KNOWLEDGE ANSWER");
- const answer=document.createElement("div");
- answer.className="answer";
-
- const best=pages.find(p=>p.extract && p.extract.length>80);
- if(best){
-  answer.textContent=best.extract.slice(0,3500);
- }else{
-  answer.textContent="I found related knowledge pages. Open a result below to explore the topic.";
- }
- reply.appendChild(answer);
-
- section(reply,"WIKIPEDIA SOURCES");
- const grid=document.createElement("div");
- grid.className="sources";
- pages.forEach(p=>{
-  addCard(grid,p.title,p.url,cleanText(p.extract).slice(0,180), "WIKIPEDIA");
- });
- reply.appendChild(grid);
- return true;
-}
-
-function showWikidata(reply,items){
- if(!items.length)return;
- section(reply,"WIKIDATA FACTS");
- const grid=document.createElement("div");
- grid.className="sources";
- items.forEach(item=>{
-  addCard(grid,item.title,item.url,item.description,"WIKIDATA");
- });
- reply.appendChild(grid);
-}
-
-function showBooks(reply,books){
- if(!books.length)return;
- section(reply,"RELATED BOOKS");
- const grid=document.createElement("div");
- grid.className="sources";
- books.forEach(book=>{
-  addCard(
-   grid,
-   book.title,
-   book.url,
-   [book.author,book.year].filter(Boolean).join(" · "),
-   "OPEN LIBRARY"
+async function getContext(item){
+ try{
+  const data=await api(
+   "/api/context?url="+encodeURIComponent(item.url)
   );
- });
- reply.appendChild(grid);
+  return {
+   text:data.content || data.summary || item.description || "",
+   coverage:data.coverage || "unknown"
+  };
+ }catch(e){
+  return {
+   text:item.description || "Only the search snippet was available.",
+   coverage:"search-snippet-fallback"
+  };
+ }
 }
 
-function showImages(reply,images){
- if(!images.length)return;
- section(reply,"RELATED IMAGES · WIKIMEDIA");
- const gallery=document.createElement("div");
- gallery.className="images";
+async function searchImages(query,parent){
+ try{
+  const data=await api(
+   "/api/images?q="+encodeURIComponent(query)+"&page=1"
+  );
+  const images=data.images || [];
+  if(!images.length)return;
 
- images.forEach(item=>{
-  const a=document.createElement("a");
-  a.href=item.url;
-  a.target="_blank";
-  a.rel="noopener noreferrer";
+  section(parent,"RELATED IMAGES");
+  const gallery=document.createElement("div");
+  gallery.className="images";
 
-  const img=document.createElement("img");
-  img.src=item.image;
-  img.alt=item.title;
-  img.loading="lazy";
-  img.onerror=()=>a.remove();
+  images.slice(0,8).forEach(item=>{
+   const imageURL=item.thumbUrl || item.url;
+   const originalURL=item.url;
 
-  const caption=document.createElement("div");
-  caption.textContent=item.title.slice(0,55);
+   if(!validURL(imageURL) && !imageURL.startsWith("/"))return;
+   if(!validURL(originalURL) && !originalURL.startsWith("/"))return;
 
-  a.append(img,caption);
-  gallery.appendChild(a);
- });
- reply.appendChild(gallery);
+   const a=document.createElement("a");
+   a.href=new URL(originalURL,API).href;
+   a.target="_blank";
+   a.rel="noopener noreferrer";
+
+   const img=document.createElement("img");
+   img.src=new URL(imageURL,API).href;
+   img.alt=item.title || "Related image";
+   img.loading="lazy";
+   img.onerror=()=>a.remove();
+
+   const caption=document.createElement("div");
+   caption.textContent=item.title || "Image";
+
+   a.append(img,caption);
+   gallery.appendChild(a);
+  });
+
+  parent.appendChild(gallery);
+ }catch(e){
+  console.log("Image search unavailable:",e);
+ }
+}
+
+async function runSearch(query,page=1){
+ currentQuery=query;
+ currentPage=page;
+
+ const reply=addMessage(
+  "Searching the web and collecting available page information...",
+  "bot"
+ );
+
+ try{
+  // Search the independent web index.
+  const data=await api(
+   "/api/search?q="+encodeURIComponent(query)+
+   "&page="+page+"&exact=0"
+  );
+
+  const results=data.results || [];
+  reply.textContent="";
+
+  section(reply,"VEX AI · WEB SEARCH");
+
+  if(data.correction?.showing){
+   const correction=document.createElement("div");
+   correction.style.color="#999";
+   correction.textContent="Search corrected to: "+data.correction.corrected;
+   reply.appendChild(correction);
+  }
+
+  const summary=document.createElement("div");
+  summary.className="answer";
+  summary.textContent=
+   results.length
+   ? "Found "+(data.total ?? results.length)+
+     " estimated matching pages. Reading available information from the top results."
+   : "No matching pages found. Try different keywords.";
+  reply.appendChild(summary);
+
+  if(!results.length)return;
+
+  // Retrieve stored page context from top five results.
+  const selected=results.slice(0,5);
+  const contexts=await Promise.all(
+   selected.map(item=>getContext(item))
+  );
+
+  const evidence=contexts
+   .map((c,i)=>({
+    title:selected[i].title,
+    url:selected[i].url,
+    text:relevantText(c.text,query) || selected[i].description,
+    coverage:c.coverage
+   }))
+   .filter(x=>x.text);
+
+  if(evidence.length){
+   section(reply,"INFORMATION FOUND");
+
+   evidence.forEach(item=>{
+    const block=document.createElement("div");
+    block.style.marginBottom="17px";
+
+    const title=document.createElement("div");
+    title.style.fontWeight="700";
+    title.style.marginBottom="5px";
+    title.textContent=item.title;
+
+    const content=document.createElement("div");
+    content.className="answer";
+    content.textContent=item.text;
+
+    const coverage=document.createElement("div");
+    coverage.style.cssText="font-size:10px;color:#777;margin-top:5px";
+    coverage.textContent=
+     item.coverage==="stored-extracted-passages"
+     ? "Stored page passages"
+     : "Search snippet / limited stored content";
+
+    block.append(title,content,coverage);
+    reply.appendChild(block);
+   });
+  }
+
+  section(reply,"WEB SOURCES");
+  const grid=document.createElement("div");
+  grid.className="sources";
+
+  results.forEach((item,i)=>{
+   addSource(
+    grid,
+    item,
+    contexts[i]?.text
+      ? contexts[i].text.slice(0,190)
+      : item.description
+   );
+  });
+
+  reply.appendChild(grid);
+
+  // Images from Wikimedia-powered image endpoint.
+  await searchImages(query,reply);
+
+  const info=document.createElement("div");
+  info.style.cssText="font-size:10px;color:#777;margin-top:17px";
+  info.textContent=
+   "Search index: Purili. Page information may be incomplete. "+
+   "VEX displays retrieved source material and does not independently verify every claim.";
+  reply.appendChild(info);
+
+  if(data.hasNext){
+   const more=document.createElement("button");
+   more.className="more";
+   more.textContent="Load more results →";
+   more.onclick=()=>{
+    more.disabled=true;
+    more.textContent="Loading...";
+    runSearch(currentQuery,currentPage+1);
+   };
+   reply.appendChild(more);
+  }
+
+ }catch(error){
+  reply.textContent=
+   "VEX could not connect to the web search service.\n\n"+
+   error.message+
+   "\n\nPlease try again later.";
+ }
 }
 
 async function sendMessage(){
  const query=input.value.trim();
- if(!query || sendButton.disabled)return;
+ if(!query || searching)return;
+
+ searching=true;
+ sendButton.disabled=true;
 
  addMessage(query,"user");
  input.value="";
  input.style.height="28px";
- sendButton.disabled=true;
 
- const reply=addMessage("Searching knowledge sources","bot typing");
- const animation=document.createElement("span");
- animation.className="dot";
- animation.textContent=" ...";
- reply.appendChild(animation);
+ await runSearch(query,1);
 
- try{
-  // Run all four searches together.
-  const results=await Promise.allSettled([
-   wikipediaSearch(query),
-   wikidataSearch(query),
-   bookSearch(query),
-   imageSearch(query)
-  ]);
-
-  reply.classList.remove("typing");
-  reply.textContent="";
-
-  const wiki=results[0].status==="fulfilled"?results[0].value:[];
-  const wikiData=results[1].status==="fulfilled"?results[1].value:[];
-  const books=results[2].status==="fulfilled"?results[2].value:[];
-  const images=results[3].status==="fulfilled"?results[3].value:[];
-
-  const successful=results.filter(r=>r.status==="fulfilled").length;
-
-  section(reply,"VEX AI");
-  if(successful===0){
-   const error=document.createElement("div");
-   error.className="answer";
-   error.textContent="All knowledge sources are temporarily unavailable. Please try again.";
-   reply.appendChild(error);
-  }else{
-   if(!wiki.length && !wikiData.length && !books.length){
-    const note=document.createElement("div");
-    note.className="answer";
-    note.textContent="No matching knowledge was found. Try a more specific question or different keywords.";
-    reply.appendChild(note);
-   }else{
-    showWikipedia(reply,wiki);
-    showWikidata(reply,wikiData);
-    showBooks(reply,books);
-    showImages(reply,images);
-   }
-   const note=document.createElement("div");
-   note.style.cssText="color:#777;font-size:11px;margin-top:20px";
-   note.textContent="Sources are retrieved from independent public knowledge services. Results may be incomplete.";
-   reply.appendChild(note);
-  }
-
- }catch(error){
-  reply.classList.remove("typing");
-  reply.textContent="VEX search error: "+error.message;
- }
-
+ searching=false;
  sendButton.disabled=false;
- chat.scrollTop=chat.scrollHeight;
  input.focus();
-}
-
-function quickAsk(text){
- input.value=text;
- sendMessage();
+ chat.scrollTop=chat.scrollHeight;
 }
 
 sendButton.addEventListener("click",sendMessage);
