@@ -16,8 +16,6 @@ def main(page: ft.Page):
     page.bgcolor = BG
     page.padding = 0
     page.spacing = 0
-    page.window_min_width = 350
-    page.window_min_height = 500
 
     chats = []
     busy = False
@@ -106,8 +104,7 @@ def main(page: ft.Page):
             content=text(content, 15),
             bgcolor="#202020" if is_user else "transparent",
             padding=14 if is_user else 0,
-            border_radius=18,
-            width=None
+            border_radius=18
         )
 
         if is_user:
@@ -156,7 +153,11 @@ def main(page: ft.Page):
                 ft.Column(
                     [
                         text("RELATED IMAGES", 10, GREY),
-                        ft.Row(controls, wrap=True, spacing=8)
+                        ft.Row(
+                            controls,
+                            wrap=True,
+                            spacing=8
+                        )
                     ],
                     spacing=9
                 )
@@ -188,12 +189,14 @@ def main(page: ft.Page):
 
             cards.append(
                 ft.Container(
-                    content=ft.Column(content, spacing=5),
+                    content=ft.Column(
+                        content,
+                        spacing=5
+                    ),
                     bgcolor=PANEL,
                     border=ft.Border.all(1, BORDER),
                     border_radius=13,
-                    padding=12,
-                    width=650
+                    padding=12
                 )
             )
 
@@ -237,16 +240,16 @@ def main(page: ft.Page):
 
         active_chat = index
         current_view = "home"
-
         messages.controls.clear()
 
         for role, content in chats[index]["messages"]:
             add_message(role, content)
 
         render()
-        
+
     def new_chat():
         nonlocal active_chat, current_view
+
         active_chat = None
         current_view = "home"
         show_welcome()
@@ -296,7 +299,10 @@ def main(page: ft.Page):
                 ],
                 spacing=5
             ),
-            padding=ft.Padding.symmetric(horizontal=7, vertical=5),
+            padding=ft.Padding.symmetric(
+                horizontal=7,
+                vertical=5
+            ),
             border=ft.Border.only(
                 bottom=ft.BorderSide(1, BORDER)
             )
@@ -320,7 +326,11 @@ def main(page: ft.Page):
                     ),
                     ft.Row(
                         [
-                            ft.Icon(ft.Icons.SEARCH, size=12, color=GREY),
+                            ft.Icon(
+                                ft.Icons.SEARCH,
+                                size=12,
+                                color=GREY
+                            ),
                             text("Web search enabled", 10, GREY),
                             ft.Container(expand=True),
                             text("VEX AI", 10, GREY)
@@ -350,7 +360,10 @@ def main(page: ft.Page):
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 spacing=7
             ),
-            padding=ft.Padding.symmetric(horizontal=12, vertical=8)
+            padding=ft.Padding.symmetric(
+                horizontal=12,
+                vertical=8
+            )
         )
 
         if current_view == "menu":
@@ -375,7 +388,10 @@ def main(page: ft.Page):
                         on_click=lambda e: new_chat()
                     ),
                     ft.ListTile(
-                        leading=ft.Icon(ft.Icons.HOME_OUTLINED, color=WHITE),
+                        leading=ft.Icon(
+                            ft.Icons.HOME_OUTLINED,
+                            color=WHITE
+                        ),
                         title=text("Home"),
                         on_click=lambda e: back_home()
                     ),
@@ -508,7 +524,10 @@ def main(page: ft.Page):
         messages.controls.append(
             ft.Column(
                 [
-                    ft.Row([logo(27), text("VEX", 13)], spacing=9),
+                    ft.Row(
+                        [logo(27), text("VEX", 13)],
+                        spacing=9
+                    ),
                     answer_text
                 ],
                 spacing=10
