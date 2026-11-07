@@ -1,10 +1,11 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#080808">
+
 <title>VEX AI</title>
 
 <style>
@@ -16,8 +17,8 @@ body {
     margin: 0;
     background: #080808;
     color: #f5f5f5;
-    font-family: Inter, "Segoe UI", Arial, sans-serif;
-    height: 100vh;
+    font-family: "Segoe UI", Arial, sans-serif;
+    height: 100dvh;
     overflow: hidden;
 }
 
@@ -31,43 +32,45 @@ body {
 
 header {
     height: 65px;
+    min-height: 65px;
     display: flex;
     align-items: center;
     padding: 0 18px;
-    border-bottom: 1px solid #202020;
-    gap: 14px;
+    border-bottom: 1px solid #222;
+    gap: 12px;
 }
 
 .logo {
     font-size: 23px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    background: linear-gradient(90deg,#fff,#777);
+    font-weight: 900;
+    letter-spacing: 3px;
+    background: linear-gradient(90deg, #fff, #777);
     color: transparent;
     background-clip: text;
 }
 
 .status {
-    color: #888;
-    font-size: 11px;
     margin-left: auto;
+    color: #777;
+    font-size: 11px;
 }
 
 #chat {
     flex: 1;
     overflow-y: auto;
-    padding: 25px 17px 30px;
+    padding: 25px 18px 35px;
+    scroll-behavior: smooth;
 }
 
 .welcome {
     text-align: center;
-    margin: 19vh auto 30px;
+    margin: 18vh auto 30px;
 }
 
 .welcome h1 {
-    font-size: 35px;
-    letter-spacing: 3px;
-    margin-bottom: 10px;
+    font-size: 38px;
+    letter-spacing: 5px;
+    margin: 0 0 12px;
 }
 
 .welcome p {
@@ -76,32 +79,59 @@ header {
 }
 
 .message {
-    max-width: 85%;
-    padding: 14px 17px;
-    margin: 15px 0;
+    max-width: 88%;
+    padding: 13px 17px;
+    margin: 17px 0;
     border-radius: 17px;
-    line-height: 1.65;
+    line-height: 1.7;
     font-size: 15px;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
 }
 
 .user {
-    background: #202020;
+    background: #222;
     margin-left: auto;
     border-bottom-right-radius: 5px;
 }
 
 .bot {
     background: transparent;
-    color: #e5e5e5;
     margin-right: auto;
     padding-left: 3px;
 }
 
+.sources {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.source {
+    display: block;
+    background: #151515;
+    border: 1px solid #292929;
+    border-radius: 11px;
+    padding: 11px;
+    color: #ddd;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.source:hover {
+    background: #222;
+}
+
+.source small {
+    display: block;
+    color: #888;
+    margin-top: 5px;
+}
+
 .composer {
     padding: 12px 14px 20px;
-    border-top: 1px solid #202020;
+    border-top: 1px solid #222;
     background: #080808;
 }
 
@@ -111,8 +141,8 @@ header {
     background: #171717;
     border: 1px solid #333;
     border-radius: 22px;
-    padding: 7px 8px 7px 17px;
-    gap: 9px;
+    padding: 7px 8px 7px 16px;
+    gap: 10px;
 }
 
 textarea {
@@ -122,30 +152,29 @@ textarea {
     border: none;
     outline: none;
     resize: none;
-    font-size: 15px;
     font-family: inherit;
-    min-height: 27px;
+    font-size: 15px;
+    min-height: 28px;
     max-height: 120px;
-    padding-top: 7px;
+    padding-top: 6px;
 }
 
 textarea::placeholder {
     color: #777;
 }
 
-button {
-    border: none;
-    cursor: pointer;
-}
-
 .send {
-    width: 39px;
-    height: 39px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background: white;
     color: black;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: bold;
+}
+
+.send:disabled {
+    opacity: .5;
 }
 
 .footer {
@@ -155,45 +184,78 @@ button {
     padding-top: 10px;
 }
 
+.typing {
+    color: #888;
+    font-size: 13px;
+}
+
 @media(max-width:600px) {
-    .welcome h1 { font-size: 29px; }
-    .message { max-width: 93%; }
+    .message {
+        max-width: 95%;
+    }
+
+    .welcome h1 {
+        font-size: 31px;
+    }
 }
 </style>
 </head>
 
 <body>
+
 <div class="app">
 
 <header>
     <div class="logo">VEX AI</div>
-    <div class="status">● Independent AI</div>
+    <div class="status">● AI ASSISTANT</div>
 </header>
 
 <main id="chat">
+
     <div class="welcome" id="welcome">
         <h1>HELLO.</h1>
         <p>What would you like to explore today?</p>
     </div>
+
 </main>
 
 <div class="composer">
+
     <div class="inputbox">
-        <textarea id="question"
-          placeholder="Ask VEX anything..."
-          rows="1"></textarea>
-        <button class="send" onclick="sendMessage()">↑</button>
+
+        <textarea
+            id="question"
+            placeholder="Ask VEX anything..."
+            rows="1"
+        ></textarea>
+
+        <button
+            class="send"
+            id="send"
+            onclick="sendMessage()"
+        >↑</button>
+
     </div>
-    <div class="footer">VEX AI · Built independently</div>
+
+    <div class="footer">
+        VEX AI · Independent AI Assistant
+    </div>
+
 </div>
 
 </div>
 
 <script>
+
+// Backend URL: replace after hosting server.py
+const API_URL = "YOUR_BACKEND_URL";
+
 const chat = document.getElementById("chat");
 const input = document.getElementById("question");
+const sendButton = document.getElementById("send");
 
 function addMessage(text, type) {
+
     document.getElementById("welcome")?.remove();
 
     const div = document.createElement("div");
@@ -202,31 +264,134 @@ function addMessage(text, type) {
 
     chat.appendChild(div);
     chat.scrollTop = chat.scrollHeight;
+
     return div;
 }
 
+function addSources(container, sources) {
+
+    if (!Array.isArray(sources) || !sources.length) {
+        return;
+    }
+
+    const section = document.createElement("div");
+    section.className = "sources";
+
+    sources.forEach(source => {
+
+        if (!source.url) return;
+
+        const link = document.createElement("a");
+        link.className = "source";
+        link.href = source.url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+
+        const title = document.createElement("strong");
+        title.textContent = source.title || "Web source";
+
+        const snippet = document.createElement("small");
+        snippet.textContent = source.snippet || "";
+
+        link.appendChild(title);
+        link.appendChild(snippet);
+
+        section.appendChild(link);
+    });
+
+    container.appendChild(section);
+}
+
 async function sendMessage() {
+
     const question = input.value.trim();
+
     if (!question) return;
 
     addMessage(question, "user");
-    input.value = "";
 
-    const reply = addMessage("VEX is ready to be connected to its AI engine.", "bot");
+    input.value = "";
+    input.style.height = "28px";
+
+    sendButton.disabled = true;
+
+    const reply = addMessage("VEX is thinking...", "bot");
+    reply.classList.add("typing");
+
+    try {
+
+        if (API_URL === "YOUR_BACKEND_URL") {
+            throw new Error("Backend not configured");
+        }
+
+        const response = await fetch(API_URL + "/ask", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                question: question
+            })
+
+        });
+
+        if (!response.ok) {
+            throw new Error("Server error: " + response.status);
+        }
+
+        const data = await response.json();
+
+        reply.classList.remove("typing");
+
+        if (data.error) {
+            reply.textContent = data.error;
+        } else {
+            reply.textContent = data.answer || "No answer received.";
+            addSources(reply, data.sources);
+        }
+
+    } catch (error) {
+
+        reply.classList.remove("typing");
+
+        reply.textContent =
+            error.message === "Backend not configured"
+            ? "VEX AI backend is not configured yet. Please connect the server."
+            : "Unable to connect to VEX AI server. Please try again.";
+
+    } finally {
+
+        sendButton.disabled = false;
+        chat.scrollTop = chat.scrollHeight;
+
+    }
 }
 
-input.addEventListener("keydown", function(e) {
-    if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
+input.addEventListener("keydown", function(event) {
+
+    if (event.key === "Enter" && !event.shiftKey) {
+
+        event.preventDefault();
         sendMessage();
+
     }
+
 });
 
 input.addEventListener("input", function() {
+
     this.style.height = "auto";
-    this.style.height = Math.min(this.scrollHeight, 120) + "px";
+
+    this.style.height =
+        Math.min(this.scrollHeight, 120) + "px";
+
 });
+
 </script>
 
 </body>
 </html>
+```
