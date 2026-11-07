@@ -2,10 +2,11 @@
 [project]
 name = "vex-ai"
 version = "1.0.0"
-description = "VEX AI - Web Intelligence Assistant"
+description = "VEX AI - Independent AI Assistant"
 requires-python = ">=3.10"
 dependencies = [
     "flet==1.1.0",
+    "flet-webview",
     "requests",
     "beautifulsoup4",
     "ddgs"
@@ -20,7 +21,8 @@ dev = [
 org = "com.aveesharma"
 product = "VEX AI"
 company = "Avee Sharma"
-description = "Independent Web Intelligence Assistant"
+description = "Independent AI Assistant"
 
 [tool.flet.app]
 module = "vex_ui"
+
