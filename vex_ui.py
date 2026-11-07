@@ -1,4 +1,3 @@
-```python
 import flet as ft
 import flet_webview as fwv
 
@@ -27,4 +26,4 @@ def main(page: ft.Page):
 
 if __name__ == "__main__":
     ft.run(main)
-```
+
