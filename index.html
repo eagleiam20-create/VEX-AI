@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <title>VEX AI</title>
-
 <style>
 :root{color-scheme:dark;--bg:#000;--line:#252525;--white:#fff;--muted:#999}
 *{box-sizing:border-box}
@@ -91,74 +90,54 @@ textarea::placeholder{color:#777}
 #chat::-webkit-scrollbar,.history::-webkit-scrollbar{width:5px}
 #chat::-webkit-scrollbar-thumb,.history::-webkit-scrollbar-thumb{background:#292929;border-radius:10px}
 @media(max-width:700px){
- .sidebar{position:fixed;left:-280px;top:0;bottom:0;transition:left .2s;width:270px}
- .sidebar.open{left:0}
- .main{width:100%}
- .mobile-brand{display:block}
- .topbar{padding:0 12px}
- #chat{padding:20px 15px 155px}
- .composer-area{padding:22px 12px 12px}
- .welcome{margin-top:18vh}
- .welcome h1{font-size:30px}
- .user{max-width:90%}
- .sources{grid-template-columns:1fr}
+.sidebar{position:fixed;left:-280px;top:0;bottom:0;transition:left .2s;width:270px}
+.sidebar.open{left:0}.main{width:100%}.mobile-brand{display:block}
+.topbar{padding:0 12px}#chat{padding:20px 15px 155px}
+.composer-area{padding:22px 12px 12px}.welcome{margin-top:18vh}
+.welcome h1{font-size:30px}.user{max-width:90%}.sources{grid-template-columns:1fr}
 }
 </style>
 </head>
-
 <body>
 <div class="app">
- <aside class="sidebar" id="sidebar">
-  <div class="side-top">
-   <div class="brand">VEX AI</div>
-   <button class="icon-btn" onclick="toggleSidebar()">×</button>
-  </div>
-  <button class="new-chat" onclick="newChat()">＋ &nbsp; New chat</button>
-  <div class="history-title">YOUR CHATS</div>
-  <div class="history" id="history"></div>
-  <div class="profile">
-   <div class="profile-name">VEX AI</div>
-   <div class="profile-info">
-    Owner &amp; Creator: Avee Sharma<br>
-    Experimental model: VEX V6<br>
-    Knowledge: Public web sources<br>
-    Independent AI project
+<aside class="sidebar" id="sidebar">
+ <div class="side-top"><div class="brand">VEX AI</div><button class="icon-btn" onclick="toggleSidebar()">×</button></div>
+ <button class="new-chat" onclick="newChat()">＋ &nbsp; New chat</button>
+ <div class="history-title">YOUR CHATS</div>
+ <div class="history" id="history"></div>
+ <div class="profile">
+  <div class="profile-name">VEX AI</div>
+  <div class="profile-info">Owner &amp; Creator: Avee Sharma<br>Experimental model: VEX V6<br>Knowledge: Public web sources<br>Independent AI project</div>
+ </div>
+</aside>
+<main class="main">
+ <div class="topbar">
+  <button class="icon-btn" onclick="toggleSidebar()">☰</button>
+  <div class="mobile-brand">VEX AI</div>
+  <div class="model-label">VEX AI <span>Knowledge Assistant</span></div>
+ </div>
+ <section id="chat">
+  <div class="welcome" id="welcome">
+   <h1>What can I help with?</h1>
+   <p>Explore knowledge. Discover ideas. Ask VEX anything.</p>
+   <div class="suggestions">
+    <button onclick="quickAsk('Explain artificial intelligence')">Explain AI</button>
+    <button onclick="quickAsk('Latest space discoveries')">Space</button>
+    <button onclick="quickAsk('How does the internet work?')">Technology</button>
+    <button onclick="quickAsk('Explain quantum computing')">Science</button>
    </div>
   </div>
- </aside>
-
- <main class="main">
-  <div class="topbar">
-   <button class="icon-btn" onclick="toggleSidebar()">☰</button>
-   <div class="mobile-brand">VEX AI</div>
-   <div class="model-label">VEX AI <span>Knowledge Assistant</span></div>
+ </section>
+ <div class="composer-area">
+  <div class="composer">
+   <textarea id="question" rows="1" placeholder="Message VEX AI..."></textarea>
+   <button class="send" id="send" aria-label="Send message">↑</button>
   </div>
-
-  <section id="chat">
-   <div class="welcome" id="welcome">
-    <h1>What can I help with?</h1>
-    <p>Explore knowledge. Discover ideas. Ask VEX anything.</p>
-    <div class="suggestions">
-     <button onclick="quickAsk('Explain artificial intelligence')">Explain AI</button>
-     <button onclick="quickAsk('Latest space discoveries')">Space</button>
-     <button onclick="quickAsk('How does the internet work?')">Technology</button>
-     <button onclick="quickAsk('Explain quantum computing')">Science</button>
-    </div>
-   </div>
-  </section>
-
-  <div class="composer-area">
-   <div class="composer">
-    <textarea id="question" rows="1" placeholder="Message VEX AI..."></textarea>
-    <button class="send" id="send" aria-label="Send message">↑</button>
-   </div>
-   <div class="bottom-note">VEX AI · Built by Avee Sharma</div>
-  </div>
- </main>
+  <div class="bottom-note">VEX AI · Built by Avee Sharma</div>
+ </div>
+</main>
 </div>
-
-<div class="media-viewer" id="mediaViewer" role="dialog" aria-modal="true"
- onclick="if(event.target===this)closeViewer()">
+<div class="media-viewer" id="mediaViewer" role="dialog" aria-modal="true" onclick="if(event.target===this)closeViewer()">
  <button class="viewer-close" onclick="closeViewer()">×</button>
  <div class="viewer-inner" id="viewerInner"></div>
 </div>
@@ -166,1237 +145,491 @@ textarea::placeholder{color:#777}
 <script>
 'use strict';
 
-/* --------------------------------
-   VEX AI SETTINGS
---------------------------------- */
+const API='https://puri.li';
+const chat=document.getElementById('chat');
+const input=document.getElementById('question');
+const sendButton=document.getElementById('send');
+const historyBox=document.getElementById('history');
 
-const API = 'https://puri.li';
-const CORS_PROXY = 'https://proxy.cors.dev/';
+let conversations=[];
+let activeId=null;
+let searching=false;
 
-const chat = document.getElementById('chat');
-const input = document.getElementById('question');
-const sendButton = document.getElementById('send');
-const historyBox = document.getElementById('history');
+const WELCOME=`<div class="welcome" id="welcome">
+<h1>What can I help with?</h1><p>Explore knowledge. Discover ideas. Ask VEX anything.</p>
+<div class="suggestions">
+<button onclick="quickAsk('Explain artificial intelligence')">Explain AI</button>
+<button onclick="quickAsk('Latest space discoveries')">Space</button>
+<button onclick="quickAsk('How does the internet work?')">Technology</button>
+<button onclick="quickAsk('Explain quantum computing')">Science</button>
+</div></div>`;
 
-let conversations = [];
-let activeId = null;
-let searching = false;
-
-const WELCOME = `
-<div class="welcome" id="welcome">
- <h1>What can I help with?</h1>
- <p>Explore knowledge. Discover ideas. Ask VEX anything.</p>
- <div class="suggestions">
-  <button onclick="quickAsk('Explain artificial intelligence')">Explain AI</button>
-  <button onclick="quickAsk('Latest space discoveries')">Space</button>
-  <button onclick="quickAsk('How does the internet work?')">Technology</button>
-  <button onclick="quickAsk('Explain quantum computing')">Science</button>
- </div>
-</div>`;
-
-/* --------------------------------
-   CHAT HISTORY
---------------------------------- */
-
-function scrollDown(){
- chat.scrollTop = chat.scrollHeight;
-}
-
-function saveHistory(){
- try{
-  localStorage.setItem('vex_chats', JSON.stringify(conversations));
- }catch(e){
-  console.warn('History storage unavailable', e);
- }
-}
-
+function scrollDown(){chat.scrollTop=chat.scrollHeight}
+function saveHistory(){try{localStorage.setItem('vex_chats',JSON.stringify(conversations))}catch(e){}}
 function loadHistory(){
- try{
-  const saved = JSON.parse(localStorage.getItem('vex_chats') || '[]');
-  conversations = Array.isArray(saved) ? saved : [];
- }catch(e){
-  conversations = [];
- }
+ try{const x=JSON.parse(localStorage.getItem('vex_chats')||'[]');conversations=Array.isArray(x)?x:[]}catch(e){conversations=[]}
  renderHistory();
 }
-
 function renderHistory(){
- historyBox.textContent = '';
-
+ historyBox.textContent='';
  conversations.forEach(c=>{
-  const el = document.createElement('div');
-  el.className = 'history-item';
-  el.textContent = c.title || 'New chat';
-  el.onclick = ()=>openChat(c.id);
-  historyBox.appendChild(el);
+  const el=document.createElement('div');
+  el.className='history-item';el.textContent=c.title||'New chat';
+  el.onclick=()=>openChat(c.id);historyBox.appendChild(el);
  });
 }
-
 function newChat(){
- activeId = null;
- chat.innerHTML = WELCOME;
- input.value = '';
- input.style.height = '30px';
- document.getElementById('sidebar').classList.remove('open');
- input.focus();
+ activeId=null;chat.innerHTML=WELCOME;input.value='';input.style.height='30px';
+ document.getElementById('sidebar').classList.remove('open');input.focus();
 }
-
-function toggleSidebar(){
- document.getElementById('sidebar').classList.toggle('open');
-}
-
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
 function openChat(id){
- const c = conversations.find(x=>x.id===id);
- if(!c) return;
-
- activeId = id;
- chat.innerHTML = '';
-
- (c.messages || []).forEach(m=>{
-  if(m.type === 'user') addUser(m.text, false);
-  else if(m.type === 'bot') renderBot(m.data, false);
+ const c=conversations.find(x=>x.id===id);if(!c)return;
+ activeId=id;chat.innerHTML='';
+ (c.messages||[]).forEach(m=>{
+  if(m.type==='user')addUser(m.text,false);
+  else if(m.type==='bot')renderBot(m.data,false);
  });
-
- document.getElementById('sidebar').classList.remove('open');
- scrollDown();
+ document.getElementById('sidebar').classList.remove('open');scrollDown();
 }
-
 function storeMessage(message){
  if(!activeId){
-  activeId = String(Date.now());
-  conversations.unshift({
-   id:activeId,
-   title:message.type === 'user' ? message.text.slice(0,48) : 'New chat',
-   messages:[]
-  });
+  activeId=String(Date.now());
+  conversations.unshift({id:activeId,title:message.type==='user'?message.text.slice(0,48):'New chat',messages:[]});
  }
-
- const c = conversations.find(x=>x.id===activeId);
- if(c) c.messages.push(message);
-
- saveHistory();
- renderHistory();
+ const c=conversations.find(x=>x.id===activeId);
+ if(c)c.messages.push(message);
+ saveHistory();renderHistory();
 }
-
-function addUser(text, save=true){
+function addUser(text,save=true){
  document.getElementById('welcome')?.remove();
-
- const wrap = document.createElement('div');
- wrap.className = 'message user-wrap';
-
- const inner = document.createElement('div');
- inner.style.display = 'flex';
- inner.style.flexDirection = 'column';
- inner.style.alignItems = 'flex-end';
- inner.style.gap = '5px';
-
- const bubble = document.createElement('div');
- bubble.className = 'user';
- bubble.textContent = text;
-
- const share = document.createElement('button');
- share.className = 'icon-btn';
- share.style.fontSize = '12px';
- share.style.padding = '5px 9px';
- share.textContent = '↗ Share question';
- share.onclick = ()=>shareText(text);
-
- inner.append(bubble, share);
- wrap.appendChild(inner);
- chat.appendChild(wrap);
-
- if(save) storeMessage({type:'user', text});
- scrollDown();
+ const wrap=document.createElement('div');wrap.className='message user-wrap';
+ const inner=document.createElement('div');inner.style.cssText='display:flex;flex-direction:column;align-items:flex-end;gap:5px';
+ const bubble=document.createElement('div');bubble.className='user';bubble.textContent=text;
+ const share=document.createElement('button');share.className='icon-btn';share.style.cssText='font-size:12px;padding:5px 9px';
+ share.textContent='↗ Share question';share.onclick=()=>shareText(text);
+ inner.append(bubble,share);wrap.appendChild(inner);chat.appendChild(wrap);
+ if(save)storeMessage({type:'user',text});scrollDown();
 }
-
 async function shareText(text){
- try{
-  if(navigator.share){
-   await navigator.share({title:'VEX AI question', text});
-   return;
-  }
- }catch(e){
-  if(e.name === 'AbortError') return;
- }
-
- try{
-  await copyText(text);
-  alert('Question copied. You can paste it into another app.');
- }catch(e){
-  alert('Could not share or copy this question.');
- }
+ try{if(navigator.share){await navigator.share({title:'VEX AI question',text});return}}catch(e){if(e.name==='AbortError')return}
+ try{await copyText(text);alert('Question copied. You can paste it into another app.')}catch(e){alert('Could not share or copy this question.')}
 }
-
 async function copyText(text){
- if(navigator.clipboard && window.isSecureContext){
-  await navigator.clipboard.writeText(text);
-  return;
- }
-
- const area = document.createElement('textarea');
- area.value = text;
- area.style.position = 'fixed';
- area.style.opacity = '0';
- document.body.appendChild(area);
- area.select();
-
- const ok = document.execCommand('copy');
- area.remove();
-
- if(!ok) throw new Error('Copy failed');
+ if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);return}
+ const area=document.createElement('textarea');area.value=text;area.style.position='fixed';area.style.opacity='0';
+ document.body.appendChild(area);area.select();const ok=document.execCommand('copy');area.remove();
+ if(!ok)throw new Error('Copy failed');
 }
-
-/* --------------------------------
-   BASIC UTILITIES
---------------------------------- */
-
-function addLabel(parent, text){
- const el = document.createElement('div');
- el.className = 'label';
- el.textContent = text;
- parent.appendChild(el);
+function addLabel(parent,text){
+ const el=document.createElement('div');el.className='label';el.textContent=text;parent.appendChild(el);
 }
-
 function validURL(value){
+ try{const u=new URL(value,API);return u.protocol==='https:'||u.protocol==='http:'}catch(e){return false}
+}
+function absoluteURL(value){try{return new URL(value,API).href}catch(e){return ''}}
+
+function addSource(parent,item){
+ if(!validURL(item.url))return;
+ const a=document.createElement('a');a.className='source';a.href=absoluteURL(item.url);a.target='_blank';a.rel='noopener noreferrer';
+ const tag=document.createElement('span');tag.className='tag';tag.textContent=item.source||'WEB SOURCE';
+ const title=document.createElement('strong');title.textContent=item.title||'Web result';
+ const small=document.createElement('small');small.textContent=item.description||'';
+ a.append(tag,title,small);parent.appendChild(a);
+}
+
+/* Reliable direct API requests: no unverified CORS proxy in front. */
+async function fetchJSON(path,timeoutMs=16000){
+ const controller=new AbortController();
+ const timer=setTimeout(()=>controller.abort(),timeoutMs);
  try{
-  const u = new URL(value, API);
-  return u.protocol === 'https:' || u.protocol === 'http:';
- }catch(e){
-  return false;
- }
+  const response=await fetch(API+path,{method:'GET',mode:'cors',credentials:'omit',cache:'no-store',signal:controller.signal});
+  const raw=await response.text();
+  let data;
+  try{data=JSON.parse(raw)}catch(e){throw new Error('Search service returned invalid data')}
+  if(!response.ok)throw new Error(data.error||('HTTP '+response.status));
+  return data;
+ }finally{clearTimeout(timer)}
 }
-
-function absoluteURL(value){
- try{
-  return new URL(value, API).href;
- }catch(e){
-  return '';
- }
-}
-
-function addSource(parent, item){
- if(!validURL(item.url)) return;
-
- const a = document.createElement('a');
- a.className = 'source';
- a.href = absoluteURL(item.url);
- a.target = '_blank';
- a.rel = 'noopener noreferrer';
-
- const tag = document.createElement('span');
- tag.className = 'tag';
- tag.textContent = item.source || 'WEB SOURCE';
-
- const title = document.createElement('strong');
- title.textContent = item.title || 'Web result';
-
- const small = document.createElement('small');
- small.textContent = item.description || '';
-
- a.append(tag, title, small);
- parent.appendChild(a);
-}
-
-/* --------------------------------
-   SEARCH CONNECTION
---------------------------------- */
-
-function parseApiResponse(raw, status){
- let data;
-
- try{
-  data = JSON.parse(raw);
- }catch(e){
-  throw new Error('Search service returned invalid data.');
- }
-
- if(status < 200 || status >= 300){
-  throw new Error(data.error || ('Search service HTTP ' + status));
- }
-
- return data;
-}
-
-function xhrJSON(url, timeoutMs){
- return new Promise((resolve,reject)=>{
-  try{
-   const x = new XMLHttpRequest();
-   x.open('GET', url, true);
-   x.timeout = timeoutMs || 15000;
-
-   x.onload = ()=>{
-    try{
-     resolve(parseApiResponse(x.responseText, x.status));
-    }catch(e){
-     reject(e);
-    }
-   };
-
-   x.onerror = ()=>reject(new Error('Network/CORS error'));
-   x.ontimeout = ()=>reject(new Error('Request timed out'));
-   x.send();
-  }catch(e){
-   reject(e);
-  }
- });
-}
-
-async function fetchJSON(path, timeoutMs=18000){
- const target = API + path;
- const urls = [CORS_PROXY + target, target];
- const errors = [];
-
- for(const url of urls){
-
-  if(typeof window.fetch === 'function'){
-   try{
-    let timer;
-
-    const response = await Promise.race([
-     window.fetch(url,{
-      method:'GET',
-      mode:'cors',
-      credentials:'omit',
-      cache:'no-store'
-     }),
-     new Promise((_,reject)=>{
-      timer = setTimeout(()=>reject(new Error('Request timed out')),timeoutMs);
-     })
-    ]).finally(()=>clearTimeout(timer));
-
-    const raw = await response.text();
-    return parseApiResponse(raw, response.status);
-
-   }catch(e){
-    errors.push(e.message || 'Fetch failed');
-   }
-  }
-
-  try{
-   return await xhrJSON(url, timeoutMs);
-  }catch(e){
-   errors.push(e.message || 'XHR failed');
-  }
- }
-
- throw new Error('Search connection failed: ' + errors.join(' / '));
-}
-
-async function fetchWithRetry(path, attempts=2){
- let lastError;
-
+async function fetchRetry(path,attempts=2){
+ let error;
  for(let i=0;i<attempts;i++){
-  try{
-   return await fetchJSON(path,18000);
-  }catch(e){
-   lastError = e;
-   if(i+1 < attempts){
-    await new Promise(r=>setTimeout(r,800*(i+1)));
-   }
-  }
+  try{return await fetchJSON(path)}catch(e){error=e;if(i+1<attempts)await new Promise(r=>setTimeout(r,700*(i+1)))}
  }
-
- throw lastError || new Error('Request failed');
+ throw error||new Error('Request failed');
 }
 
-/* --------------------------------
-   QUERY UNDERSTANDING
---------------------------------- */
+/* QUERY UNDERSTANDING */
+const STOP=new Set(('what when where which who whom whose with from that this then than have does doing about into your you the and for are was were will would could should can how why tell explain please give show find search information some me is it its a an of to in on at by or as be do did my we they their them hai hain kya ka ki ke ko se mein aur batao mujhe kaise kab kahan kyun theek').split(' '));
 
-const STOPWORDS = new Set([
- 'what','when','where','which','who','whom','whose','with','from',
- 'that','this','then','than','have','does','doing','about','into',
- 'your','you','the','and','for','are','was','were','will','would',
- 'could','should','can','how','why','tell','explain','please',
- 'give','show','find','search','information','about','some',
- 'me','is','it','its','a','an','of','to','in','on','at','by',
- 'or','as','be','do','did','my','we','they','their','them',
- 'hai','hain','kya','ka','ki','ke','ko','se','mein','aur',
- 'batao','mujhe','kaise','kab','kahan','kyun'
-]);
-
-function getWords(text){
- return String(text || '')
-  .toLowerCase()
-  .normalize('NFKD')
-  .replace(/[^\p{L}\p{N}\s]/gu,' ')
-  .split(/\s+/)
-  .filter(w=>w.length>2 && !STOPWORDS.has(w));
+function words(text){
+ return String(text||'').toLowerCase().normalize('NFKD')
+ .replace(/[^\p{L}\p{N}\s]/gu,' ').split(/\s+/)
+ .filter(w=>w.length>2&&!STOP.has(w));
 }
-
-function queryType(query){
- const q = query.toLowerCase();
-
- if(/\b(compare|difference|differentiate|versus|vs)\b/.test(q)) return 'compare';
- if(/\b(why|reason|cause)\b/.test(q)) return 'why';
- if(/\b(how|process|working|work)\b/.test(q)) return 'how';
- if(/\b(who|biography|born|invented|founder)\b/.test(q)) return 'who';
- if(/\b(when|date|year|timeline)\b/.test(q)) return 'when';
+function cleanText(text){
+ return String(text||'')
+ .replace(/<script[\s\S]*?<\/script>/gi,' ')
+ .replace(/<style[\s\S]*?<\/style>/gi,' ')
+ .replace(/<[^>]*>/g,' ')
+ .replace(/&nbsp;/gi,' ').replace(/&amp;/gi,'&')
+ .replace(/&quot;/gi,'"').replace(/&#39;/g,"'")
+ .replace(/&#x27;/gi,"'").replace(/&lt;/gi,'<')
+ .replace(/&gt;/gi,'>').replace(/\s+/g,' ').trim();
+}
+function normalizeQuery(q){
+ return String(q||'').replace(/\s+/g,' ').trim().replace(/[?!.]+$/,'');
+}
+function queryType(q){
+ const s=q.toLowerCase();
+ if(/\b(compare|difference|differentiate|versus|vs)\b/.test(s))return 'compare';
+ if(/\b(why|reason|cause)\b/.test(s))return 'why';
+ if(/\b(how|process|working|work)\b/.test(s))return 'how';
+ if(/\b(who|biography|born|invented|founder)\b/.test(s))return 'who';
+ if(/\b(when|date|year|timeline)\b/.test(s))return 'when';
+ if(/\b(list|types|examples|benefits|advantages|disadvantages)\b/.test(s))return 'list';
  return 'general';
 }
-
-function cleanText(text){
- return String(text || '')
-  .replace(/<script[\s\S]*?<\/script>/gi,' ')
-  .replace(/<style[\s\S]*?<\/style>/gi,' ')
-  .replace(/<[^>]*>/g,' ')
-  .replace(/&nbsp;/gi,' ')
-  .replace(/&amp;/gi,'&')
-  .replace(/&quot;/gi,'"')
-  .replace(/&#39;/g,"'")
-  .replace(/&#x27;/gi,"'")
-  .replace(/&lt;/gi,'<')
-  .replace(/&gt;/gi,'>')
-  .replace(/\s+/g,' ')
-  .trim();
-}
-
 function splitSentences(text){
- const cleaned = cleanText(text);
-
- return cleaned
-  .replace(/([.!?])\s+(?=[A-Z0-9])/g,'$1|')
-  .split('|')
-  .map(s=>s.trim())
-  .filter(s=>s.length>=45 && s.length<=650);
+ return cleanText(text).replace(/([.!?])\s+(?=[A-Z0-9])/g,'$1|')
+ .split('|').map(s=>s.trim()).filter(s=>s.length>=45&&s.length<=550);
 }
-
-function isBoilerplate(sentence){
- const s = sentence.toLowerCase();
-
- const bad = [
-  'cookie policy','privacy policy','terms of use','all rights reserved',
-  'subscribe to our newsletter','sign up for','log in to','create an account',
-  'skip to content','read more','click here','share this article',
-  'advertisement','javascript is disabled','accept all cookies',
-  'your browser does not support','related articles','table of contents',
-  'contact us','follow us on','download our app','copyright ©',
-  'this website uses cookies','view all posts','menu'
- ];
-
- if(bad.some(x=>s.includes(x))) return true;
- if(/^(home|menu|search|login|register|next|previous|read more)\b/i.test(s)) return true;
- if((sentence.match(/https?:\/\//g)||[]).length>0) return true;
- if(sentence.split(' ').length<7) return true;
-
+function isBadSentence(s){
+ const x=s.toLowerCase();
+ const bad=['cookie policy','privacy policy','terms of use','all rights reserved','subscribe to our newsletter',
+ 'sign up for','log in to','create an account','skip to content','read more','click here',
+ 'share this article','advertisement','javascript is disabled','accept all cookies',
+ 'your browser does not support','related articles','table of contents','contact us',
+ 'follow us on','download our app','copyright ©','this website uses cookies','view all posts'];
+ if(bad.some(v=>x.includes(v)))return true;
+ if(/^(home|menu|search|login|register|next|previous|read more)\b/i.test(s))return true;
+ if(/https?:\/\//i.test(s))return true;
+ if(s.split(/\s+/).length<8)return true;
  return false;
 }
 
-/* --------------------------------
-   ANSWER ENGINE
-   Sentence selection + deduplication
---------------------------------- */
-
-function sentenceScore(sentence, query, title, description){
- const words = getWords(query);
- const s = sentence.toLowerCase();
- const t = (title || '').toLowerCase();
- const d = (description || '').toLowerCase();
-
- if(!words.length) return 0;
-
- let score = 0;
- let matches = 0;
-
- for(const word of words){
-  if(s.includes(word)){
-   score += 2;
-   matches++;
-  }
-  if(t.includes(word)) score += 1.5;
-  if(d.includes(word)) score += 0.5;
- }
-
- const coverage = matches / words.length;
- score += coverage * 5;
-
- if(coverage >= 0.7) score += 2;
- if(coverage === 1) score += 2;
-
- // Prefer complete explanatory statements.
- if(/\b(is|are|was|were|because|therefore|consists|contains|formed|caused|means|refers|known|called|created|developed)\b/i.test(sentence)){
-  score += 0.8;
- }
-
- // Avoid sentences that are mostly dates or navigation fragments.
- const letters = (sentence.match(/[a-zA-Z]/g)||[]).length;
- if(letters / Math.max(sentence.length,1) < 0.45) score -= 2;
-
+/* RELEVANCE SCORING */
+function scoreSentence(sentence,query,title,description){
+ const terms=words(query);if(!terms.length)return 0;
+ const s=sentence.toLowerCase(),t=(title||'').toLowerCase(),d=(description||'').toLowerCase();
+ let matched=0,score=0;
+ terms.forEach(w=>{
+  if(s.includes(w)){matched++;score+=3}
+  if(t.includes(w))score+=2.4;
+  if(d.includes(w))score+=0.7;
+ });
+ const coverage=matched/terms.length;
+ score+=coverage*7;
+ if(coverage>=0.75)score+=2;
+ if(coverage===1)score+=2;
+ if(/\b(is|are|was|were|because|therefore|consists|contains|formed|caused|means|refers|known|called|created|developed|occurs|produces|allows|includes)\b/i.test(sentence))score+=1;
+ if(sentence.length<75)score-=0.8;
+ if(sentence.length>420)score-=1;
+ const letters=(sentence.match(/[a-z]/gi)||[]).length;
+ if(letters/Math.max(sentence.length,1)<0.5)score-=3;
  return score;
 }
-
-function similarity(a,b){
- const A = new Set(getWords(a));
- const B = new Set(getWords(b));
-
- if(!A.size || !B.size) return 0;
-
- let common = 0;
- for(const w of A) if(B.has(w)) common++;
-
- return common / Math.min(A.size,B.size);
+function overlap(a,b){
+ const A=new Set(words(a)),B=new Set(words(b));
+ if(!A.size||!B.size)return 0;
+ let n=0;A.forEach(x=>{if(B.has(x))n++});
+ return n/Math.min(A.size,B.size);
 }
-
-function collectFacts(query, parts){
- const candidates = [];
-
- parts.forEach((part,index)=>{
-  const sentences = splitSentences(part.text);
-
-  sentences.forEach((sentence,position)=>{
-   if(isBoilerplate(sentence)) return;
-
-   const score = sentenceScore(
-    sentence,
-    query,
-    part.title,
-    part.description
-   );
-
-   if(score < 2.5) return;
-
-   candidates.push({
-    text:sentence,
-    score,
-    sourceIndex:index,
-    position
-   });
+function extractFacts(query,parts){
+ const candidates=[];
+ parts.forEach((part,sourceIndex)=>{
+  splitSentences(part.text).forEach((sentence,position)=>{
+   if(isBadSentence(sentence))return;
+   const score=scoreSentence(sentence,query,part.title,part.description);
+   if(score<4)return;
+   candidates.push({text:sentence,score,sourceIndex,position,title:part.title});
   });
  });
-
  candidates.sort((a,b)=>b.score-a.score);
-
- const selected = [];
- const perSource = {};
-
+ const chosen=[],perSource={};
  for(const item of candidates){
-  const duplicate = selected.some(existing=>
-   similarity(existing.text,item.text)>0.78
-  );
-
-  if(duplicate) continue;
-
-  const count = perSource[item.sourceIndex] || 0;
-
-  // Prevent one page from dominating the answer.
-  if(count >= 3) continue;
-
-  selected.push(item);
-  perSource[item.sourceIndex] = count + 1;
-
-  if(selected.length >= 8) break;
+  if(chosen.some(x=>overlap(x.text,item.text)>0.72))continue;
+  if((perSource[item.sourceIndex]||0)>=2)continue;
+  chosen.push(item);perSource[item.sourceIndex]=(perSource[item.sourceIndex]||0)+1;
+  if(chosen.length>=9)break;
  }
-
- // Restore a readable order after relevance selection.
- selected.sort((a,b)=>{
-  if(a.sourceIndex !== b.sourceIndex){
-   return a.score > b.score ? -1 : 1;
-  }
-  return a.position-b.position;
- });
-
- return selected;
+ return chosen;
 }
 
-function buildAnswer(query, parts, card){
- const facts = collectFacts(query,parts);
+/* BUILD A READABLE EVIDENCE-BASED ANSWER */
+function makeIntro(query,facts){
+ if(!facts.length)return '';
+ const first=facts[0].text;
+ // Do not invent a definition: use a relevant source statement as the opening.
+ return first;
+}
+function buildAnswer(query,parts,card){
+ const facts=extractFacts(query,parts);
+ const instant=card?.instantAnswer?.answer?cleanText(card.instantAnswer.answer):'';
+ const validInstant=instant.length>35&&instant.length<700&&!isBadSentence(instant);
+ const type=queryType(query);
+ const lines=[];
+ const used=new Set();
 
- const instant = card?.instantAnswer?.answer
-  ? cleanText(card.instantAnswer.answer)
-  : '';
+ if(validInstant){lines.push(instant);used.add(instant.toLowerCase())}
+ else if(facts.length){lines.push(makeIntro(query,facts));used.add(facts[0].text.toLowerCase())}
 
- const cardFacts = Array.isArray(card?.facts)
-  ? card.facts.filter(x=>x && x.label && x.value).slice(0,4)
-  : [];
+ const remaining=facts.filter(f=>!used.has(f.text.toLowerCase()));
+ if(remaining.length){
+  lines.push('');
+  if(type==='how')lines.push('How it works');
+  else if(type==='why')lines.push('Why it happens');
+  else if(type==='compare')lines.push('Important differences and points');
+  else if(type==='who')lines.push('Background and details');
+  else if(type==='when')lines.push('Timeline and details');
+  else if(type==='list')lines.push('Key points');
+  else lines.push('More details');
 
- const type = queryType(query);
- const lines = [];
-
- // A short instant answer may be useful, but only if it is real text.
- if(instant && instant.length>25 && instant.length<900){
-  lines.push(instant);
+  remaining.slice(0,6).forEach((f,i)=>lines.push('• '+f.text));
  }
-
- // Add a small number of structured facts if the search service provides them.
- if(cardFacts.length){
-  const factLines = cardFacts.map(f=>
-   '• ' + cleanText(f.label) + ': ' + cleanText(f.value)
-  );
-
-  if(lines.length) lines.push('');
-  lines.push('Key facts');
-  lines.push(...factLines);
- }
-
- if(facts.length){
-  if(lines.length) lines.push('');
-
-  if(type === 'how') lines.push('How it works');
-  else if(type === 'why') lines.push('Why it happens');
-  else if(type === 'compare') lines.push('Main points');
-  else if(type === 'who') lines.push('About the subject');
-  else lines.push('Explanation');
-
-  facts.slice(0,7).forEach((fact,index)=>{
-   lines.push((index+1)+'. '+fact.text);
-  });
-
- }else if(!instant && !cardFacts.length){
-  return 'I found matching web pages, but their available text did not contain enough relevant information to prepare a reliable explanation. You can open the sources below.';
- }
-
- let answer = lines.join('\n');
-
- if(answer.length > 3800){
-  answer = answer.slice(0,3800).replace(/\s+\S*$/,'') + '…';
- }
-
+ if(!lines.length)return 'I found some related web pages, but their available text did not provide enough reliable information to answer this question. Please try asking in a more specific way.';
+ let answer=lines.join('\n');
+ if(answer.length>3200)answer=answer.slice(0,3200).replace(/\s+\S*$/,'')+'…';
  return answer.trim();
 }
 
-/* --------------------------------
-   WEB CONTEXT AND SOURCES
---------------------------------- */
-
+/* CONTEXT + WEB SOURCES */
 async function getContext(result){
  try{
-  const data = await fetchJSON(
-   '/api/context?url='+encodeURIComponent(result.url),
-   13000
-  );
-
-  const passages = Array.isArray(data.passages)
-   ? data.passages.join('\n')
-   : '';
-
+  const data=await fetchJSON('/api/context?url='+encodeURIComponent(result.url),14000);
+  const passages=Array.isArray(data.passages)?data.passages.join('\n'):'';
   return {
-   title:data.title || result.title || '',
-   text:[
-    data.summary || '',
-    data.content || '',
-    passages
-   ].filter(Boolean).join('\n'),
-   coverage:data.coverage || 'unknown'
+   title:data.title||result.title||'',
+   text:[data.summary||'',data.content||'',passages].filter(Boolean).join('\n'),
+   coverage:data.coverage||'unknown'
   };
-
  }catch(e){
-  return {
-   title:result.title || '',
-   text:result.description || '',
-   coverage:'search-snippet-fallback'
-  };
+  return {title:result.title||'',text:result.description||'',coverage:'snippet'};
  }
 }
-
 async function getInfocard(query){
- try{
-  return await fetchJSON(
-   '/api/infocard?q='+encodeURIComponent(query),
-   9000
-  );
- }catch(e){
-  return null;
- }
+ try{return await fetchJSON('/api/infocard?q='+encodeURIComponent(query),9000)}
+ catch(e){return null}
 }
-
 async function searchImages(query){
  try{
-  const data = await fetchJSON(
-   '/api/images?q='+encodeURIComponent(query)+'&page=1',
-   12000
-  );
-
-  const rows = Array.isArray(data.images) ? data.images : [];
-
-  return rows.slice(0,8).map(x=>({
-   title:x.title || 'Image',
-   image:absoluteURL(x.thumbUrl || x.url),
-   url:absoluteURL(x.url || x.thumbUrl),
-   license:x.license || '',
-   source:x.source || 'Wikimedia Commons',
-   sourceUrl:absoluteURL(x.sourceUrl || x.pageUrl || x.sourcePage || '')
-  })).filter(x=>x.image && x.url);
-
- }catch(e){
-  console.warn('Image search failed:',e);
-  return [];
- }
+  const data=await fetchJSON('/api/images?q='+encodeURIComponent(query)+'&page=1',13000);
+  return (Array.isArray(data.images)?data.images:[]).slice(0,8).map(x=>({
+   title:x.title||'Image',image:absoluteURL(x.thumbUrl||x.url),
+   url:absoluteURL(x.url||x.thumbUrl),license:x.license||'',
+   source:x.source||'Wikimedia Commons',
+   sourceUrl:absoluteURL(x.sourceUrl||x.pageUrl||x.sourcePage||'')
+  })).filter(x=>x.image&&x.url);
+ }catch(e){console.warn('Image search:',e);return []}
 }
 
-/* --------------------------------
-   IMAGE / VIDEO REQUEST DETECTION
---------------------------------- */
-
+/* MEDIA REQUESTS */
 function isImageOnlyRequest(q){
- return /\b(images?|pictures?|photos?)\b/i.test(q) &&
- /\b(only|just|show|give|send|find|display)\b/i.test(q) &&
+ return /\b(images?|pictures?|photos?)\b/i.test(q)&&
+ /\b(only|just|show|give|send|find|display)\b/i.test(q)&&
  !/\b(video|videos|explain|describe|what is|who is|how)\b/i.test(q);
 }
-
-function isVideoRequest(q){
- return /\b(video|videos|watch|clip|documentary|trailer)\b/i.test(q);
-}
-
+function isVideoRequest(q){return /\b(video|videos|watch|clip|documentary|trailer)\b/i.test(q)}
 function isVideoOnlyRequest(q){
- return isVideoRequest(q) &&
- /\b(only|just|show|give|send|find|play)\b/i.test(q) &&
+ return isVideoRequest(q)&&/\b(only|just|show|give|send|find|play)\b/i.test(q)&&
  !/\b(image|images|picture|pictures|photo|photos|explain)\b/i.test(q);
 }
-
 function mediaQuery(q){
- return q.replace(
-  /\b(show|give|send|find|display|me|some|only|just|images?|pictures?|photos?|videos?|clips?|documentary|trailer|of|about)\b/gi,
-  ' '
- ).replace(/\s+/g,' ').trim() || q;
+ return q.replace(/\b(show|give|send|find|display|me|some|only|just|images?|pictures?|photos?|videos?|clips?|documentary|trailer|of|about)\b/gi,' ')
+ .replace(/\s+/g,' ').trim()||q;
 }
-
-/* --------------------------------
-   VIDEO SEARCH
---------------------------------- */
-
 async function searchVideos(query){
  try{
-  const searchQuery = 'site:youtube.com/watch ' + query;
-
-  const data = await fetchWithRetry(
-   '/api/search?q='+encodeURIComponent(searchQuery)+'&page=1&exact=0',
-   2
-  );
-
-  const rows = Array.isArray(data.results) ? data.results : [];
-  const output = [];
-  const seen = new Set();
-
-  for(const item of rows){
-   const url = String(item.url || '');
-   let id = '';
-
+  const data=await fetchRetry('/api/search?q='+encodeURIComponent('site:youtube.com/watch '+query)+'&page=1&exact=0',2);
+  const output=[],seen=new Set();
+  (data.results||[]).forEach(item=>{
+   let id='';
    try{
-    const parsed = new URL(url);
-
-    if(parsed.hostname.includes('youtube.com')){
-     id = parsed.searchParams.get('v') || '';
-    }else if(parsed.hostname === 'youtu.be'){
-     id = parsed.pathname.slice(1);
-    }
+    const u=new URL(item.url);
+    if(u.hostname.includes('youtube.com'))id=u.searchParams.get('v')||'';
+    else if(u.hostname==='youtu.be')id=u.pathname.slice(1);
    }catch(e){}
-
-   if(!/^[A-Za-z0-9_-]{11}$/.test(id)) continue;
-   if(seen.has(id)) continue;
-
-   seen.add(id);
-
-   output.push({
-    id,
-    title:item.title || 'YouTube video',
-    url,
-    description:item.description || ''
-   });
-
-   if(output.length >= 8) break;
-  }
-
-  return output;
-
- }catch(e){
-  console.warn('Video search failed:',e);
-  return [];
- }
+   if(!/^[A-Za-z0-9_-]{11}$/.test(id)||seen.has(id))return;
+   seen.add(id);output.push({id,title:item.title||'YouTube video',url:item.url,description:item.description||''});
+  });
+  return output.slice(0,8);
+ }catch(e){console.warn('Video search:',e);return []}
 }
 
-/* --------------------------------
-   FOLLOW-UP QUESTIONS
---------------------------------- */
-
-function makeFollowups(query, results){
- const words = getWords(query);
- const topic = words.slice(0,5).join(' ') || query;
-
- const candidates = [
-  'How does '+topic+' work?',
-  'What are the main benefits and limitations of '+topic+'?',
-  'What are the latest developments related to '+topic+'?'
+/* FOLLOW-UP QUESTIONS */
+function makeFollowups(query,results){
+ const topic=words(query).slice(0,4).join(' ')||query;
+ const title=results?.[0]?.title||'';
+ const topicText=topic.length>55?topic.slice(0,55):topic;
+ const options=[
+  'How does '+topicText+' work in practice?',
+  'What are the main benefits and limitations of '+topicText+'?',
+  title&&title.toLowerCase()!==query.toLowerCase()?'What does '+title+' explain?':'What are some real-world examples of '+topicText+'?'
  ];
-
- const original = query.toLowerCase();
-
- return candidates
-  .filter(q=>!original.includes(q.toLowerCase().replace(/[?]/g,'')))
-  .slice(0,3);
+ const unique=[...new Set(options)];
+ return unique.slice(0,3);
 }
 
-/* --------------------------------
-   MAIN SEARCH FLOW
---------------------------------- */
-
-async function runSearch(query, progress){
- progress.textContent = 'Searching the web...';
-
- const [searchData,card] = await Promise.all([
-  fetchWithRetry(
-   '/api/search?q='+encodeURIComponent(query)+'&page=1&exact=0',
-   2
-  ),
-  getInfocard(query)
- ]);
-
- const results = Array.isArray(searchData.results)
-  ? searchData.results
-  : [];
-
+/* MAIN SEARCH */
+async function runSearch(query,progress){
+ progress.textContent='Searching the web...';
+ const searchData=await fetchRetry('/api/search?q='+encodeURIComponent(query)+'&page=1&exact=0',2);
+ const results=Array.isArray(searchData.results)?searchData.results:[];
+ const card=await getInfocard(query);
  if(!results.length){
-  const direct = card?.instantAnswer?.answer || '';
-
-  return {
-   answer:direct || 'I could not find matching pages. Try asking with more specific keywords.',
-   results:[],
-   images:[],
-   followups:[]
-  };
+  const answer=card?.instantAnswer?.answer?cleanText(card.instantAnswer.answer):'I could not find useful matching pages. Try adding a little more detail to your question.';
+  return {answer,results:[],images:[],followups:[]};
  }
-
- progress.textContent = 'Reading relevant pages...';
-
- const selected = results.slice(0,6);
-
- const contexts = await Promise.all(
-  selected.map(getContext)
- );
-
- const parts = contexts.map((context,index)=>({
-  title:context.title || selected[index].title || 'Web source',
-  text:context.text || selected[index].description || '',
-  description:selected[index].description || '',
-  coverage:context.coverage,
-  url:selected[index].url
+ progress.textContent='Checking relevant sources...';
+ // Start with the most relevant search results; avoid loading dozens of pages.
+ const selected=results.slice(0,7);
+ const contexts=await Promise.all(selected.map(getContext));
+ const parts=contexts.map((c,i)=>({
+  title:c.title||selected[i].title||'Web source',
+  text:c.text||selected[i].description||'',
+  description:selected[i].description||''
  }));
-
- progress.textContent = 'Preparing a clear explanation...';
-
- const answer = buildAnswer(query,parts,card);
-
- progress.textContent = 'Finding related images...';
-
- const images = await searchImages(query);
-
- const sourceResults = results.slice(0,7).map(item=>({
-  title:item.title || 'Web result',
-  url:item.url,
-  description:item.description || item.displayUrl || '',
-  source:item.source || 'WEB SOURCE'
+ progress.textContent='Building your explanation...';
+ const answer=buildAnswer(query,parts,card);
+ progress.textContent='Finding related images...';
+ const images=await searchImages(query);
+ const sourceResults=results.slice(0,7).map(x=>({
+  title:x.title||'Web result',url:x.url,
+  description:x.description||x.displayUrl||'',source:x.source||'WEB SOURCE'
  }));
-
- return {
-  answer,
-  results:sourceResults,
-  images,
-  followups:makeFollowups(query,sourceResults)
- };
+ return {answer,results:sourceResults,images,followups:makeFollowups(query,sourceResults)};
 }
-
 async function runImageSearch(query){
- const topic = mediaQuery(query);
-
- return {
-  mode:'images',
-  answer:'',
-  results:[],
-  images:await searchImages(topic)
- };
+ return {mode:'images',answer:'',results:[],images:await searchImages(mediaQuery(query))};
 }
-
 async function runVideoSearch(query,progress){
- const topic = mediaQuery(query);
-
- progress.textContent = 'Searching for videos...';
-
- const videos = await searchVideos(topic);
-
- return {
-  mode:'videos',
-  answer:'',
-  results:[],
-  images:[],
-  videos,
-  note:videos.length
-   ? 'Videos are found through indexed YouTube pages. Playback depends on the video owner’s embed settings.'
-   : 'No matching YouTube videos were found in the current search results.'
- };
+ progress.textContent='Searching for videos...';
+ const videos=await searchVideos(mediaQuery(query));
+ return {mode:'videos',answer:'',results:[],images:[],videos,
+ note:videos.length?'Videos are found from indexed YouTube pages. Playback depends on the video owner’s embed settings.':'No matching YouTube videos were found in the current search results.'};
 }
 
-/* --------------------------------
-   IN-APP MEDIA VIEWER
---------------------------------- */
-
+/* VIEWER */
 function openViewer(kind,url,title,source){
- const viewer = document.getElementById('mediaViewer');
- const inner = document.getElementById('viewerInner');
-
- inner.textContent = '';
-
- if(kind === 'video'){
-  const frame = document.createElement('iframe');
-
-  frame.src =
-   'https://www.youtube-nocookie.com/embed/' +
-   encodeURIComponent(url) +
-   '?autoplay=1&rel=0';
-
-  frame.title = title || 'VEX video';
-  frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-  frame.allowFullscreen = true;
-
-  inner.appendChild(frame);
-
+ const viewer=document.getElementById('mediaViewer'),inner=document.getElementById('viewerInner');
+ inner.textContent='';
+ if(kind==='video'){
+  const frame=document.createElement('iframe');
+  frame.src='https://www.youtube-nocookie.com/embed/'+encodeURIComponent(url)+'?autoplay=1&rel=0';
+  frame.title=title||'VEX video';
+  frame.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+  frame.allowFullscreen=true;inner.appendChild(frame);
  }else{
-  const img = document.createElement('img');
-  img.src = url;
-  img.alt = title || 'Image';
-  inner.appendChild(img);
+  const img=document.createElement('img');img.src=url;img.alt=title||'Image';inner.appendChild(img);
  }
-
- const caption = document.createElement('div');
- caption.className = 'viewer-caption';
- caption.textContent = title || '';
- inner.appendChild(caption);
-
- if(source){
-  const link = document.createElement('a');
-  link.className = 'viewer-source';
-  link.href = source;
-  link.target = '_blank';
-  link.rel = 'noopener noreferrer';
-  link.textContent = 'Open original source';
-  inner.appendChild(link);
+ const caption=document.createElement('div');caption.className='viewer-caption';caption.textContent=title||'';inner.appendChild(caption);
+ if(source&&validURL(source)){
+  const link=document.createElement('a');link.className='viewer-source';link.href=source;
+  link.target='_blank';link.rel='noopener noreferrer';link.textContent='Open original source';inner.appendChild(link);
  }
-
- viewer.classList.add('open');
- document.body.style.overflow = 'hidden';
+ viewer.classList.add('open');document.body.style.overflow='hidden';
 }
-
 function closeViewer(){
- const viewer = document.getElementById('mediaViewer');
-
- viewer.classList.remove('open');
- document.getElementById('viewerInner').textContent = '';
- document.body.style.overflow = '';
+ document.getElementById('mediaViewer').classList.remove('open');
+ document.getElementById('viewerInner').textContent='';document.body.style.overflow='';
 }
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeViewer()});
 
-document.addEventListener('keydown',e=>{
- if(e.key === 'Escape') closeViewer();
-});
-
-/* --------------------------------
-   RENDER IMAGE RESULTS
---------------------------------- */
-
+/* RENDER IMAGES */
 function renderImages(reply,images){
- if(!images || !images.length){
-  const empty = document.createElement('div');
-  empty.textContent = 'No images were found for this search.';
-  reply.appendChild(empty);
-  return;
+ if(!images||!images.length){
+  const empty=document.createElement('div');empty.textContent='No images were found for this search.';reply.appendChild(empty);return;
  }
-
  addLabel(reply,'IMAGES');
-
- const gallery = document.createElement('div');
- gallery.className = 'images';
-
+ const gallery=document.createElement('div');gallery.className='images';
  images.forEach(item=>{
-  if(!validURL(item.image)) return;
-
-  const card = document.createElement('div');
-  card.className = 'image-card';
-
-  const button = document.createElement('button');
-  button.type = 'button';
-
-  button.onclick = ()=>openViewer(
-   'image',
-   item.image,
-   item.title,
-   item.sourceUrl
-  );
-
-  const img = document.createElement('img');
-  img.src = item.image;
-  img.alt = item.title || 'Image';
-  img.loading = 'lazy';
-  img.onerror = ()=>card.remove();
-
-  const caption = document.createElement('div');
-  caption.style.cssText = 'padding:7px 8px;font-size:11px';
-  caption.textContent = item.title || 'Image';
-
-  button.append(img,caption);
-  card.appendChild(button);
-
-  if(item.license){
-   const lic = document.createElement('small');
-   lic.textContent = 'Licence: '+item.license+' · '+item.source;
-   card.appendChild(lic);
-  }
-
+  if(!validURL(item.image))return;
+  const card=document.createElement('div');card.className='image-card';
+  const button=document.createElement('button');button.type='button';
+  button.onclick=()=>openViewer('image',item.image,item.title,item.sourceUrl);
+  const img=document.createElement('img');img.src=item.image;img.alt=item.title||'Image';img.loading='lazy';img.onerror=()=>card.remove();
+  const caption=document.createElement('div');caption.style.cssText='padding:7px 8px;font-size:11px';caption.textContent=item.title||'Image';
+  button.append(img,caption);card.appendChild(button);
+  if(item.license){const lic=document.createElement('small');lic.textContent='Licence: '+item.license+' · '+item.source;card.appendChild(lic)}
   gallery.appendChild(card);
  });
-
- if(gallery.childElementCount) reply.appendChild(gallery);
+ if(gallery.childElementCount)reply.appendChild(gallery);
 }
 
-/* --------------------------------
-   RENDER VIDEO RESULTS
---------------------------------- */
-
+/* RENDER VIDEOS */
 function renderVideos(reply,videos){
- if(!videos || !videos.length) return;
-
+ if(!videos||!videos.length)return;
  addLabel(reply,'VIDEOS');
-
- const grid = document.createElement('div');
- grid.className = 'videos';
-
+ const grid=document.createElement('div');grid.className='videos';
  videos.forEach(video=>{
-  const card = document.createElement('div');
-  card.className = 'video-card';
-
-  const button = document.createElement('button');
-  button.type = 'button';
-
-  button.onclick = ()=>openViewer(
-   'video',
-   video.id,
-   video.title,
-   video.url
-  );
-
-  const img = document.createElement('img');
-  img.src = 'https://i.ytimg.com/vi/'+encodeURIComponent(video.id)+'/hqdefault.jpg';
-  img.alt = video.title;
-  img.loading = 'lazy';
-
-  const title = document.createElement('strong');
-  title.textContent = video.title;
-
-  button.append(img,title);
-  card.appendChild(button);
-  grid.appendChild(card);
+  const card=document.createElement('div');card.className='video-card';
+  const button=document.createElement('button');button.type='button';
+  button.onclick=()=>openViewer('video',video.id,video.title,video.url);
+  const img=document.createElement('img');img.src='https://i.ytimg.com/vi/'+encodeURIComponent(video.id)+'/hqdefault.jpg';img.alt=video.title;img.loading='lazy';
+  const title=document.createElement('strong');title.textContent=video.title;
+  button.append(img,title);card.appendChild(button);grid.appendChild(card);
  });
-
  reply.appendChild(grid);
 }
 
-/* --------------------------------
-   MAIN RESPONSE RENDERER
---------------------------------- */
-
+/* RENDER ANSWER */
 function renderBot(data,save=true){
- const reply = document.createElement('div');
- reply.className = 'message bot';
-
- // IMAGE-ONLY MODE
- if(data.mode === 'images'){
-  renderImages(reply,data.images);
-  chat.appendChild(reply);
-
-  if(save) storeMessage({type:'bot',data});
-  scrollDown();
-  return;
- }
-
- // VIDEO-ONLY MODE
- if(data.mode === 'videos'){
+ const reply=document.createElement('div');reply.className='message bot';
+ if(data.mode==='images'){renderImages(reply,data.images);chat.appendChild(reply);if(save)storeMessage({type:'bot',data});scrollDown();return}
+ if(data.mode==='videos'){
   renderVideos(reply,data.videos);
-
-  if(data.note){
-   const note = document.createElement('div');
-   note.style.cssText = 'color:#888;font-size:12px;margin-top:10px';
-   note.textContent = data.note;
-   reply.appendChild(note);
-  }
-
-  chat.appendChild(reply);
-
-  if(save) storeMessage({type:'bot',data});
-  scrollDown();
-  return;
+  if(data.note){const note=document.createElement('div');note.style.cssText='color:#888;font-size:12px;margin-top:10px';note.textContent=data.note;reply.appendChild(note)}
+  chat.appendChild(reply);if(save)storeMessage({type:'bot',data});scrollDown();return;
  }
-
- // NORMAL ANSWER
  addLabel(reply,'VEX AI');
-
- const answer = document.createElement('div');
- answer.className = 'answer';
- answer.textContent = data.answer || 'No information found.';
- reply.appendChild(answer);
-
- // SOURCES
+ const answer=document.createElement('div');answer.className='answer';answer.textContent=data.answer||'No information found.';reply.appendChild(answer);
  if(data.results?.length){
-  addLabel(reply,'WEB SOURCES');
-
-  const grid = document.createElement('div');
-  grid.className = 'sources';
-
-  data.results.forEach(item=>addSource(grid,item));
-
-  if(grid.childElementCount) reply.appendChild(grid);
+  addLabel(reply,'WEB SOURCES');const grid=document.createElement('div');grid.className='sources';
+  data.results.forEach(item=>addSource(grid,item));if(grid.childElementCount)reply.appendChild(grid);
  }
-
- // RELATED IMAGES
- if(data.images?.length){
-  addLabel(reply,'RELATED IMAGES');
-  renderImages(reply,data.images);
- }
-
- // RELATED VIDEOS
- if(data.videos?.length){
-  renderVideos(reply,data.videos);
- }
-
- // FOLLOW-UP QUESTIONS
+ if(data.images?.length){addLabel(reply,'RELATED IMAGES');renderImages(reply,data.images)}
+ if(data.videos?.length)renderVideos(reply,data.videos);
  if(data.followups?.length){
-  addLabel(reply,'YOU MAY ALSO ASK');
-
-  const follow = document.createElement('div');
-  follow.className = 'followups';
-
-  data.followups.forEach(question=>{
-   const button = document.createElement('button');
-   button.type = 'button';
-   button.textContent = question;
-   button.onclick = ()=>quickAsk(question);
-   follow.appendChild(button);
-  });
-
+  addLabel(reply,'YOU MAY ALSO ASK');const follow=document.createElement('div');follow.className='followups';
+  data.followups.forEach(q=>{const b=document.createElement('button');b.type='button';b.textContent=q;b.onclick=()=>quickAsk(q);follow.appendChild(b)});
   reply.appendChild(follow);
  }
-
- // COPY ANSWER
- const actions = document.createElement('div');
- actions.className = 'actions';
-
- const copy = document.createElement('button');
- copy.textContent = 'Copy answer';
-
- copy.onclick = ()=>{
-  copyText(data.answer || '')
-   .then(()=>{
-    copy.textContent = 'Copied';
-    setTimeout(()=>copy.textContent='Copy answer',1400);
-   })
-   .catch(()=>{
-    copy.textContent = 'Copy failed';
-   });
- };
-
- actions.appendChild(copy);
- reply.appendChild(actions);
-
- chat.appendChild(reply);
-
- if(save) storeMessage({type:'bot',data});
-
- scrollDown();
+ const actions=document.createElement('div');actions.className='actions';
+ const copy=document.createElement('button');copy.textContent='Copy answer';
+ copy.onclick=()=>copyText(data.answer||'').then(()=>{copy.textContent='Copied';setTimeout(()=>copy.textContent='Copy answer',1400)}).catch(()=>{copy.textContent='Copy failed'});
+ actions.appendChild(copy);reply.appendChild(actions);
+ chat.appendChild(reply);if(save)storeMessage({type:'bot',data});scrollDown();
 }
 
-/* --------------------------------
-   SEND MESSAGE
---------------------------------- */
-
+/* SEND */
 async function sendMessage(){
- const query = input.value.trim();
-
- if(!query || searching) return;
-
- searching = true;
- sendButton.disabled = true;
-
- addUser(query);
-
- input.value = '';
- input.style.height = '30px';
-
- const progress = document.createElement('div');
- progress.className = 'message bot progress';
- progress.textContent = 'Preparing your search...';
-
- chat.appendChild(progress);
- scrollDown();
-
+ const query=normalizeQuery(input.value);if(!query||searching)return;
+ searching=true;sendButton.disabled=true;addUser(query);
+ input.value='';input.style.height='30px';
+ const progress=document.createElement('div');progress.className='message bot progress';
+ progress.textContent='Preparing your search...';chat.appendChild(progress);scrollDown();
  try{
   let data;
-
-  if(isImageOnlyRequest(query)){
-   progress.textContent = 'Searching images...';
-   data = await runImageSearch(query);
-
-  }else if(isVideoOnlyRequest(query)){
-   data = await runVideoSearch(query,progress);
-
-  }else{
-   data = await runSearch(query,progress);
-
-   if(isVideoRequest(query)){
-    progress.textContent = 'Finding matching videos...';
-    data.videos = await searchVideos(mediaQuery(query));
-   }
+  if(isImageOnlyRequest(query)){progress.textContent='Searching images...';data=await runImageSearch(query)}
+  else if(isVideoOnlyRequest(query)){data=await runVideoSearch(query,progress)}
+  else{
+   data=await runSearch(query,progress);
+   if(isVideoRequest(query)){progress.textContent='Finding matching videos...';data.videos=await searchVideos(mediaQuery(query))}
   }
-
-  progress.remove();
-  renderBot(data,true);
-
+  progress.remove();renderBot(data,true);
  }catch(e){
   progress.classList.remove('progress');
-  progress.textContent =
-   'VEX could not connect to the search service: '+
-   (e.message || 'Network request failed')+
-   '. Please try again.';
-
-  const retry = document.createElement('button');
-  retry.className = 'icon-btn';
-  retry.textContent = '↻ Retry';
-
-  retry.onclick = ()=>{
-   progress.remove();
-   input.value = query;
-   sendMessage();
-  };
-
-  progress.appendChild(document.createTextNode(' '));
-  progress.appendChild(retry);
-
- }finally{
-  searching = false;
-  sendButton.disabled = false;
-  input.focus();
- }
+  progress.textContent='VEX could not complete the search: '+(e.message||'Network request failed')+'. Please try again.';
+  const retry=document.createElement('button');retry.className='icon-btn';retry.textContent='↻ Retry';
+  retry.onclick=()=>{progress.remove();input.value=query;sendMessage()};
+  progress.appendChild(document.createTextNode(' '));progress.appendChild(retry);
+ }finally{searching=false;sendButton.disabled=false;input.focus()}
 }
-
-function quickAsk(text){
- input.value = text;
- sendMessage();
-}
-
-/* --------------------------------
-   EVENTS
---------------------------------- */
-
+function quickAsk(text){input.value=text;sendMessage()}
 sendButton.addEventListener('click',sendMessage);
-
-input.addEventListener('keydown',e=>{
- if(e.key === 'Enter' && !e.shiftKey){
-  e.preventDefault();
-  sendMessage();
- }
-});
-
-input.addEventListener('input',function(){
- this.style.height = 'auto';
- this.style.height = Math.min(this.scrollHeight,130)+'px';
-});
-
+input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});
+input.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,130)+'px'});
 loadHistory();
-
 </script>
 </body>
 </html>
