@@ -1,4 +1,3 @@
-
 [project]
 name = "vex-ai"
 version = "1.0.0"
@@ -7,7 +6,7 @@ requires-python = ">=3.10"
 dependencies = [
     "flet==1.1.0",
     "flet-webview",
-    "flet-ads",
+    "vex-native-ads @ git+https://github.com/eagleiam20-create/VEX-AI.git@main#subdirectory=vex_native_ads",
     "requests",
     "beautifulsoup4",
     "ddgs"

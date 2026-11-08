@@ -1,0 +1,6 @@
+flet==1.1.0
+flet-webview
+vex-native-ads @ git+https://github.com/eagleiam20-create/VEX-AI.git@main#subdirectory=vex_native_ads
+requests
+beautifulsoup4
+ddgs
