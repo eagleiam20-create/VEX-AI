@@ -1,0 +1,15 @@
+name: vex_native_ads
+description: VEX AI Native AdMob Flet extension.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=3.10.0 <4.0.0"
+  flutter: ">=3.38.1"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flet: ^1.1.0
+  material_ui: any
+  google_mobile_ads: ^9.2.0
