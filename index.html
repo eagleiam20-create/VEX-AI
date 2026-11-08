@@ -9,7 +9,7 @@
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#000;color:#fff;font-family:Arial, sans-serif;height:100vh;overflow:hidden}
+body{margin:0;background:#000;color:#fff;font-family:Arial,sans-serif;height:100vh;overflow:hidden}
 button,textarea{font:inherit}
 .app{height:100dvh;display:flex;background:#000}
 .sidebar{width:260px;border-right:1px solid #222;padding:16px;display:flex;flex-direction:column;flex-shrink:0}
@@ -51,7 +51,7 @@ button,textarea{font:inherit}
 .actions{display:flex;gap:10px;margin-top:12px}
 .actions button{background:none;border:0;color:#888;cursor:pointer;padding:6px}
 .related{display:block;width:100%;text-align:left;padding:13px;border:1px solid #292929;border-radius:10px;background:#000;color:#fff;cursor:pointer}
-.related:hover{border-color:#fff}
+.related:hover{border-color:#fff;background:#101010}
 .composer-area{position:absolute;bottom:0;left:0;right:0;padding:25px 16px 13px;background:linear-gradient(transparent,#000 25%)}
 .composer{max-width:800px;margin:auto;border:1px solid #444;border-radius:25px;background:#000;padding:10px 12px;display:flex;align-items:flex-end;gap:10px}
 .composer:focus-within{border-color:#aaa}
@@ -63,7 +63,7 @@ textarea::placeholder{color:#777}
 .loading{color:#aaa;font-size:13px}
 .loading:before{content:"";display:inline-block;width:7px;height:7px;background:white;border-radius:50%;margin-right:10px;animation:pulse 1s infinite}
 @keyframes pulse{50%{opacity:.2}}
-#viewer{display:none;position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:20;align-items:center;justify-content:center;padding:20px}
+#viewer{display:none;position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:20;align-items:center;justify-content:center;padding:20px}
 #viewer img{max-width:95vw;max-height:85vh;object-fit:contain}
 #viewer button{position:absolute;top:20px;right:25px;background:none;border:0;color:white;font-size:30px;cursor:pointer}
 @media(max-width:700px){
@@ -78,6 +78,7 @@ textarea::placeholder{color:#777}
 
 <body>
 <div class="app">
+
 <aside class="sidebar" id="sidebar">
   <div class="brand">VEX AI</div>
   <button class="btn" onclick="newChat()">＋ &nbsp; New chat</button>
@@ -94,7 +95,8 @@ textarea::placeholder{color:#777}
 <main class="main">
   <div class="top">
     <button onclick="toggleSidebar()">☰</button>
-    <strong>VEX AI</strong><small>Knowledge Assistant</small>
+    <strong>VEX AI</strong>
+    <small>Knowledge Assistant</small>
   </div>
 
   <div id="chat">
@@ -289,13 +291,24 @@ function renderAnswer(data,save=true){
       box.appendChild(grid);
     }
 
-    if(data.related){
-      addLabel(box,"ASK VEX");
-      const related=document.createElement("button");
-      related.className="related";
-      related.textContent=data.related;
-      related.onclick=()=>quickAsk(data.related);
-      box.appendChild(related);
+    if(data.relatedQuestions?.length){
+      addLabel(box,"EXPLORE MORE");
+      const list=document.createElement("div");
+      list.style.display="grid";
+      list.style.gap="9px";
+
+      data.relatedQuestions.slice(0,3).forEach((question,index)=>{
+        const button=document.createElement("button");
+        button.className="related";
+        button.textContent=(index+1)+".  "+question;
+        button.onclick=()=>{
+          input.value=question;
+          sendMessage();
+        };
+        list.appendChild(button);
+      });
+
+      box.appendChild(list);
     }
 
     const actions=document.createElement("div");
@@ -321,7 +334,6 @@ function addGallery(parent,images){
 
   images.forEach(item=>{
     if(!item.url)return;
-
     const card=document.createElement("div");
     card.className="image-card";
     card.onclick=()=>showViewer(item.url);
@@ -354,36 +366,72 @@ function cleanQuery(query){
     .trim();
 }
 
+/* WIKIPEDIA KNOWLEDGE SEARCH */
+
 async function wikiSearch(query){
-  const url=WIKI+"?origin=*&action=query&format=json&list=search&srlimit=5&srsearch="+encodeURIComponent(query);
+  const url=WIKI+
+    "?origin=*&action=query&format=json&list=search"+
+    "&srlimit=8&srinfo=totalhits&srsearch="+
+    encodeURIComponent(query);
+
   const response=await fetch(url);
-  if(!response.ok)throw new Error("Wikipedia search is unavailable.");
+  if(!response.ok)throw new Error("Knowledge search is unavailable.");
   const json=await response.json();
   return json.query?.search||[];
 }
 
-async function wikiSummary(title){
-  const url="https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(title);
+/* GET DETAILED ARTICLE EXTRACTS */
+
+async function wikiArticles(results){
+  if(!results.length)return [];
+
+  const titles=results
+    .slice(0,7)
+    .map(item=>item.title)
+    .join("|");
+
+  const url=WIKI+
+    "?origin=*&action=query&format=json"+
+    "&prop=extracts|info"+
+    "&explaintext=1&exsectionformat=plain"+
+    "&exchars=5000&inprop=url"+
+    "&redirects=1&titles="+encodeURIComponent(titles);
+
   const response=await fetch(url);
-  if(!response.ok)return null;
-  return await response.json();
+  if(!response.ok)throw new Error("Could not read knowledge articles.");
+
+  const json=await response.json();
+  const pages=Object.values(json.query?.pages||{});
+
+  return pages
+    .filter(p=>p.extract&&p.extract.length>100)
+    .map(p=>({
+      title:p.title,
+      extract:p.extract,
+      url:p.fullurl||"https://en.wikipedia.org/wiki/"+encodeURIComponent(p.title.replace(/ /g,"_"))
+    }));
 }
+
+/* WIKIMEDIA IMAGE SEARCH */
 
 async function commonsImages(query){
   const url=COMMONS+
-    "?origin=*&action=query&format=json&generator=search"+
+    "?origin=*&action=query&format=json"+
+    "&generator=search"+
     "&gsrsearch="+encodeURIComponent(query+" filetype:bitmap")+
     "&gsrnamespace=6&gsrlimit=8"+
     "&prop=imageinfo&iiprop=url&iiurlwidth=500";
 
   const response=await fetch(url);
   if(!response.ok)return [];
+
   const json=await response.json();
   const pages=Object.values(json.query?.pages||{});
 
   return pages.map(page=>{
     const info=page.imageinfo?.[0];
     if(!info)return null;
+
     return {
       title:page.title.replace("File:",""),
       url:info.thumburl||info.url
@@ -391,17 +439,127 @@ async function commonsImages(query){
   }).filter(Boolean);
 }
 
-function makeRelated(query){
-  const words=query.replace(/[?!.]/g,"").trim().split(/\s+/);
-  if(!words.length)return "";
-  return "How does "+words.slice(0,7).join(" ")+" work?";
+/* SCORE ARTICLES AGAINST THE QUESTION */
+
+function scoreArticle(article,query){
+  const queryWords=query.toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter(w=>w.length>2);
+
+  const title=article.title.toLowerCase();
+  const text=article.extract.toLowerCase();
+
+  let score=0;
+
+  queryWords.forEach(word=>{
+    if(title.includes(word))score+=5;
+    if(text.includes(word))score+=1;
+  });
+
+  return score;
 }
+
+/* SELECT USEFUL KNOWLEDGE */
+
+function selectArticles(articles,query){
+  return articles
+    .map(article=>({
+      ...article,
+      score:scoreArticle(article,query)
+    }))
+    .sort((a,b)=>b.score-a.score)
+    .slice(0,5);
+}
+
+/* CREATE A MORE COMPLETE ANSWER */
+
+function buildAnswer(articles,query){
+  if(!articles.length){
+    return "I couldn't find enough reliable information for this question. Try using different keywords.";
+  }
+
+  const best=articles[0];
+  let output="";
+
+  output+=best.title+"\n\n";
+  output+=best.extract.slice(0,1800).trim();
+
+  if(articles.length>1){
+    output+="\n\nMORE INFORMATION\n";
+
+    articles.slice(1,4).forEach(article=>{
+      const sentences=article.extract
+        .split(/(?<=[.!?])\s+/)
+        .filter(s=>s.length>55);
+
+      const useful=sentences.slice(0,2).join(" ");
+
+      if(useful){
+        output+="\n"+article.title+":\n";
+        output+=useful.slice(0,650)+"\n";
+      }
+    });
+  }
+
+  return output.trim();
+}
+
+/* GENERATE DIFFERENT FOLLOW-UP QUESTIONS */
+
+function generateRelatedQuestions(query,articles){
+  const topic=articles[0]?.title||query;
+  const lower=topic.toLowerCase();
+
+  const candidates=[
+    `How does ${topic} work in simple terms?`,
+    `Where is ${topic} used in the real world?`,
+    `What are the biggest challenges and limitations of ${topic}?`
+  ];
+
+  if(/artificial intelligence|machine learning|robot|computer/i.test(lower)){
+    return [
+      `How do machines learn from data in ${topic}?`,
+      `How is ${topic} changing everyday life and industries?`,
+      `What are the risks and limitations of ${topic}?`
+    ];
+  }
+
+  if(/space|planet|star|universe|black hole|galaxy/i.test(lower)){
+    return [
+      `How was ${topic} discovered and studied?`,
+      `What makes ${topic} different from other objects in space?`,
+      `What new discoveries could scientists make about ${topic}?`
+    ];
+  }
+
+  if(/history|war|empire|civilization|revolution/i.test(lower)){
+    return [
+      `What events led to ${topic}?`,
+      `How did ${topic} change the world?`,
+      `What were the long-term effects of ${topic}?`
+    ];
+  }
+
+  if(/science|physics|chemistry|biology|quantum/i.test(lower)){
+    return [
+      `What is the scientific principle behind ${topic}?`,
+      `Where can we see ${topic} in everyday life?`,
+      `What are the latest questions scientists have about ${topic}?`
+    ];
+  }
+
+  return candidates;
+}
+
+/* MAIN KNOWLEDGE ENGINE */
 
 async function searchVex(query){
   const imageOnly=isImageRequest(query);
   const searchTerm=imageOnly?cleanQuery(query):query;
 
-  if(!searchTerm)throw new Error("Please tell VEX what image you want.");
+  if(!searchTerm){
+    throw new Error("Please tell VEX what you want to find.");
+  }
 
   const imagePromise=commonsImages(searchTerm);
 
@@ -413,46 +571,33 @@ async function searchVex(query){
     };
   }
 
-  const results=await wikiSearch(searchTerm);
-
-  const summaries=await Promise.all(
-    results.slice(0,4).map(item=>wikiSummary(item.title))
-  );
-
-  const sources=[];
-  const answerParts=[];
-
-  summaries.forEach((item,index)=>{
-    if(!item)return;
-
-    const title=item.title||results[index]?.title||"Source";
-    const description=item.extract||"";
-    const url=item.content_urls?.desktop?.page||
-      "https://en.wikipedia.org/wiki/"+encodeURIComponent(title.replace(/ /g,"_"));
-
-    if(description){
-      answerParts.push(title+"\n"+description);
-      sources.push({title,url,description:description.slice(0,180)});
-    }
-  });
-
+  const searchResults=await wikiSearch(searchTerm);
+  const allArticles=await wikiArticles(searchResults);
+  const articles=selectArticles(allArticles,searchTerm);
   const images=await imagePromise;
 
-  let answer;
-  if(answerParts.length){
-    answer=answerParts.slice(0,3).join("\n\n");
-  }else{
-    answer="I couldn't find a matching Wikipedia article. Try asking with different keywords.";
-  }
+  const answer=buildAnswer(articles,searchTerm);
+
+  const sources=articles.map(article=>({
+    title:article.title,
+    url:article.url,
+    description:article.extract.slice(0,200)
+  }));
+
+  const relatedQuestions=articles.length
+    ?generateRelatedQuestions(searchTerm,articles)
+    :[];
 
   return {
     imageOnly:false,
     answer,
     images,
     sources,
-    related:answerParts.length?makeRelated(searchTerm):""
+    relatedQuestions
   };
 }
+
+/* CHAT */
 
 async function sendMessage(){
   const query=input.value.trim();
@@ -467,17 +612,13 @@ async function sendMessage(){
 
   const loading=document.createElement("div");
   loading.className="message loading";
-  loading.textContent="VEX is searching information and images...";
+  loading.textContent="VEX is searching knowledge, reading articles and finding images...";
   chat.appendChild(loading);
   scrollDown();
 
   try{
     const result=await searchVex(query);
     loading.remove();
-
-    if(!result.imageOnly&&!result.answer){
-      result.answer="I couldn't find a useful answer.";
-    }
 
     renderAnswer(result,true);
 
