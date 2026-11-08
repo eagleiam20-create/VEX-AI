@@ -1,136 +1,130 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <title>VEX AI</title>
 
 <style>
-:root{--black:#000;--white:#fff;--border:#202020;--soft:#a0a0a0}
+:root{color-scheme:dark;--bg:#000;--line:#252525;--white:#fff;--muted:#999}
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;background:#000;color:#fff;font-family:Inter,"Segoe UI",Arial,sans-serif}
+html,body{margin:0;width:100%;height:100%;background:#000;color:#fff;font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
 body{height:100dvh;overflow:hidden}
 button,textarea{font:inherit}
+button{cursor:pointer}
 .app{height:100dvh;display:flex;background:#000}
-
-.sidebar{width:265px;background:#000;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:14px;flex-shrink:0}
-.side-top{display:flex;align-items:center;justify-content:space-between;padding:8px 5px 22px}
-.brand{font-size:22px;font-weight:900;letter-spacing:3px;color:#fff}
-.icon-btn{background:transparent;border:0;color:#fff;font-size:21px;cursor:pointer;padding:9px;border-radius:10px}
-.icon-btn:hover{background:#171717}
-.new-chat{background:#000;border:1px solid #333;color:#fff;border-radius:12px;padding:13px;text-align:left;cursor:pointer;transition:.2s}
+.sidebar{width:270px;flex:0 0 270px;background:#000;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:14px;z-index:10}
+.side-top{display:flex;align-items:center;justify-content:space-between;padding:7px 4px 22px}
+.brand{font-size:22px;font-weight:900;letter-spacing:3px}
+.icon-btn{background:transparent;border:0;color:#fff;font-size:20px;padding:9px;border-radius:10px}
+.icon-btn:hover,.history-item:hover{background:#171717}
+.new-chat{background:#000;border:1px solid #383838;color:#fff;border-radius:12px;padding:13px;text-align:left}
 .new-chat:hover{background:#151515;border-color:#777}
 .history-title{font-size:10px;color:#888;margin:25px 8px 10px;letter-spacing:2px}
-.history{overflow-y:auto;flex:1}
+.history{overflow:auto;flex:1}
 .history-item{padding:11px;border-radius:9px;color:#ddd;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
-.history-item:hover{background:#151515}
-.profile{border-top:1px solid #202020;padding:15px 6px 5px}
-.profile-name{font-size:13px;font-weight:800;color:white}
+.profile{border-top:1px solid var(--line);padding:15px 6px 5px}
+.profile-name{font-size:13px;font-weight:800}
 .profile-info{font-size:11px;color:#888;margin-top:6px;line-height:1.8}
-
-.main{flex:1;min-width:0;display:flex;flex-direction:column;height:100dvh;background:#000}
-.topbar{height:60px;min-height:60px;display:flex;align-items:center;padding:0 22px;border-bottom:1px solid #171717;background:#000}
-.mobile-brand{display:none;font-weight:900;letter-spacing:2px}
-.model-label{font-size:14px;color:#fff;font-weight:600}
+.main{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;height:100dvh;background:#000}
+.topbar{height:60px;min-height:60px;display:flex;align-items:center;padding:0 22px;border-bottom:1px solid #171717}
+.mobile-brand{display:none;font-weight:900;letter-spacing:2px;margin-right:14px}
+.model-label{font-size:14px;font-weight:600}
 .model-label span{color:#777;font-size:11px;margin-left:8px}
-
-#chat{flex:1;overflow-y:auto;padding:26px 20px 165px;scroll-behavior:smooth;background:#000}
-.welcome{max-width:700px;margin:20vh auto 30px;text-align:center}
-.welcome h1{font-size:39px;letter-spacing:4px;font-weight:750;margin:0 0 14px;color:#fff}
+#chat{flex:1;overflow-y:auto;padding:26px 20px 160px;scroll-behavior:smooth;background:#000}
+.welcome{max-width:700px;margin:18vh auto 30px;text-align:center}
+.welcome h1{font-size:39px;letter-spacing:2px;font-weight:750;margin:0 0 14px}
 .welcome p{color:#888;font-size:14px}
 .suggestions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:30px}
-.suggestions button{background:#000;border:1px solid #292929;color:#ddd;border-radius:22px;padding:12px 17px;font-size:12px;cursor:pointer;transition:.2s}
-.suggestions button:hover{background:#fff;color:#000;border-color:#fff}
-
-.message{max-width:790px;width:100%;margin:0 auto 28px;line-height:1.8;font-size:15px;overflow-wrap:anywhere}
+.suggestions button{background:#000;border:1px solid #292929;color:#ddd;border-radius:22px;padding:12px 17px;font-size:12px}
+.suggestions button:hover{background:#fff;color:#000}
+.message{max-width:850px;width:100%;margin:0 auto 27px;line-height:1.75;font-size:15px;overflow-wrap:anywhere}
 .user-wrap{display:flex;justify-content:flex-end}
-.user{background:#fff;color:#000;padding:12px 18px;border-radius:21px;max-width:80%;white-space:pre-wrap}
+.user{background:#fff;color:#000;padding:12px 18px;border-radius:21px;max-width:82%;white-space:pre-wrap}
 .bot{padding:6px 0;color:#fff}
-.answer{white-space:pre-wrap;line-height:1.9;color:#fff}
-.label{font-size:10px;letter-spacing:2px;color:#888;margin:20px 0 10px;font-weight:700}
-
+.answer{line-height:1.85;color:#fff;white-space:pre-wrap}
+.label{font-size:10px;letter-spacing:2px;color:#888;margin:22px 0 11px;font-weight:700}
 .sources{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
-.source{display:block;background:#000;border:1px solid #292929;padding:14px;border-radius:12px;text-decoration:none;color:#fff;transition:.2s}
+.source{display:block;background:#000;border:1px solid #292929;padding:14px;border-radius:12px;text-decoration:none;color:#fff}
 .source:hover{border-color:#fff}
 .source strong{font-size:13px;display:block}
 .source small{font-size:11px;color:#999;display:block;margin-top:6px;line-height:1.6}
 .tag{font-size:9px;color:#888;display:block;margin-bottom:7px;letter-spacing:1.5px}
-
-.images{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px}
-.image-card{border:0;background:#080808;padding:0;border-radius:10px;overflow:hidden;cursor:pointer;text-align:left;color:#ddd}
-.image-card img{width:100%;height:145px;object-fit:cover;display:block;background:#080808;transition:transform .25s}
-.image-card:hover img{transform:scale(1.04)}
-.image-card span{display:block;padding:8px;font-size:11px;line-height:1.4}
-
-.related{display:flex;flex-wrap:wrap;gap:9px}
-.related button{background:#050505;border:1px solid #292929;color:#ddd;border-radius:18px;padding:10px 14px;text-align:left;font-size:12px;cursor:pointer}
+.images{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
+.image-card{min-width:0;background:#050505;border:1px solid #222;border-radius:12px;overflow:hidden}
+.image-open{display:block;width:100%;padding:0;background:#080808;border:0}
+.images img{width:100%;height:155px;object-fit:cover;display:block}
+.image-caption{padding:9px;font-size:11px;color:#ddd}
+.image-credit{padding:0 9px 10px;color:#888;font-size:10px}
+.videos{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:13px}
+.video-card{border:1px solid #292929;border-radius:12px;overflow:hidden;background:#050505}
+.video-frame{width:100%;aspect-ratio:16/9;background:#111;border:0;display:block}
+.video-info{padding:12px}
+.video-info strong{font-size:13px;display:block}
+.video-info small{display:block;color:#999;font-size:11px;margin-top:5px}
+.video-link{display:inline-block;color:#fff;font-size:11px;margin-top:9px;text-decoration:underline}
+.related{display:flex;flex-direction:column;gap:8px}
+.related button{background:#050505;border:1px solid #292929;color:#ddd;border-radius:10px;padding:12px;text-align:left;font-size:12px}
 .related button:hover{border-color:#fff;color:#fff}
-
-.composer-area{position:absolute;bottom:0;left:265px;right:0;background:linear-gradient(transparent,#000 22%);padding:30px 20px 17px}
-.composer{max-width:790px;margin:auto;background:#000;border:1px solid #454545;border-radius:26px;padding:10px 12px;display:flex;gap:10px;align-items:flex-end;transition:.2s}
+.actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.actions button{background:transparent;border:1px solid #292929;color:#aaa;padding:7px 11px;border-radius:9px;font-size:12px}
+.actions button:hover{color:#fff;border-color:#777}
+.progress{color:#aaa;font-size:13px}
+.progress:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#fff;margin-right:10px;animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.2}}
+.composer-area{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,#000 22%);padding:30px 20px 17px}
+.composer{max-width:850px;margin:auto;background:#000;border:1px solid #454545;border-radius:26px;padding:10px 12px;display:flex;gap:10px;align-items:flex-end}
 .composer:focus-within{border-color:#aaa}
 textarea{background:transparent;color:#fff;border:0;outline:0;resize:none;flex:1;min-height:30px;max-height:130px;font-size:15px;padding:7px 3px}
 textarea::placeholder{color:#777}
-.send{width:39px;height:39px;border:0;border-radius:50%;background:#fff;color:#000;font-size:23px;font-weight:900;cursor:pointer}
-.send:hover{background:#ddd}
-.send:disabled{opacity:.4;cursor:not-allowed}
+.send{width:39px;height:39px;border:0;border-radius:50%;background:#fff;color:#000;font-size:23px;font-weight:900}
+.send:disabled{opacity:.4}
 .bottom-note{text-align:center;color:#666;font-size:10px;margin-top:11px}
-.actions{display:flex;gap:9px;margin-top:12px}
-.actions button{background:transparent;border:0;color:#888;padding:7px;cursor:pointer;font-size:12px}
-.actions button:hover{color:#fff}
-.progress{color:#aaa;font-size:13px}
-.progress:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#fff;margin-right:10px;animation:pulse 1s infinite}
-.error-text{color:#aaa;font-size:13px}
-
-.viewer{position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:50;display:none;align-items:center;justify-content:center;padding:55px 20px 25px}
-.viewer.open{display:flex}
-.viewer img{max-width:95vw;max-height:85vh;object-fit:contain}
-.viewer-close{position:absolute;right:22px;top:15px;background:#151515;color:#fff;border:1px solid #444;border-radius:50%;width:42px;height:42px;font-size:24px;cursor:pointer}
-.viewer-caption{position:absolute;bottom:15px;left:15px;right:15px;text-align:center;color:#aaa;font-size:12px}
-
+#imageViewer{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:100;display:none;align-items:center;justify-content:center;flex-direction:column;padding:55px 15px 20px}
+#imageViewer.open{display:flex}
+#viewerImage{max-width:95vw;max-height:78vh;object-fit:contain}
+#viewerTitle{font-size:12px;color:#bbb;margin-top:12px;text-align:center}
+#viewerClose{position:absolute;top:12px;right:18px;background:#171717;border:1px solid #444;color:white;border-radius:50%;width:42px;height:42px;font-size:22px}
+.hidden{display:none!important}
 #chat::-webkit-scrollbar,.history::-webkit-scrollbar{width:5px}
 #chat::-webkit-scrollbar-thumb,.history::-webkit-scrollbar-thumb{background:#292929;border-radius:10px}
-
-@keyframes pulse{50%{opacity:.2}}
-
 @media(max-width:700px){
- .sidebar{position:fixed;z-index:5;left:-275px;top:0;bottom:0;transition:left .2s}
- .sidebar.open{left:0}
- .main{width:100%}
- .mobile-brand{display:block;margin-right:15px}
- .topbar{padding:0 12px}
- #chat{padding:20px 15px 155px}
- .composer-area{left:0;padding:22px 12px 12px}
- .welcome{margin-top:18vh}
- .welcome h1{font-size:31px}
- .user{max-width:90%}
- .sources{grid-template-columns:1fr}
- .images{grid-template-columns:repeat(2,minmax(0,1fr))}
+.sidebar{position:fixed;left:-280px;top:0;bottom:0;transition:left .2s;width:270px}
+.sidebar.open{left:0}
+.main{width:100%}
+.mobile-brand{display:block}
+.topbar{padding:0 12px}
+#chat{padding:20px 15px 155px}
+.composer-area{padding:22px 12px 12px}
+.welcome{margin-top:18vh}
+.welcome h1{font-size:30px}
+.user{max-width:90%}
+.sources{grid-template-columns:1fr}
+.images{grid-template-columns:repeat(2,minmax(0,1fr))}
+.images img{height:130px}
+.videos{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
 <div class="app">
-
 <aside class="sidebar" id="sidebar">
  <div class="side-top">
   <div class="brand">VEX AI</div>
   <button class="icon-btn" onclick="toggleSidebar()">×</button>
  </div>
-
  <button class="new-chat" onclick="newChat()">＋ &nbsp; New chat</button>
-
  <div class="history-title">YOUR CHATS</div>
  <div class="history" id="history"></div>
-
  <div class="profile">
   <div class="profile-name">VEX AI</div>
   <div class="profile-info">
    Owner &amp; Creator: Avee Sharma<br>
    Experimental model: VEX V6<br>
-   Knowledge: Public web index<br>
+   Knowledge: Public web sources<br>
    Independent AI project
   </div>
  </div>
@@ -158,45 +152,59 @@ textarea::placeholder{color:#777}
 
  <div class="composer-area">
   <div class="composer">
-   <textarea id="question" rows="1" placeholder="Message VEX AI..." aria-label="Message VEX AI"></textarea>
-   <button class="send" id="send" aria-label="Send">↑</button>
+   <textarea id="question" rows="1" placeholder="Message VEX AI..."></textarea>
+   <button class="send" id="send" aria-label="Send message">↑</button>
   </div>
   <div class="bottom-note">VEX AI · Built by Avee Sharma</div>
  </div>
 </main>
 </div>
 
-<!-- In-app image viewer -->
-<div class="viewer" id="viewer" onclick="closeViewer()">
- <button class="viewer-close" onclick="closeViewer()">×</button>
- <img id="viewer-image" alt="Image preview">
- <div class="viewer-caption" id="viewer-caption"></div>
+<div id="imageViewer" onclick="closeViewer()">
+ <button id="viewerClose" onclick="closeViewer()">×</button>
+ <img id="viewerImage" alt="Full size image">
+ <div id="viewerTitle"></div>
 </div>
 
 <script>
-const API = "https://puri.li";
+'use strict';
 
-const chat = document.getElementById("chat");
-const input = document.getElementById("question");
-const sendButton = document.getElementById("send");
-const historyBox = document.getElementById("history");
+const API='https://puri.li';
+const chat=document.getElementById('chat');
+const input=document.getElementById('question');
+const sendButton=document.getElementById('send');
+const historyBox=document.getElementById('history');
 
-let conversations = [];
-let activeId = null;
-let searching = false;
+let conversations=[];
+let activeId=null;
+let searching=false;
 
-/* ---------------- CHAT HISTORY ---------------- */
+const WELCOME=`
+<div class="welcome" id="welcome">
+<h1>What can I help with?</h1>
+<p>Explore knowledge. Discover ideas. Ask VEX anything.</p>
+<div class="suggestions">
+<button onclick="quickAsk('Explain artificial intelligence')">Explain AI</button>
+<button onclick="quickAsk('Latest space discoveries')">Space</button>
+<button onclick="quickAsk('How does the internet work?')">Technology</button>
+<button onclick="quickAsk('Explain quantum computing')">Science</button>
+</div>
+</div>`;
+
+function scrollDown(){
+ chat.scrollTop=chat.scrollHeight;
+}
 
 function saveHistory(){
  try{
-  localStorage.setItem("vex_chats",JSON.stringify(conversations));
+  localStorage.setItem('vex_chats',JSON.stringify(conversations));
  }catch(e){}
 }
 
 function loadHistory(){
  try{
-  conversations=JSON.parse(localStorage.getItem("vex_chats")||"[]");
-  if(!Array.isArray(conversations))conversations=[];
+  const saved=JSON.parse(localStorage.getItem('vex_chats')||'[]');
+  conversations=Array.isArray(saved)?saved:[];
  }catch(e){
   conversations=[];
  }
@@ -204,11 +212,11 @@ function loadHistory(){
 }
 
 function renderHistory(){
- historyBox.textContent="";
+ historyBox.textContent='';
  conversations.forEach(c=>{
-  const el=document.createElement("div");
-  el.className="history-item";
-  el.textContent=c.title||"New chat";
+  const el=document.createElement('div');
+  el.className='history-item';
+  el.textContent=c.title||'New chat';
   el.onclick=()=>openChat(c.id);
   historyBox.appendChild(el);
  });
@@ -216,24 +224,15 @@ function renderHistory(){
 
 function newChat(){
  activeId=null;
- chat.innerHTML=`
- <div class="welcome" id="welcome">
-  <h1>What can I help with?</h1>
-  <p>Explore knowledge. Discover ideas. Ask VEX anything.</p>
-  <div class="suggestions">
-   <button onclick="quickAsk('Explain artificial intelligence')">Explain AI</button>
-   <button onclick="quickAsk('Latest space discoveries')">Space</button>
-   <button onclick="quickAsk('How does the internet work?')">Technology</button>
-   <button onclick="quickAsk('Explain quantum computing')">Science</button>
-  </div>
- </div>`;
- input.value="";
+ chat.innerHTML=WELCOME;
+ input.value='';
+ input.style.height='30px';
+ document.getElementById('sidebar').classList.remove('open');
  input.focus();
- document.getElementById("sidebar").classList.remove("open");
 }
 
 function toggleSidebar(){
- document.getElementById("sidebar").classList.toggle("open");
+ document.getElementById('sidebar').classList.toggle('open');
 }
 
 function openChat(id){
@@ -241,14 +240,15 @@ function openChat(id){
  if(!c)return;
 
  activeId=id;
- chat.innerHTML="";
+ chat.innerHTML='';
 
- c.messages.forEach(m=>{
-  if(m.type==="user")addUser(m.text,false);
-  else renderBot(m.data,false);
+ (c.messages||[]).forEach(m=>{
+  if(m.type==='user')addUser(m.text,false);
+  if(m.type==='bot')renderBot(m.data,false);
  });
 
- document.getElementById("sidebar").classList.remove("open");
+ document.getElementById('sidebar').classList.remove('open');
+ scrollDown();
 }
 
 function storeMessage(m){
@@ -256,7 +256,7 @@ function storeMessage(m){
   activeId=String(Date.now());
   conversations.unshift({
    id:activeId,
-   title:m.type==="user"?m.text.slice(0,45):"New chat",
+   title:m.type==='user'?m.text.slice(0,48):'New chat',
    messages:[]
   });
  }
@@ -269,493 +269,673 @@ function storeMessage(m){
 }
 
 function addUser(text,save=true){
- document.getElementById("welcome")?.remove();
+ document.getElementById('welcome')?.remove();
 
- const wrap=document.createElement("div");
- wrap.className="message user-wrap";
+ const wrap=document.createElement('div');
+ wrap.className='message user-wrap';
 
- const bubble=document.createElement("div");
- bubble.className="user";
+ const bubble=document.createElement('div');
+ bubble.className='user';
  bubble.textContent=text;
 
  wrap.appendChild(bubble);
  chat.appendChild(wrap);
 
- if(save)storeMessage({type:"user",text});
+ if(save)storeMessage({type:'user',text});
  scrollDown();
 }
 
+async function copyText(text){
+ if(navigator.clipboard&&window.isSecureContext){
+  await navigator.clipboard.writeText(text);
+  return;
+ }
+
+ const area=document.createElement('textarea');
+ area.value=text;
+ area.style.position='fixed';
+ area.style.opacity='0';
+ document.body.appendChild(area);
+ area.select();
+
+ const ok=document.execCommand('copy');
+ area.remove();
+
+ if(!ok)throw new Error('Copy failed');
+}
+
 function addLabel(parent,text){
- const el=document.createElement("div");
- el.className="label";
+ const el=document.createElement('div');
+ el.className='label';
  el.textContent=text;
  parent.appendChild(el);
 }
 
-function scrollDown(){
- chat.scrollTop=chat.scrollHeight;
+function absoluteURL(value){
+ try{
+  return new URL(value,API).href;
+ }catch(e){
+  return '';
+ }
 }
 
-/* ---------------- SAFE HELPERS ---------------- */
-
-function validURL(url){
+function validURL(value){
  try{
-  const u=new URL(url);
-  return u.protocol==="https:"||u.protocol==="http:";
+  const u=new URL(value);
+  return u.protocol==='https:'||u.protocol==='http:';
  }catch(e){
   return false;
  }
 }
 
-function escapeText(value){
- return String(value||"").replace(/\s+/g," ").trim();
+function safeHost(url){
+ try{return new URL(url).hostname.replace(/^www\./,'')}
+ catch(e){return 'WEB SOURCE'}
 }
 
-function getHost(url){
- try{return new URL(url).hostname.replace(/^www\./,"");}
- catch(e){return "WEB SOURCE";}
+function addSource(parent,item){
+ const url=absoluteURL(item.url);
+ if(!validURL(url))return;
+
+ const a=document.createElement('a');
+ a.className='source';
+ a.href=url;
+ a.target='_blank';
+ a.rel='noopener noreferrer';
+
+ const tag=document.createElement('span');
+ tag.className='tag';
+ tag.textContent=item.source||safeHost(url);
+
+ const title=document.createElement('strong');
+ title.textContent=item.title||'Web result';
+
+ const small=document.createElement('small');
+ small.textContent=item.description||'Open original source';
+
+ a.append(tag,title,small);
+ parent.appendChild(a);
 }
 
-async function fetchJSON(url,timeout=25000){
+async function fetchJSON(path,timeoutMs=15000){
  const controller=new AbortController();
- const timer=setTimeout(()=>controller.abort(),timeout);
+ const timer=setTimeout(()=>controller.abort(),timeoutMs);
 
  try{
-  const response=await fetch(url,{
-   method:"GET",
+  const response=await fetch(API+path,{
+   method:'GET',
+   mode:'cors',
+   credentials:'omit',
+   cache:'no-store',
    signal:controller.signal,
-   headers:{"Accept":"application/json"}
+   headers:{'Accept':'application/json'}
   });
 
-  if(!response.ok)throw new Error("Search service returned "+response.status);
-  return await response.json();
+  const raw=await response.text();
+  let data;
+
+  try{
+   data=JSON.parse(raw);
+  }catch(e){
+   throw new Error('Search service returned invalid JSON.');
+  }
+
+  if(!response.ok){
+   throw new Error(data.error||('HTTP '+response.status));
+  }
+
+  return data;
  }finally{
   clearTimeout(timer);
  }
 }
 
-/* ---------------- INTERNET SEARCH ---------------- */
+async function fetchWithRetry(path,attempts=2){
+ let last;
 
-/*
-  Purili search returns ranked pages from its independent
-  crawler-built web index. It is not a Wikipedia-only search.
-*/
+ for(let i=0;i<attempts;i++){
+  try{
+   return await fetchJSON(path);
+  }catch(e){
+   last=e;
+   if(i+1<attempts){
+    await new Promise(r=>setTimeout(r,700*(i+1)));
+   }
+  }
+ }
 
-async function searchWeb(query,page=1){
- const params=new URLSearchParams({
-  q:query,
-  page:String(page),
-  exact:"0"
- });
-
- const data=await fetchJSON(API+"/api/search?"+params.toString());
-
- return Array.isArray(data.results)?data.results:[];
+ throw last||new Error('Request failed');
 }
 
-/*
-  Context retrieves text already stored in the search index.
-  It does not scrape every live website.
-*/
+function getWords(query){
+ const ignored=[
+ 'what','when','where','which','who','whom','whose',
+ 'with','from','that','this','then','than','have',
+ 'does','doing','about','into','your','you','the',
+ 'and','for','are','was','were','will','would',
+ 'could','should','can','how','why','tell','explain',
+ 'please','give','show','tell','me','more'
+ ];
 
-async function getPageContext(url){
+ return query.toLowerCase()
+ .normalize('NFKD')
+ .replace(/[^\p{L}\p{N}\s]/gu,' ')
+ .split(/\s+/)
+ .filter(w=>w.length>2&&!ignored.includes(w));
+}
+
+function extractRelevant(text,query,maxChars=4500){
+ if(!text)return '';
+
+ const words=getWords(query);
+
+ const chunks=text.replace(/\r/g,'')
+ .split(/\n+|(?<=[.!?])\s+/)
+ .map(s=>s.trim())
+ .filter(s=>s.length>45);
+
+ const scored=chunks.map((s,i)=>{
+  const low=s.toLowerCase();
+  let score=0;
+
+  words.forEach(w=>{
+   if(low.includes(w))score+=2;
+  });
+
+  if(words.length>1&&words.every(w=>low.includes(w))){
+   score+=3;
+  }
+
+  return {s,score,i};
+ }).filter(x=>x.score>0)
+ .sort((a,b)=>b.score-a.score||a.i-b.i);
+
+ const chosen=[];
+ const seen=new Set();
+ let size=0;
+
+ for(const x of scored){
+  const key=x.s.toLowerCase().slice(0,100);
+  if(seen.has(key))continue;
+  seen.add(key);
+
+  if(size+x.s.length>maxChars)continue;
+
+  chosen.push(x.s);
+  size+=x.s.length;
+
+  if(chosen.length>=9)break;
+ }
+
+ return chosen.join('\n\n');
+}
+
+async function getContext(result){
  try{
-  const params=new URLSearchParams({url});
-  return await fetchJSON(API+"/api/context?"+params.toString(),20000);
+  const d=await fetchJSON(
+   '/api/context?url='+encodeURIComponent(result.url),
+   12000
+  );
+
+  return {
+   title:d.title||result.title,
+   text:[
+    d.summary,
+    d.content,
+    Array.isArray(d.passages)?d.passages.join('\n'):''
+   ].filter(Boolean).join('\n'),
+   coverage:d.coverage||'unknown'
+  };
+ }catch(e){
+  return {
+   title:result.title,
+   text:result.description||'',
+   coverage:'search-snippet-fallback'
+  };
+ }
+}
+
+async function getInfocard(query){
+ try{
+  return await fetchJSON(
+   '/api/infocard?q='+encodeURIComponent(query),
+   9000
+  );
  }catch(e){
   return null;
  }
 }
 
-/* ---------------- RELEVANCE / ANSWER ---------------- */
+/* IMAGE SEARCH */
 
-function getWords(text){
- return String(text||"")
-  .toLowerCase()
-  .replace(/[^a-z0-9\s]/g," ")
-  .split(/\s+/)
-  .filter(w=>w.length>2);
-}
+async function searchImages(query){
+ try{
+  const d=await fetchJSON(
+   '/api/images?q='+encodeURIComponent(query)+'&page=1',
+   12000
+  );
 
-function scoreText(text,words){
- const lower=String(text||"").toLowerCase();
- let score=0;
+  const list=Array.isArray(d.images)?d.images:[];
 
- words.forEach(word=>{
-  const matches=lower.split(word).length-1;
-  score+=Math.min(matches,5);
- });
+  return list.slice(0,8).map(x=>({
+   title:x.title||'Image',
+   image:absoluteURL(x.thumbUrl||x.url),
+   full:absoluteURL(x.url||x.thumbUrl),
+   license:x.license||'License not provided',
+   creator:x.creator||x.author||'',
+   source:x.source||'Wikimedia Commons'
+  })).filter(x=>validURL(x.image)&&validURL(x.full));
 
- return score;
-}
-
-function extractParagraphs(text){
- return String(text||"")
-  .replace(/\r/g,"")
-  .split(/\n+/)
-  .map(p=>p.replace(/\s+/g," ").trim())
-  .filter(p=>p.length>100);
-}
-
-function buildAnswer(query,results,contexts){
- const words=getWords(query);
- let passages=[];
-
- results.forEach((result,index)=>{
-  const context=contexts[index];
-
-  const title=result.title||context?.title||"";
-  const content=context?.content||context?.summary||result.description||"";
-
-  const paragraphs=extractParagraphs(content);
-
-  paragraphs.forEach(p=>{
-   const score=scoreText(p,words)+scoreText(title,words)*2;
-
-   if(score>0){
-    passages.push({
-     text:p,
-     score,
-     title
-    });
-   }
-  });
-
-  if(paragraphs.length===0&&result.description){
-   passages.push({
-    text:result.description,
-    score:scoreText(result.description,words)+1,
-    title
-   });
-  }
- });
-
- passages.sort((a,b)=>b.score-a.score);
-
- const selected=[];
- const seen=new Set();
-
- for(const p of passages){
-  const key=p.text.slice(0,100).toLowerCase();
-  if(seen.has(key))continue;
-
-  seen.add(key);
-  selected.push(p);
-
-  if(selected.length>=4)break;
+ }catch(e){
+  return [];
  }
-
- if(!selected.length){
-  const descriptions=results
-   .map(r=>r.description)
-   .filter(Boolean)
-   .slice(0,4);
-
-  if(descriptions.length){
-   return "Here is what I found from the indexed web sources:\n\n"+
-    descriptions.map((x,i)=>(i+1)+". "+x).join("\n\n");
-  }
-
-  return "I couldn't find enough relevant indexed information for this question. Try using more specific keywords.";
- }
-
- return "Here is a source-based overview of your question:\n\n"+
-  selected.map((p,i)=>(i+1)+". "+p.text.slice(0,850)).join("\n\n");
 }
 
-/* ---------------- RELATED QUESTIONS ---------------- */
+/* IMAGE ONLY DETECTION */
 
-function makeRelatedQuestions(query,results){
- const title=escapeText(results[0]?.title||"");
- let topic=title||query;
+function isImageOnlyRequest(q){
+ const s=q.toLowerCase().trim();
 
- if(topic.length>65)topic=topic.slice(0,65).trim();
+ const imageWords=/\b(image|images|picture|pictures|photo|photos|wallpaper|wallpapers)\b/i;
+ const videoWords=/\b(video|videos|movie|movies|documentary|tutorial)\b/i;
 
- const questions=[
-  "How does "+topic+" work?",
-  "What are the important facts about "+topic+"?",
-  "What are the latest developments related to "+topic+"?"
- ];
+ if(videoWords.test(s))return false;
 
- return [...new Set(questions)].slice(0,3);
-}
-
-/* ---------------- IMAGE SEARCH ---------------- */
-
-function isImageOnlyRequest(query){
- const q=query.toLowerCase().trim();
-
- return (
-  /\b(images?|photos?|pictures?)\s+(of|for)\b/i.test(q) ||
-  /\b(show|find|display|send|get|give)\b.*\b(images?|photos?|pictures?)\b/i.test(q) ||
-  /\b(images?|photos?|pictures?)\b.*\b(only|please|show)\b/i.test(q) ||
-  /^(image|images|photo|photos|picture|pictures)\s*$/i.test(q)
+ return imageWords.test(s)&&
+ (
+  /\b(only|just|show|give|send|display|find|get)\b/i.test(s)||
+  /^(image|images|picture|pictures|photo|photos)\b/i.test(s)
  );
 }
 
-function cleanImageQuery(query){
- return query
-  .replace(/\b(show me|show|find|display|send|give me|get me|give|please)\b/gi,"")
-  .replace(/\b(images?|photos?|pictures?)\b/gi,"")
-  .replace(/\b(only)\b/gi,"")
-  .replace(/\b(of|for)\b/gi,"")
-  .replace(/\s+/g," ")
-  .trim();
+/* VIDEO SEARCH */
+
+function isVideoRequest(q){
+ return /\b(video|videos|watch|documentary|tutorial|clip|clips|movie|movies)\b/i.test(q);
 }
 
-async function searchImages(query){
- const params=new URLSearchParams({
-  q:query,
-  page:"1"
+function cleanVideoQuery(q){
+ return q.replace(/\b(show|give|find|search|watch|play|send|me|some|a|the|video|videos|clip|clips|please)\b/gi,' ')
+ .replace(/\s+/g,' ').trim();
+}
+
+function youtubeId(url){
+ try{
+  const u=new URL(url);
+  if(u.hostname.includes('youtu.be')){
+   return u.pathname.split('/').filter(Boolean)[0]||'';
+  }
+  if(u.hostname.includes('youtube.com')){
+   if(u.pathname==='/watch')return u.searchParams.get('v')||'';
+   const parts=u.pathname.split('/').filter(Boolean);
+   if(['embed','shorts','live'].includes(parts[0]))return parts[1]||'';
+  }
+ }catch(e){}
+ return '';
+}
+
+async function searchVideos(query){
+ const topic=cleanVideoQuery(query)||query;
+ const searches=[
+  'site:youtube.com/watch '+topic,
+  'site:youtu.be '+topic
+ ];
+
+ let all=[];
+
+ for(const q of searches){
+  try{
+   const d=await fetchJSON(
+    '/api/search?q='+encodeURIComponent(q)+'&page=1&exact=0',
+    12000
+   );
+
+   if(Array.isArray(d.results))all=all.concat(d.results);
+  }catch(e){}
+ }
+
+ const seen=new Set();
+ const videos=[];
+
+ for(const item of all){
+  const url=absoluteURL(item.url);
+  const id=youtubeId(url);
+
+  if(!id||seen.has(id))continue;
+  seen.add(id);
+
+  videos.push({
+   id,
+   title:item.title||'Video',
+   url,
+   description:item.description||'',
+   source:'YouTube'
+  });
+
+  if(videos.length>=6)break;
+ }
+
+ return videos;
+}
+
+/* RELATED QUESTIONS */
+
+function makeRelatedQuestions(query,results){
+ const words=getWords(query);
+ const titleWords=[];
+
+ (results||[]).slice(0,4).forEach(r=>{
+  getWords(r.title||'').forEach(w=>{
+   if(!words.includes(w)&&!titleWords.includes(w)){
+    titleWords.push(w);
+   }
+  });
  });
 
- const data=await fetchJSON(API+"/api/images?"+params.toString());
+ const topic=words.slice(0,3).join(' ')||query;
+ const extra=titleWords.slice(0,2);
 
- return Array.isArray(data.images)?data.images:[];
+ const candidates=[
+  'How does '+topic+' work in real life?',
+  'What are the main benefits and limitations of '+topic+'?',
+  extra.length
+   ?'How is '+extra.join(' ')+' connected to '+topic+'?'
+   :'What are some real-world examples of '+topic+'?'
+ ];
+
+ return [...new Set(candidates)].slice(0,3);
 }
 
-/* ---------------- IMAGE VIEWER ---------------- */
+/* BUILD EXPLANATION */
 
-function showViewer(url,title){
- if(!validURL(url))return;
+function buildExplanation(query,parts,card){
+ const instant=card?.instantAnswer?.answer;
+ const facts=Array.isArray(card?.facts)
+  ?card.facts.filter(x=>x&&x.label&&x.value).slice(0,5)
+  :[];
 
- document.getElementById("viewer-image").src=url;
- document.getElementById("viewer-caption").textContent=title||"";
- document.getElementById("viewer").classList.add("open");
+ const relevant=parts.map(p=>({
+  title:p.title,
+  text:extractRelevant(p.text,query,1400)
+ })).filter(p=>p.text);
+
+ let output='';
+
+ if(instant){
+  output+='DIRECT ANSWER\n'+String(instant).trim();
+ }
+
+ if(facts.length){
+  if(output)output+='\n\n';
+  output+='KEY FACTS\n';
+  output+=facts.map(f=>'• '+f.label+': '+f.value).join('\n');
+ }
+
+ if(relevant.length){
+  if(output)output+='\n\n';
+  output+='DETAILED EXPLANATION\n';
+
+  output+=relevant.slice(0,4).map((p,i)=>{
+   return (i+1)+'. '+p.text;
+  }).join('\n\n');
+ }
+
+ if(!output){
+  output='I found related web pages, but their indexed text did not contain enough information to prepare a reliable explanation. Please open the sources below.';
+ }
+
+ return output.trim();
+}
+
+/* NORMAL WEB SEARCH */
+
+async function runSearch(query,progress){
+ progress.textContent='Searching the web...';
+
+ const [searchData,card]=await Promise.all([
+  fetchWithRetry(
+   '/api/search?q='+encodeURIComponent(query)+'&page=1&exact=0',
+   2
+  ),
+  getInfocard(query)
+ ]);
+
+ const results=Array.isArray(searchData.results)
+  ?searchData.results:[ ];
+
+ if(!results.length){
+  return {
+   answer:card?.instantAnswer?.answer||
+    'I could not find matching pages in the available web index. Try a more specific question.',
+   results:[],
+   images:[],
+   related:[],
+   note:'No matching indexed pages were returned.'
+  };
+ }
+
+ progress.textContent='Reading relevant web pages...';
+
+ const selected=results.slice(0,5);
+ const contexts=await Promise.all(selected.map(getContext));
+
+ const parts=contexts.map((c,i)=>({
+  title:c.title||selected[i].title||'Web source',
+  text:c.text||selected[i].description||'',
+  url:selected[i].url,
+  coverage:c.coverage
+ }));
+
+ progress.textContent='Preparing the explanation...';
+
+ const answer=buildExplanation(query,parts,card);
+
+ progress.textContent='Finding related images...';
+
+ const images=await searchImages(query);
+
+ return {
+  answer,
+  results:results.slice(0,8).map(x=>({
+   title:x.title,
+   url:x.url,
+   description:x.description||x.displayUrl||'',
+   source:x.source||'WEB INDEX'
+  })),
+  images,
+  related:makeRelatedQuestions(query,results)
+ };
+}
+
+/* RENDER IMAGES */
+
+function openViewer(url,title){
+ const viewer=document.getElementById('imageViewer');
+ document.getElementById('viewerImage').src=url;
+ document.getElementById('viewerTitle').textContent=title||'';
+ viewer.classList.add('open');
 }
 
 function closeViewer(){
- document.getElementById("viewer").classList.remove("open");
- document.getElementById("viewer-image").src="";
+ document.getElementById('imageViewer').classList.remove('open');
+ document.getElementById('viewerImage').src='';
 }
 
-document.addEventListener("keydown",e=>{
- if(e.key==="Escape")closeViewer();
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape')closeViewer();
 });
-
-/* ---------------- RENDER IMAGES ---------------- */
 
 function renderImages(parent,images){
  if(!images?.length)return;
 
- const gallery=document.createElement("div");
- gallery.className="images";
+ addLabel(parent,'RELATED IMAGES');
+
+ const gallery=document.createElement('div');
+ gallery.className='images';
 
  images.forEach(item=>{
-  const imageUrl=item.thumbUrl||item.image||item.url||"";
-  const title=escapeText(item.title||"Image");
+  if(!validURL(item.image)||!validURL(item.full))return;
 
-  if(!validURL(imageUrl))return;
+  const card=document.createElement('div');
+  card.className='image-card';
 
-  const card=document.createElement("button");
-  card.className="image-card";
-  card.type="button";
-  card.onclick=()=>showViewer(item.url||imageUrl,title);
+  const button=document.createElement('button');
+  button.className='image-open';
+  button.onclick=()=>openViewer(item.full,item.title);
 
-  const img=document.createElement("img");
-  img.src=imageUrl;
-  img.alt=title;
-  img.loading="lazy";
+  const img=document.createElement('img');
+  img.src=item.image;
+  img.alt=item.title||'Image';
+  img.loading='lazy';
   img.onerror=()=>card.remove();
 
-  const caption=document.createElement("span");
-  caption.textContent=title;
+  button.appendChild(img);
 
-  card.append(img,caption);
+  const title=document.createElement('div');
+  title.className='image-caption';
+  title.textContent=item.title||'Image';
+
+  const credit=document.createElement('div');
+  credit.className='image-credit';
+  credit.textContent=
+   (item.creator?item.creator+' · ':'')+
+   item.license+' · '+item.source;
+
+  card.append(button,title,credit);
   gallery.appendChild(card);
  });
 
- if(gallery.children.length)parent.appendChild(gallery);
+ if(gallery.childElementCount)parent.appendChild(gallery);
 }
 
-/* ---------------- RENDER SOURCES ---------------- */
+/* RENDER VIDEOS */
 
-function renderSources(parent,results){
- const grid=document.createElement("div");
- grid.className="sources";
+function renderVideos(parent,videos){
+ if(!videos?.length){
+  const msg=document.createElement('div');
+  msg.style.cssText='color:#999;font-size:12px;margin-top:10px';
+  msg.textContent='No matching YouTube videos were found in the indexed search results. Try another search phrase.';
+  parent.appendChild(msg);
+  return;
+ }
 
- results.forEach(item=>{
-  const url=item.url||"";
-  if(!validURL(url))return;
+ addLabel(parent,'RELATED VIDEOS');
 
-  const a=document.createElement("a");
-  a.className="source";
-  a.href=url;
-  a.target="_blank";
-  a.rel="noopener noreferrer";
+ const grid=document.createElement('div');
+ grid.className='videos';
 
-  const tag=document.createElement("span");
-  tag.className="tag";
-  tag.textContent=getHost(url);
+ videos.forEach(v=>{
+  const card=document.createElement('div');
+  card.className='video-card';
 
-  const title=document.createElement("strong");
-  title.textContent=item.title||"Web result";
+  const frame=document.createElement('iframe');
+  frame.className='video-frame';
+  frame.src='https://www.youtube-nocookie.com/embed/'+encodeURIComponent(v.id);
+  frame.title=v.title;
+  frame.loading='lazy';
+  frame.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+  frame.referrerPolicy='strict-origin-when-cross-origin';
+  frame.allowFullscreen=true;
 
-  const small=document.createElement("small");
-  small.textContent=item.description||"Open original source";
+  const info=document.createElement('div');
+  info.className='video-info';
 
-  a.append(tag,title,small);
-  grid.appendChild(a);
+  const title=document.createElement('strong');
+  title.textContent=v.title;
+
+  const description=document.createElement('small');
+  description.textContent=v.description||'YouTube video';
+
+  const link=document.createElement('a');
+  link.className='video-link';
+  link.href=v.url;
+  link.target='_blank';
+  link.rel='noopener noreferrer';
+  link.textContent='Open original video';
+
+  info.append(title,description,link);
+  card.append(frame,info);
+  grid.appendChild(card);
  });
 
- if(grid.children.length)parent.appendChild(grid);
+ parent.appendChild(grid);
 }
 
-/* ---------------- RENDER RELATED QUESTIONS ---------------- */
+/* RENDER RELATED QUESTIONS */
 
 function renderRelated(parent,questions){
  if(!questions?.length)return;
 
- const row=document.createElement("div");
- row.className="related";
+ addLabel(parent,'EXPLORE FURTHER');
+
+ const box=document.createElement('div');
+ box.className='related';
 
  questions.forEach(q=>{
-  const btn=document.createElement("button");
-  btn.type="button";
-  btn.textContent=q;
-  btn.onclick=()=>quickAsk(q);
-  row.appendChild(btn);
+  const button=document.createElement('button');
+  button.textContent='↗  '+q;
+  button.onclick=()=>quickAsk(q);
+  box.appendChild(button);
  });
 
- parent.appendChild(row);
+ parent.appendChild(box);
 }
 
-/* ---------------- BOT MESSAGE ---------------- */
+/* MAIN BOT RESPONSE */
 
 function renderBot(data,save=true){
- const reply=document.createElement("div");
- reply.className="message bot";
+ const reply=document.createElement('div');
+ reply.className='message bot';
 
- addLabel(reply,"VEX AI");
+ addLabel(reply,'VEX AI');
 
- /*
-   Image-only response:
-   show only images. No answer, sources or suggestions.
- */
  if(data.imageOnly){
-  renderImages(reply,data.images||[]);
-  if(!reply.querySelector(".images")){
-   const empty=document.createElement("div");
-   empty.className="error-text";
-   empty.textContent="No images were found for this search.";
-   reply.appendChild(empty);
-  }
+  renderImages(reply,data.images);
+ }else if(data.videoOnly){
+  renderVideos(reply,data.videos);
  }else{
-  const answer=document.createElement("div");
-  answer.className="answer";
-  answer.textContent=data.answer||"No information found.";
+  const answer=document.createElement('div');
+  answer.className='answer';
+  answer.textContent=data.answer||'No information found.';
   reply.appendChild(answer);
 
-  if(data.images?.length){
-   addLabel(reply,"RELATED IMAGES");
-   renderImages(reply,data.images);
-  }
-
   if(data.results?.length){
-   addLabel(reply,"WEB SOURCES");
-   renderSources(reply,data.results);
+   addLabel(reply,'WEB SOURCES');
+
+   const grid=document.createElement('div');
+   grid.className='sources';
+
+   data.results.forEach(item=>addSource(grid,item));
+   reply.appendChild(grid);
   }
 
-  if(data.related?.length){
-   addLabel(reply,"EXPLORE FURTHER");
-   renderRelated(reply,data.related);
-  }
-
-  const actions=document.createElement("div");
-  actions.className="actions";
-
-  const copy=document.createElement("button");
-  copy.textContent="Copy";
-  copy.onclick=()=>{
-   navigator.clipboard?.writeText(data.answer||"");
-   copy.textContent="Copied";
-   setTimeout(()=>copy.textContent="Copy",1200);
-  };
-
-  actions.appendChild(copy);
-  reply.appendChild(actions);
+  renderImages(reply,data.images);
+  renderVideos(reply,data.videos);
+  renderRelated(reply,data.related);
  }
+
+ const actions=document.createElement('div');
+ actions.className='actions';
+
+ const copy=document.createElement('button');
+ copy.textContent='Copy answer';
+ copy.onclick=()=>{
+  copyText(data.answer||'').then(()=>{
+   copy.textContent='Copied';
+   setTimeout(()=>copy.textContent='Copy answer',1400);
+  }).catch(()=>copy.textContent='Copy failed');
+ };
+
+ actions.appendChild(copy);
+ reply.appendChild(actions);
 
  chat.appendChild(reply);
 
- if(save)storeMessage({type:"bot",data});
+ if(save)storeMessage({type:'bot',data});
  scrollDown();
 }
 
-/* ---------------- SEARCH PROCESS ---------------- */
-
-function showProgress(text){
- let el=document.getElementById("vex-progress");
-
- if(!el){
-  el=document.createElement("div");
-  el.id="vex-progress";
-  el.className="message bot progress";
-  chat.appendChild(el);
- }
-
- el.textContent=text;
- scrollDown();
-}
-
-function removeProgress(){
- document.getElementById("vex-progress")?.remove();
-}
-
-async function runImageSearch(query){
- const clean=cleanImageQuery(query)||query;
- const images=await searchImages(clean);
-
- return {
-  imageOnly:true,
-  images
- };
-}
-
-async function runWebSearch(query){
- showProgress("Finding relevant pages across the web...");
-
- const results=await searchWeb(query);
-
- if(!results.length){
-  return {
-   answer:"I couldn't find matching pages in the current web index. Try a different or more specific search query.",
-   results:[],
-   images:[],
-   related:[]
-  };
- }
-
- showProgress("Reading relevant indexed sources...");
-
- const selected=results.slice(0,5);
-
- const contexts=await Promise.all(
-  selected.map(r=>getPageContext(r.url))
- );
-
- showProgress("Preparing your answer...");
-
- const answer=buildAnswer(query,selected,contexts);
-
- let images=[];
- try{
-  const imageData=await searchImages(query);
-  images=imageData.slice(0,6);
- }catch(e){
-  images=[];
- }
-
- return {
-  imageOnly:false,
-  answer,
-  results:selected,
-  images,
-  related:makeRelatedQuestions(query,selected)
- };
-}
-
-/* ---------------- SEND MESSAGE ---------------- */
+/* SEND MESSAGE */
 
 async function sendMessage(){
  const query=input.value.trim();
@@ -767,41 +947,62 @@ async function sendMessage(){
 
  addUser(query);
 
- input.value="";
- input.style.height="30px";
+ input.value='';
+ input.style.height='30px';
 
- showProgress("Understanding your question...");
+ const progress=document.createElement('div');
+ progress.className='message bot progress';
+ progress.textContent='Preparing your search...';
+
+ chat.appendChild(progress);
+ scrollDown();
 
  try{
   let data;
 
   if(isImageOnlyRequest(query)){
-   showProgress("Finding matching images...");
-   data=await runImageSearch(query);
+   progress.textContent='Searching for images...';
+
+   data={
+    imageOnly:true,
+    images:await searchImages(query)
+   };
+
+  }else if(isVideoRequest(query)){
+   progress.textContent='Searching for relevant videos...';
+
+   data={
+    videoOnly:true,
+    videos:await searchVideos(query)
+   };
+
   }else{
-   data=await runWebSearch(query);
+   data=await runSearch(query,progress);
   }
 
-  removeProgress();
+  progress.remove();
   renderBot(data,true);
 
- }catch(error){
-  removeProgress();
+ }catch(e){
+  progress.classList.remove('progress');
 
-  const reply=document.createElement("div");
-  reply.className="message bot";
+  progress.textContent=
+   'VEX could not connect to the search service. '+
+   (e.name==='AbortError'?'The request timed out.':e.message||'Network request failed.')+
+   ' Check your internet connection and try again.';
 
-  addLabel(reply,"VEX AI");
+  const retry=document.createElement('button');
+  retry.className='icon-btn';
+  retry.textContent='↻ Retry';
 
-  const text=document.createElement("div");
-  text.className="error-text";
-  text.textContent=
-   "VEX couldn't access the web search service right now. Please try again. ("+
-   (error.message||"Network error")+")";
+  retry.onclick=()=>{
+   progress.remove();
+   input.value=query;
+   sendMessage();
+  };
 
-  reply.appendChild(text);
-  chat.appendChild(reply);
-  scrollDown();
+  progress.appendChild(document.createTextNode(' '));
+  progress.appendChild(retry);
 
  }finally{
   searching=false;
@@ -815,20 +1016,18 @@ function quickAsk(text){
  sendMessage();
 }
 
-/* ---------------- INPUT ---------------- */
+sendButton.addEventListener('click',sendMessage);
 
-sendButton.addEventListener("click",sendMessage);
-
-input.addEventListener("keydown",e=>{
- if(e.key==="Enter"&&!e.shiftKey){
+input.addEventListener('keydown',e=>{
+ if(e.key==='Enter'&&!e.shiftKey){
   e.preventDefault();
   sendMessage();
  }
 });
 
-input.addEventListener("input",function(){
- this.style.height="auto";
- this.style.height=Math.min(this.scrollHeight,130)+"px";
+input.addEventListener('input',function(){
+ this.style.height='auto';
+ this.style.height=Math.min(this.scrollHeight,130)+'px';
 });
 
 loadHistory();
