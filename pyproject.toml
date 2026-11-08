@@ -5,7 +5,6 @@ description = "VEX AI - Independent AI Assistant"
 requires-python = ">=3.10"
 dependencies = [
     "flet==1.1.0",
-    "flet-cli==1.1.0",
     "flet-webview",
     "requests",
     "beautifulsoup4",
