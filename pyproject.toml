@@ -11,8 +11,11 @@ dependencies = [
     "requests",
     "beautifulsoup4",
     "ddgs",
-    "vex-native-ads @ git+https://github.com/eagleiam20-create/VEX-AI.git@main#subdirectory=vex_native_ads"
+    "vex-native-ads"
 ]
+
+[tool.uv.sources]
+vex-native-ads = { path = "vex_native_ads" }
 
 [tool.flet]
 org = "com.aveesharma"
