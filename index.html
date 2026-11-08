@@ -4,111 +4,99 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#000">
 <title>VEX AI</title>
-
 <style>
-:root{color-scheme:dark;--bg:#000;--line:#252525;--white:#fff;--muted:#999}
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;background:#000;color:#fff;font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+html,body{margin:0;width:100%;height:100%;background:#000;color:#fff;font-family:Arial,system-ui,sans-serif}
 body{height:100dvh;overflow:hidden}
 button,textarea{font:inherit}
 button{cursor:pointer}
 .app{height:100dvh;display:flex;background:#000}
-.sidebar{width:270px;flex:0 0 270px;background:#000;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:14px;z-index:10}
-.side-top{display:flex;align-items:center;justify-content:space-between;padding:7px 4px 22px}
+.sidebar{width:260px;flex-shrink:0;border-right:1px solid #242424;padding:15px;display:flex;flex-direction:column;background:#000;z-index:5}
+.side-top{display:flex;justify-content:space-between;align-items:center;padding:8px 4px 22px}
 .brand{font-size:22px;font-weight:900;letter-spacing:3px}
-.icon-btn{background:transparent;border:0;color:#fff;font-size:20px;padding:9px;border-radius:10px}
-.icon-btn:hover,.history-item:hover{background:#171717}
-.new-chat{background:#000;border:1px solid #383838;color:#fff;border-radius:12px;padding:13px;text-align:left}
-.new-chat:hover{background:#151515;border-color:#777}
-.history-title{font-size:10px;color:#888;margin:25px 8px 10px;letter-spacing:2px}
+.icon-btn{background:transparent;border:0;color:#fff;padding:9px;font-size:20px}
+.new-chat{background:#000;color:#fff;border:1px solid #383838;border-radius:12px;padding:13px;text-align:left}
+.history-title{font-size:10px;color:#888;letter-spacing:2px;margin:25px 8px 10px}
 .history{overflow:auto;flex:1}
 .history-item{padding:11px;border-radius:9px;color:#ddd;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
-.profile{border-top:1px solid var(--line);padding:15px 6px 5px}
-.profile-name{font-size:13px;font-weight:800}
-.profile-info{font-size:11px;color:#888;margin-top:6px;line-height:1.8}
-.main{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;height:100dvh;background:#000}
-.topbar{height:60px;min-height:60px;display:flex;align-items:center;padding:0 22px;border-bottom:1px solid #171717}
-.mobile-brand{display:none;font-weight:900;letter-spacing:2px;margin-right:14px}
-.model-label{font-size:14px;font-weight:600}
+.history-item:hover{background:#171717}
+.profile{border-top:1px solid #242424;padding:15px 6px 5px}
+.profile-name{font-size:13px;font-weight:bold}
+.profile-info{font-size:11px;color:#888;line-height:1.8;margin-top:6px}
+.main{position:relative;flex:1;min-width:0;height:100dvh;display:flex;flex-direction:column;background:#000}
+.topbar{height:60px;min-height:60px;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid #171717}
+.mobile-brand{display:none;font-weight:900;letter-spacing:2px;margin-right:12px}
+.model-label{font-size:14px;font-weight:bold}
 .model-label span{color:#777;font-size:11px;margin-left:8px}
-#chat{flex:1;overflow-y:auto;padding:26px 20px 160px;scroll-behavior:smooth;background:#000}
+#chat{flex:1;overflow-y:auto;padding:25px 18px 155px;scroll-behavior:smooth}
 .welcome{max-width:700px;margin:18vh auto 30px;text-align:center}
-.welcome h1{font-size:39px;letter-spacing:2px;font-weight:750;margin:0 0 14px}
+.welcome h1{font-size:38px;letter-spacing:1px;margin:0 0 14px}
 .welcome p{color:#888;font-size:14px}
-.suggestions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:30px}
-.suggestions button{background:#000;border:1px solid #292929;color:#ddd;border-radius:22px;padding:12px 17px;font-size:12px}
-.suggestions button:hover{background:#fff;color:#000}
-.message{max-width:850px;width:100%;margin:0 auto 27px;line-height:1.75;font-size:15px;overflow-wrap:anywhere}
+.suggestions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:28px}
+.suggestions button{background:#000;border:1px solid #292929;color:#ddd;border-radius:22px;padding:12px 16px;font-size:12px}
+.message{max-width:850px;width:100%;margin:0 auto 26px;line-height:1.75;font-size:15px;overflow-wrap:anywhere}
 .user-wrap{display:flex;justify-content:flex-end}
-.user{background:#fff;color:#000;padding:12px 18px;border-radius:21px;max-width:82%;white-space:pre-wrap}
-.bot{padding:6px 0;color:#fff}
-.answer{line-height:1.85;color:#fff;white-space:pre-wrap}
-.label{font-size:10px;letter-spacing:2px;color:#888;margin:22px 0 11px;font-weight:700}
-.sources{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
-.source{display:block;background:#000;border:1px solid #292929;padding:14px;border-radius:12px;text-decoration:none;color:#fff}
+.user{background:#fff;color:#000;padding:12px 18px;border-radius:20px;max-width:85%;white-space:pre-wrap}
+.bot{padding:6px 0}
+.label{font-size:10px;letter-spacing:2px;color:#888;margin:22px 0 10px;font-weight:bold}
+.answer{white-space:pre-wrap;line-height:1.85}
+.sources{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.source{display:block;background:#000;border:1px solid #292929;padding:13px;border-radius:11px;text-decoration:none;color:#fff}
 .source:hover{border-color:#fff}
 .source strong{font-size:13px;display:block}
-.source small{font-size:11px;color:#999;display:block;margin-top:6px;line-height:1.6}
-.tag{font-size:9px;color:#888;display:block;margin-bottom:7px;letter-spacing:1.5px}
-.images{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
-.image-card{min-width:0;background:#050505;border:1px solid #222;border-radius:12px;overflow:hidden}
-.image-open{display:block;width:100%;padding:0;background:#080808;border:0}
-.images img{width:100%;height:155px;object-fit:cover;display:block}
-.image-caption{padding:9px;font-size:11px;color:#ddd}
-.image-credit{padding:0 9px 10px;color:#888;font-size:10px}
-.videos{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:13px}
+.source small{font-size:11px;color:#999;display:block;margin-top:6px}
+.tag{font-size:9px;color:#888;display:block;margin-bottom:7px}
+.images{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:11px}
+.image-card{border:1px solid #242424;border-radius:11px;overflow:hidden;background:#050505}
+.image-open{display:block;width:100%;padding:0;border:0;background:#080808}
+.images img{width:100%;height:150px;object-fit:cover;display:block}
+.image-caption{font-size:11px;padding:8px;color:#ddd}
+.image-credit{font-size:10px;padding:0 8px 9px;color:#888}
+.videos{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
 .video-card{border:1px solid #292929;border-radius:12px;overflow:hidden;background:#050505}
-.video-frame{width:100%;aspect-ratio:16/9;background:#111;border:0;display:block}
+.video-card video,.video-card iframe{width:100%;aspect-ratio:16/9;display:block;background:#111;border:0}
 .video-info{padding:12px}
-.video-info strong{font-size:13px;display:block}
+.video-info strong{display:block;font-size:13px}
 .video-info small{display:block;color:#999;font-size:11px;margin-top:5px}
-.video-link{display:inline-block;color:#fff;font-size:11px;margin-top:9px;text-decoration:underline}
+.video-link{display:inline-block;color:#fff;font-size:11px;margin-top:8px}
 .related{display:flex;flex-direction:column;gap:8px}
 .related button{background:#050505;border:1px solid #292929;color:#ddd;border-radius:10px;padding:12px;text-align:left;font-size:12px}
-.related button:hover{border-color:#fff;color:#fff}
-.actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.related button:hover{border-color:#fff}
+.actions{display:flex;gap:8px;margin-top:12px}
 .actions button{background:transparent;border:1px solid #292929;color:#aaa;padding:7px 11px;border-radius:9px;font-size:12px}
-.actions button:hover{color:#fff;border-color:#777}
 .progress{color:#aaa;font-size:13px}
-.progress:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#fff;margin-right:10px;animation:pulse 1s infinite}
+.progress:before{content:"";display:inline-block;width:7px;height:7px;background:#fff;border-radius:50%;margin-right:10px;animation:pulse 1s infinite}
 @keyframes pulse{50%{opacity:.2}}
-.composer-area{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,#000 22%);padding:30px 20px 17px}
+.composer-area{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,#000 22%);padding:28px 18px 16px}
 .composer{max-width:850px;margin:auto;background:#000;border:1px solid #454545;border-radius:26px;padding:10px 12px;display:flex;gap:10px;align-items:flex-end}
 .composer:focus-within{border-color:#aaa}
 textarea{background:transparent;color:#fff;border:0;outline:0;resize:none;flex:1;min-height:30px;max-height:130px;font-size:15px;padding:7px 3px}
 textarea::placeholder{color:#777}
-.send{width:39px;height:39px;border:0;border-radius:50%;background:#fff;color:#000;font-size:23px;font-weight:900}
+.send{width:39px;height:39px;border:0;border-radius:50%;background:#fff;color:#000;font-size:23px;font-weight:bold}
 .send:disabled{opacity:.4}
-.bottom-note{text-align:center;color:#666;font-size:10px;margin-top:11px}
-#imageViewer{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:100;display:none;align-items:center;justify-content:center;flex-direction:column;padding:55px 15px 20px}
+.bottom-note{text-align:center;color:#666;font-size:10px;margin-top:10px}
+#imageViewer{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:99;display:none;align-items:center;justify-content:center;flex-direction:column;padding:55px 15px 20px}
 #imageViewer.open{display:flex}
 #viewerImage{max-width:95vw;max-height:78vh;object-fit:contain}
 #viewerTitle{font-size:12px;color:#bbb;margin-top:12px;text-align:center}
-#viewerClose{position:absolute;top:12px;right:18px;background:#171717;border:1px solid #444;color:white;border-radius:50%;width:42px;height:42px;font-size:22px}
-.hidden{display:none!important}
-#chat::-webkit-scrollbar,.history::-webkit-scrollbar{width:5px}
-#chat::-webkit-scrollbar-thumb,.history::-webkit-scrollbar-thumb{background:#292929;border-radius:10px}
+#viewerClose{position:absolute;top:12px;right:18px;background:#171717;border:1px solid #444;color:#fff;border-radius:50%;width:42px;height:42px;font-size:22px}
 @media(max-width:700px){
-.sidebar{position:fixed;left:-280px;top:0;bottom:0;transition:left .2s;width:270px}
+.sidebar{position:fixed;left:-270px;top:0;bottom:0;transition:left .2s;width:260px}
 .sidebar.open{left:0}
-.main{width:100%}
 .mobile-brand{display:block}
-.topbar{padding:0 12px}
-#chat{padding:20px 15px 155px}
-.composer-area{padding:22px 12px 12px}
+.topbar{padding:0 10px}
+#chat{padding:18px 13px 150px}
+.composer-area{padding:20px 10px 12px}
 .welcome{margin-top:18vh}
-.welcome h1{font-size:30px}
-.user{max-width:90%}
-.sources{grid-template-columns:1fr}
+.welcome h1{font-size:29px}
 .images{grid-template-columns:repeat(2,minmax(0,1fr))}
-.images img{height:130px}
+.images img{height:125px}
 .videos{grid-template-columns:1fr}
 }
 </style>
 </head>
-
 <body>
 <div class="app">
 <aside class="sidebar" id="sidebar">
@@ -121,12 +109,7 @@ textarea::placeholder{color:#777}
  <div class="history" id="history"></div>
  <div class="profile">
   <div class="profile-name">VEX AI</div>
-  <div class="profile-info">
-   Owner &amp; Creator: Avee Sharma<br>
-   Experimental model: VEX V6<br>
-   Knowledge: Public web sources<br>
-   Independent AI project
-  </div>
+  <div class="profile-info">Owner &amp; Creator: Avee Sharma<br>Experimental model: VEX V6<br>Public web knowledge</div>
  </div>
 </aside>
 
@@ -136,7 +119,6 @@ textarea::placeholder{color:#777}
   <div class="mobile-brand">VEX AI</div>
   <div class="model-label">VEX AI <span>Knowledge Assistant</span></div>
  </div>
-
  <section id="chat">
   <div class="welcome" id="welcome">
    <h1>What can I help with?</h1>
@@ -149,11 +131,10 @@ textarea::placeholder{color:#777}
    </div>
   </div>
  </section>
-
  <div class="composer-area">
   <div class="composer">
    <textarea id="question" rows="1" placeholder="Message VEX AI..."></textarea>
-   <button class="send" id="send" aria-label="Send message">↑</button>
+   <button class="send" id="send">↑</button>
   </div>
   <div class="bottom-note">VEX AI · Built by Avee Sharma</div>
  </div>
@@ -188,29 +169,19 @@ const WELCOME=`
 <button onclick="quickAsk('Latest space discoveries')">Space</button>
 <button onclick="quickAsk('How does the internet work?')">Technology</button>
 <button onclick="quickAsk('Explain quantum computing')">Science</button>
-</div>
-</div>`;
+</div></div>`;
 
-function scrollDown(){
- chat.scrollTop=chat.scrollHeight;
-}
+function scrollDown(){chat.scrollTop=chat.scrollHeight}
+function absoluteURL(v){try{return new URL(v,API).href}catch(e){return ''}}
+function validURL(v){try{return ['https:','http:'].includes(new URL(v).protocol)}catch(e){return false}}
 
 function saveHistory(){
- try{
-  localStorage.setItem('vex_chats',JSON.stringify(conversations));
- }catch(e){}
+ try{localStorage.setItem('vex_chats',JSON.stringify(conversations))}catch(e){}
 }
-
 function loadHistory(){
- try{
-  const saved=JSON.parse(localStorage.getItem('vex_chats')||'[]');
-  conversations=Array.isArray(saved)?saved:[];
- }catch(e){
-  conversations=[];
- }
+ try{conversations=JSON.parse(localStorage.getItem('vex_chats')||'[]');if(!Array.isArray(conversations))conversations=[]}catch(e){conversations=[]}
  renderHistory();
 }
-
 function renderHistory(){
  historyBox.textContent='';
  conversations.forEach(c=>{
@@ -221,815 +192,407 @@ function renderHistory(){
   historyBox.appendChild(el);
  });
 }
-
 function newChat(){
- activeId=null;
- chat.innerHTML=WELCOME;
- input.value='';
- input.style.height='30px';
+ activeId=null;chat.innerHTML=WELCOME;
+ input.value='';input.style.height='30px';
  document.getElementById('sidebar').classList.remove('open');
  input.focus();
 }
-
-function toggleSidebar(){
- document.getElementById('sidebar').classList.toggle('open');
-}
-
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
 function openChat(id){
- const c=conversations.find(x=>x.id===id);
- if(!c)return;
-
- activeId=id;
- chat.innerHTML='';
-
+ const c=conversations.find(x=>x.id===id);if(!c)return;
+ activeId=id;chat.innerHTML='';
  (c.messages||[]).forEach(m=>{
   if(m.type==='user')addUser(m.text,false);
   if(m.type==='bot')renderBot(m.data,false);
  });
-
- document.getElementById('sidebar').classList.remove('open');
- scrollDown();
+ document.getElementById('sidebar').classList.remove('open');scrollDown();
 }
-
 function storeMessage(m){
  if(!activeId){
   activeId=String(Date.now());
-  conversations.unshift({
-   id:activeId,
-   title:m.type==='user'?m.text.slice(0,48):'New chat',
-   messages:[]
-  });
+  conversations.unshift({id:activeId,title:m.type==='user'?m.text.slice(0,48):'New chat',messages:[]});
  }
-
  const c=conversations.find(x=>x.id===activeId);
  if(c)c.messages.push(m);
-
- saveHistory();
- renderHistory();
+ saveHistory();renderHistory();
 }
-
 function addUser(text,save=true){
  document.getElementById('welcome')?.remove();
-
- const wrap=document.createElement('div');
- wrap.className='message user-wrap';
-
- const bubble=document.createElement('div');
- bubble.className='user';
- bubble.textContent=text;
-
- wrap.appendChild(bubble);
- chat.appendChild(wrap);
-
+ const wrap=document.createElement('div');wrap.className='message user-wrap';
+ const bubble=document.createElement('div');bubble.className='user';bubble.textContent=text;
+ wrap.appendChild(bubble);chat.appendChild(wrap);
  if(save)storeMessage({type:'user',text});
  scrollDown();
 }
-
 async function copyText(text){
- if(navigator.clipboard&&window.isSecureContext){
-  await navigator.clipboard.writeText(text);
-  return;
- }
-
- const area=document.createElement('textarea');
- area.value=text;
- area.style.position='fixed';
- area.style.opacity='0';
- document.body.appendChild(area);
- area.select();
-
- const ok=document.execCommand('copy');
- area.remove();
-
- if(!ok)throw new Error('Copy failed');
+ if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(text);
+ const a=document.createElement('textarea');a.value=text;
+ a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();
+ const ok=document.execCommand('copy');a.remove();if(!ok)throw Error('Copy failed');
 }
-
 function addLabel(parent,text){
- const el=document.createElement('div');
- el.className='label';
- el.textContent=text;
- parent.appendChild(el);
+ const el=document.createElement('div');el.className='label';el.textContent=text;parent.appendChild(el);
 }
-
-function absoluteURL(value){
- try{
-  return new URL(value,API).href;
- }catch(e){
-  return '';
- }
-}
-
-function validURL(value){
- try{
-  const u=new URL(value);
-  return u.protocol==='https:'||u.protocol==='http:';
- }catch(e){
-  return false;
- }
-}
-
-function safeHost(url){
- try{return new URL(url).hostname.replace(/^www\./,'')}
- catch(e){return 'WEB SOURCE'}
-}
-
-function addSource(parent,item){
- const url=absoluteURL(item.url);
- if(!validURL(url))return;
-
- const a=document.createElement('a');
- a.className='source';
- a.href=url;
- a.target='_blank';
- a.rel='noopener noreferrer';
-
- const tag=document.createElement('span');
- tag.className='tag';
- tag.textContent=item.source||safeHost(url);
-
- const title=document.createElement('strong');
- title.textContent=item.title||'Web result';
-
- const small=document.createElement('small');
- small.textContent=item.description||'Open original source';
-
- a.append(tag,title,small);
- parent.appendChild(a);
-}
-
-async function fetchJSON(path,timeoutMs=15000){
+async function apiJSON(url,timeout=15000){
  const controller=new AbortController();
- const timer=setTimeout(()=>controller.abort(),timeoutMs);
-
+ const timer=setTimeout(()=>controller.abort(),timeout);
  try{
-  const response=await fetch(API+path,{
-   method:'GET',
-   mode:'cors',
-   credentials:'omit',
-   cache:'no-store',
-   signal:controller.signal,
-   headers:{'Accept':'application/json'}
-  });
-
-  const raw=await response.text();
-  let data;
-
-  try{
-   data=JSON.parse(raw);
-  }catch(e){
-   throw new Error('Search service returned invalid JSON.');
-  }
-
-  if(!response.ok){
-   throw new Error(data.error||('HTTP '+response.status));
-  }
-
-  return data;
- }finally{
-  clearTimeout(timer);
+  const r=await fetch(url,{mode:'cors',credentials:'omit',cache:'no-store',signal:controller.signal,headers:{Accept:'application/json'}});
+  if(!r.ok)throw Error('HTTP '+r.status);
+  return await r.json();
+ }finally{clearTimeout(timer)}
+}
+async function apiRetry(url){
+ let error;
+ for(let i=0;i<2;i++){
+  try{return await apiJSON(url)}catch(e){error=e;await new Promise(r=>setTimeout(r,500))}
  }
+ throw error;
 }
-
-async function fetchWithRetry(path,attempts=2){
- let last;
-
- for(let i=0;i<attempts;i++){
-  try{
-   return await fetchJSON(path);
-  }catch(e){
-   last=e;
-   if(i+1<attempts){
-    await new Promise(r=>setTimeout(r,700*(i+1)));
-   }
-  }
- }
-
- throw last||new Error('Request failed');
+function words(q){
+ const stop='what when where which who with from that this have does doing about into your the and for are was were will would could should can how why tell explain please show give me some only pictures picture images image photo photos video videos watch find search'.split(' ');
+ return q.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu,' ').split(/\s+/).filter(w=>w.length>2&&!stop.includes(w));
 }
-
-function getWords(query){
- const ignored=[
- 'what','when','where','which','who','whom','whose',
- 'with','from','that','this','then','than','have',
- 'does','doing','about','into','your','you','the',
- 'and','for','are','was','were','will','would',
- 'could','should','can','how','why','tell','explain',
- 'please','give','show','tell','me','more'
- ];
-
- return query.toLowerCase()
- .normalize('NFKD')
- .replace(/[^\p{L}\p{N}\s]/gu,' ')
- .split(/\s+/)
- .filter(w=>w.length>2&&!ignored.includes(w));
-}
-
-function extractRelevant(text,query,maxChars=4500){
+function relevantText(text,q,max=4000){
  if(!text)return '';
-
- const words=getWords(query);
-
- const chunks=text.replace(/\r/g,'')
- .split(/\n+|(?<=[.!?])\s+/)
- .map(s=>s.trim())
- .filter(s=>s.length>45);
-
- const scored=chunks.map((s,i)=>{
+ const ws=words(q);
+ const sentences=text.replace(/\r/g,'').split(/\n+|(?<=[.!?])\s+/).map(s=>s.trim()).filter(s=>s.length>45);
+ const ranked=sentences.map((s,i)=>{
   const low=s.toLowerCase();
-  let score=0;
-
-  words.forEach(w=>{
-   if(low.includes(w))score+=2;
-  });
-
-  if(words.length>1&&words.every(w=>low.includes(w))){
-   score+=3;
-  }
-
-  return {s,score,i};
- }).filter(x=>x.score>0)
- .sort((a,b)=>b.score-a.score||a.i-b.i);
-
- const chosen=[];
- const seen=new Set();
- let size=0;
-
- for(const x of scored){
-  const key=x.s.toLowerCase().slice(0,100);
-  if(seen.has(key))continue;
-  seen.add(key);
-
-  if(size+x.s.length>maxChars)continue;
-
-  chosen.push(x.s);
-  size+=x.s.length;
-
-  if(chosen.length>=9)break;
+  return {s,i,score:ws.reduce((n,w)=>n+(low.includes(w)?2:0),0)};
+ }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score||a.i-b.i);
+ let out=[],seen=new Set(),size=0;
+ for(const x of ranked){
+  const key=x.s.toLowerCase().slice(0,90);if(seen.has(key))continue;seen.add(key);
+  if(size+x.s.length>max)continue;
+  out.push(x.s);size+=x.s.length;if(out.length===8)break;
  }
-
- return chosen.join('\n\n');
+ return out.join('\n\n');
 }
 
-async function getContext(result){
- try{
-  const d=await fetchJSON(
-   '/api/context?url='+encodeURIComponent(result.url),
-   12000
-  );
-
-  return {
-   title:d.title||result.title,
-   text:[
-    d.summary,
-    d.content,
-    Array.isArray(d.passages)?d.passages.join('\n'):''
-   ].filter(Boolean).join('\n'),
-   coverage:d.coverage||'unknown'
-  };
- }catch(e){
-  return {
-   title:result.title,
-   text:result.description||'',
-   coverage:'search-snippet-fallback'
-  };
- }
-}
-
-async function getInfocard(query){
- try{
-  return await fetchJSON(
-   '/api/infocard?q='+encodeURIComponent(query),
-   9000
-  );
- }catch(e){
-  return null;
- }
-}
-
-/* IMAGE SEARCH */
-
+/* IMAGE API */
 async function searchImages(query){
- try{
-  const d=await fetchJSON(
-   '/api/images?q='+encodeURIComponent(query)+'&page=1',
-   12000
-  );
+ const url=API+'/api/images?'+new URLSearchParams({q:query,page:'1'});
+ const data=await apiRetry(url);
+ const list=Array.isArray(data.images)?data.images:[];
+ return list.slice(0,12).map(x=>({
+  title:x.title||'Image',
+  image:absoluteURL(x.thumbUrl||x.url),
+  full:absoluteURL(x.url||x.thumbUrl),
+  license:x.license||'Licence not provided',
+  creator:x.creator||x.author||'',
+  source:x.source||'Wikimedia Commons'
+ })).filter(x=>validURL(x.image)&&validURL(x.full));
+}
 
-  const list=Array.isArray(d.images)?d.images:[];
+/* IMAGE REQUEST DETECTION */
+function imageOnly(q){
+ const s=q.toLowerCase();
+ const image=/\b(images?|pictures?|photos?|wallpapers?)\b/.test(s);
+ const video=/\b(videos?|documentary|watch|movie|movies|tutorial)\b/.test(s);
+ return image&&!video;
+}
 
-  return list.slice(0,8).map(x=>({
-   title:x.title||'Image',
-   image:absoluteURL(x.thumbUrl||x.url),
-   full:absoluteURL(x.url||x.thumbUrl),
-   license:x.license||'License not provided',
-   creator:x.creator||x.author||'',
-   source:x.source||'Wikimedia Commons'
-  })).filter(x=>validURL(x.image)&&validURL(x.full));
+/* VIDEO SEARCH: Internet Archive */
+async function searchArchiveVideos(query){
+ const params=new URLSearchParams({
+  q:query+' AND mediatype:movies',
+  fl:'identifier,title,description,mediatype',
+  rows:'12',
+  page:'1',
+  output:'json'
+ });
+ const data=await apiJSON('https://archive.org/advancedsearch.php?'+params,18000);
+ const docs=data?.response?.docs||[];
+ const output=[];
 
- }catch(e){
-  return [];
+ for(const doc of docs.slice(0,10)){
+  if(!doc.identifier)continue;
+  try{
+   const meta=await apiJSON('https://archive.org/metadata/'+encodeURIComponent(doc.identifier),12000);
+   const files=meta.files||[];
+   const file=files.find(f=>
+    f.name&&/\.(mp4|webm|ogv|mov)$/i.test(f.name)&&
+    !f.name.includes('_thumb')
+   );
+   if(!file)continue;
+   const videoURL='https://archive.org/download/'+encodeURIComponent(doc.identifier)+'/'+file.name;
+   output.push({
+    title:doc.title||doc.identifier,
+    description:typeof doc.description==='string'?doc.description.slice(0,250):'Internet Archive video',
+    url:videoURL,
+    page:'https://archive.org/details/'+encodeURIComponent(doc.identifier),
+    type:'archive'
+   });
+   if(output.length>=6)break;
+  }catch(e){}
  }
+ return output;
 }
 
-/* IMAGE ONLY DETECTION */
-
-function isImageOnlyRequest(q){
- const s=q.toLowerCase().trim();
-
- const imageWords=/\b(image|images|picture|pictures|photo|photos|wallpaper|wallpapers)\b/i;
- const videoWords=/\b(video|videos|movie|movies|documentary|tutorial)\b/i;
-
- if(videoWords.test(s))return false;
-
- return imageWords.test(s)&&
- (
-  /\b(only|just|show|give|send|display|find|get)\b/i.test(s)||
-  /^(image|images|picture|pictures|photo|photos)\b/i.test(s)
- );
-}
-
-/* VIDEO SEARCH */
-
-function isVideoRequest(q){
- return /\b(video|videos|watch|documentary|tutorial|clip|clips|movie|movies)\b/i.test(q);
-}
-
-function cleanVideoQuery(q){
- return q.replace(/\b(show|give|find|search|watch|play|send|me|some|a|the|video|videos|clip|clips|please)\b/gi,' ')
- .replace(/\s+/g,' ').trim();
-}
-
+/* YOUTUBE SEARCH THROUGH INDEXED PAGES */
 function youtubeId(url){
  try{
   const u=new URL(url);
-  if(u.hostname.includes('youtu.be')){
-   return u.pathname.split('/').filter(Boolean)[0]||'';
-  }
+  if(u.hostname.includes('youtu.be'))return u.pathname.split('/').filter(Boolean)[0]||'';
   if(u.hostname.includes('youtube.com')){
    if(u.pathname==='/watch')return u.searchParams.get('v')||'';
-   const parts=u.pathname.split('/').filter(Boolean);
-   if(['embed','shorts','live'].includes(parts[0]))return parts[1]||'';
+   const p=u.pathname.split('/').filter(Boolean);
+   if(['embed','shorts'].includes(p[0]))return p[1]||'';
   }
  }catch(e){}
  return '';
 }
-
-async function searchVideos(query){
- const topic=cleanVideoQuery(query)||query;
- const searches=[
-  'site:youtube.com/watch '+topic,
-  'site:youtu.be '+topic
- ];
-
- let all=[];
-
- for(const q of searches){
-  try{
-   const d=await fetchJSON(
-    '/api/search?q='+encodeURIComponent(q)+'&page=1&exact=0',
-    12000
-   );
-
-   if(Array.isArray(d.results))all=all.concat(d.results);
-  }catch(e){}
- }
-
- const seen=new Set();
- const videos=[];
-
- for(const item of all){
-  const url=absoluteURL(item.url);
-  const id=youtubeId(url);
-
+async function searchYoutube(query){
+ const q='site:youtube.com/watch '+query;
+ const data=await apiRetry(API+'/api/search?'+new URLSearchParams({q,page:'1',exact:'0'}));
+ const results=data.results||[];
+ const seen=new Set(),out=[];
+ for(const r of results){
+  const id=youtubeId(r.url||'');
   if(!id||seen.has(id))continue;
   seen.add(id);
-
-  videos.push({
-   id,
-   title:item.title||'Video',
-   url,
-   description:item.description||'',
-   source:'YouTube'
-  });
-
-  if(videos.length>=6)break;
+  out.push({title:r.title||'YouTube video',description:r.description||'',id,url:r.url,type:'youtube'});
+  if(out.length>=5)break;
  }
-
- return videos;
+ return out;
 }
-
-/* RELATED QUESTIONS */
-
-function makeRelatedQuestions(query,results){
- const words=getWords(query);
- const titleWords=[];
-
- (results||[]).slice(0,4).forEach(r=>{
-  getWords(r.title||'').forEach(w=>{
-   if(!words.includes(w)&&!titleWords.includes(w)){
-    titleWords.push(w);
-   }
-  });
- });
-
- const topic=words.slice(0,3).join(' ')||query;
- const extra=titleWords.slice(0,2);
-
- const candidates=[
-  'How does '+topic+' work in real life?',
-  'What are the main benefits and limitations of '+topic+'?',
-  extra.length
-   ?'How is '+extra.join(' ')+' connected to '+topic+'?'
-   :'What are some real-world examples of '+topic+'?'
- ];
-
- return [...new Set(candidates)].slice(0,3);
-}
-
-/* BUILD EXPLANATION */
-
-function buildExplanation(query,parts,card){
- const instant=card?.instantAnswer?.answer;
- const facts=Array.isArray(card?.facts)
-  ?card.facts.filter(x=>x&&x.label&&x.value).slice(0,5)
-  :[];
-
- const relevant=parts.map(p=>({
-  title:p.title,
-  text:extractRelevant(p.text,query,1400)
- })).filter(p=>p.text);
-
- let output='';
-
- if(instant){
-  output+='DIRECT ANSWER\n'+String(instant).trim();
- }
-
- if(facts.length){
-  if(output)output+='\n\n';
-  output+='KEY FACTS\n';
-  output+=facts.map(f=>'• '+f.label+': '+f.value).join('\n');
- }
-
- if(relevant.length){
-  if(output)output+='\n\n';
-  output+='DETAILED EXPLANATION\n';
-
-  output+=relevant.slice(0,4).map((p,i)=>{
-   return (i+1)+'. '+p.text;
-  }).join('\n\n');
- }
-
- if(!output){
-  output='I found related web pages, but their indexed text did not contain enough information to prepare a reliable explanation. Please open the sources below.';
- }
-
- return output.trim();
-}
-
-/* NORMAL WEB SEARCH */
-
-async function runSearch(query,progress){
- progress.textContent='Searching the web...';
-
- const [searchData,card]=await Promise.all([
-  fetchWithRetry(
-   '/api/search?q='+encodeURIComponent(query)+'&page=1&exact=0',
-   2
-  ),
-  getInfocard(query)
+async function searchVideos(query){
+ const topic=query.replace(/\b(show|find|search|give|play|watch|me|some|videos?|video|please|about)\b/gi,' ').replace(/\s+/g,' ').trim()||query;
+ const results=await Promise.allSettled([
+  searchArchiveVideos(topic),
+  searchYoutube(topic)
  ]);
+ const archive=results[0].status==='fulfilled'?results[0].value:[];
+ const youtube=results[1].status==='fulfilled'?results[1].value:[];
+ return [...youtube,...archive].slice(0,8);
+}
 
- const results=Array.isArray(searchData.results)
-  ?searchData.results:[ ];
-
- if(!results.length){
+/* SEARCH + PAGE CONTEXT */
+async function getContext(result){
+ try{
+  const d=await apiJSON(API+'/api/context?url='+encodeURIComponent(result.url),12000);
   return {
-   answer:card?.instantAnswer?.answer||
-    'I could not find matching pages in the available web index. Try a more specific question.',
-   results:[],
-   images:[],
-   related:[],
-   note:'No matching indexed pages were returned.'
+   title:d.title||result.title,
+   text:[d.summary,d.content,Array.isArray(d.passages)?d.passages.join('\n'):''].filter(Boolean).join('\n')
   };
+ }catch(e){
+  return {title:result.title,text:result.description||''};
  }
-
- progress.textContent='Reading relevant web pages...';
-
- const selected=results.slice(0,5);
- const contexts=await Promise.all(selected.map(getContext));
-
- const parts=contexts.map((c,i)=>({
-  title:c.title||selected[i].title||'Web source',
-  text:c.text||selected[i].description||'',
-  url:selected[i].url,
-  coverage:c.coverage
+}
+async function getCard(q){
+ try{return await apiJSON(API+'/api/infocard?q='+encodeURIComponent(q),9000)}
+ catch(e){return null}
+}
+function buildAnswer(q,parts,card){
+ let out='';
+ const instant=card?.instantAnswer?.answer;
+ if(instant)out+='DIRECT ANSWER\n'+instant;
+ const facts=Array.isArray(card?.facts)?card.facts.slice(0,5):[];
+ if(facts.length){
+  if(out)out+='\n\n';
+  out+='KEY FACTS\n'+facts.map(f=>'• '+f.label+': '+f.value).join('\n');
+ }
+ const excerpts=parts.map(p=>relevantText(p.text,q,1200)).filter(Boolean);
+ if(excerpts.length){
+  if(out)out+='\n\n';
+  out+='DETAILED EXPLANATION\n'+excerpts.slice(0,4).map((s,i)=>(i+1)+'. '+s).join('\n\n');
+ }
+ return out||'I found related pages, but there was not enough indexed information to prepare a reliable explanation. Please check the sources below.';
+}
+function makeRelated(q,results){
+ const base=words(q).slice(0,3).join(' ')||q;
+ const extra=[];
+ (results||[]).slice(0,5).forEach(r=>words(r.title||'').forEach(w=>{
+  if(!words(q).includes(w)&&!extra.includes(w))extra.push(w);
  }));
-
- progress.textContent='Preparing the explanation...';
-
- const answer=buildExplanation(query,parts,card);
-
+ return [
+  'How does '+base+' work in real life?',
+  'What are the benefits and limitations of '+base+'?',
+  extra.length?'How is '+extra.slice(0,2).join(' ')+' related to '+base+'?':'What are some real-world examples of '+base+'?'
+ ];
+}
+async function runSearch(q,progress){
+ progress.textContent='Searching the web...';
+ const [search,card]=await Promise.all([
+  apiRetry(API+'/api/search?'+new URLSearchParams({q,page:'1',exact:'0'})),
+  getCard(q)
+ ]);
+ const results=Array.isArray(search.results)?search.results:[];
+ if(!results.length){
+  return {answer:card?.instantAnswer?.answer||'No matching indexed pages found. Try a more specific question.',results:[],images:[],related:[]};
+ }
+ progress.textContent='Reading relevant pages...';
+ const selected=results.slice(0,5);
+ const pages=await Promise.all(selected.map(getContext));
+ const parts=pages.map((p,i)=>({title:p.title||selected[i].title,text:p.text}));
+ progress.textContent='Preparing your explanation...';
+ const answer=buildAnswer(q,parts,card);
  progress.textContent='Finding related images...';
-
- const images=await searchImages(query);
-
+ let images=[];
+ try{images=await searchImages(q)}catch(e){console.warn('Image search:',e)}
  return {
   answer,
-  results:results.slice(0,8).map(x=>({
-   title:x.title,
-   url:x.url,
-   description:x.description||x.displayUrl||'',
-   source:x.source||'WEB INDEX'
-  })),
+  results:results.slice(0,8).map(x=>({title:x.title,url:x.url,description:x.description||'',source:x.source||'WEB SOURCE'})),
   images,
-  related:makeRelatedQuestions(query,results)
+  related:makeRelated(q,results)
  };
 }
 
-/* RENDER IMAGES */
-
+/* VIEWER */
 function openViewer(url,title){
- const viewer=document.getElementById('imageViewer');
  document.getElementById('viewerImage').src=url;
  document.getElementById('viewerTitle').textContent=title||'';
- viewer.classList.add('open');
+ document.getElementById('imageViewer').classList.add('open');
 }
-
 function closeViewer(){
  document.getElementById('imageViewer').classList.remove('open');
  document.getElementById('viewerImage').src='';
 }
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeViewer()});
 
-document.addEventListener('keydown',e=>{
- if(e.key==='Escape')closeViewer();
-});
-
-function renderImages(parent,images){
- if(!images?.length)return;
-
- addLabel(parent,'RELATED IMAGES');
-
- const gallery=document.createElement('div');
- gallery.className='images';
-
- images.forEach(item=>{
-  if(!validURL(item.image)||!validURL(item.full))return;
-
-  const card=document.createElement('div');
-  card.className='image-card';
-
-  const button=document.createElement('button');
-  button.className='image-open';
-  button.onclick=()=>openViewer(item.full,item.title);
-
-  const img=document.createElement('img');
-  img.src=item.image;
-  img.alt=item.title||'Image';
-  img.loading='lazy';
-  img.onerror=()=>card.remove();
-
-  button.appendChild(img);
-
-  const title=document.createElement('div');
-  title.className='image-caption';
-  title.textContent=item.title||'Image';
-
-  const credit=document.createElement('div');
-  credit.className='image-credit';
-  credit.textContent=
-   (item.creator?item.creator+' · ':'')+
-   item.license+' · '+item.source;
-
-  card.append(button,title,credit);
-  gallery.appendChild(card);
+/* DISPLAY */
+function renderSources(parent,items){
+ if(!items?.length)return;
+ addLabel(parent,'WEB SOURCES');
+ const grid=document.createElement('div');grid.className='sources';
+ items.forEach(item=>{
+  const url=absoluteURL(item.url);if(!validURL(url))return;
+  const a=document.createElement('a');a.className='source';
+  a.href=url;a.target='_blank';a.rel='noopener noreferrer';
+  const tag=document.createElement('span');tag.className='tag';tag.textContent=item.source||'WEB SOURCE';
+  const title=document.createElement('strong');title.textContent=item.title||'Web result';
+  const small=document.createElement('small');small.textContent=item.description||'Open original source';
+  a.append(tag,title,small);grid.appendChild(a);
  });
-
- if(gallery.childElementCount)parent.appendChild(gallery);
+ if(grid.childElementCount)parent.appendChild(grid);
 }
-
-/* RENDER VIDEOS */
-
-function renderVideos(parent,videos){
- if(!videos?.length){
-  const msg=document.createElement('div');
-  msg.style.cssText='color:#999;font-size:12px;margin-top:10px';
-  msg.textContent='No matching YouTube videos were found in the indexed search results. Try another search phrase.';
-  parent.appendChild(msg);
-  return;
+function renderImages(parent,items){
+ if(!items?.length){
+  const note=document.createElement('div');note.style.color='#888';note.style.fontSize='12px';note.textContent='No images were returned by the image search service.';
+  parent.appendChild(note);return;
  }
-
- addLabel(parent,'RELATED VIDEOS');
-
- const grid=document.createElement('div');
- grid.className='videos';
-
- videos.forEach(v=>{
-  const card=document.createElement('div');
-  card.className='video-card';
-
-  const frame=document.createElement('iframe');
-  frame.className='video-frame';
-  frame.src='https://www.youtube-nocookie.com/embed/'+encodeURIComponent(v.id);
-  frame.title=v.title;
-  frame.loading='lazy';
-  frame.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-  frame.referrerPolicy='strict-origin-when-cross-origin';
-  frame.allowFullscreen=true;
-
-  const info=document.createElement('div');
-  info.className='video-info';
-
-  const title=document.createElement('strong');
-  title.textContent=v.title;
-
-  const description=document.createElement('small');
-  description.textContent=v.description||'YouTube video';
-
-  const link=document.createElement('a');
-  link.className='video-link';
-  link.href=v.url;
-  link.target='_blank';
-  link.rel='noopener noreferrer';
-  link.textContent='Open original video';
-
-  info.append(title,description,link);
-  card.append(frame,info);
-  grid.appendChild(card);
+ addLabel(parent,'RELATED IMAGES');
+ const grid=document.createElement('div');grid.className='images';
+ items.forEach(item=>{
+  const card=document.createElement('div');card.className='image-card';
+  const button=document.createElement('button');button.className='image-open';
+  button.onclick=()=>openViewer(item.full,item.title);
+  const img=document.createElement('img');img.src=item.image;img.alt=item.title;img.loading='lazy';
+  img.onerror=()=>card.remove();
+  button.appendChild(img);
+  const title=document.createElement('div');title.className='image-caption';title.textContent=item.title;
+  const credit=document.createElement('div');credit.className='image-credit';
+  credit.textContent=(item.creator?item.creator+' · ':'')+item.license+' · '+item.source;
+  card.append(button,title,credit);grid.appendChild(card);
  });
-
  parent.appendChild(grid);
 }
-
-/* RENDER RELATED QUESTIONS */
-
-function renderRelated(parent,questions){
- if(!questions?.length)return;
-
- addLabel(parent,'EXPLORE FURTHER');
-
- const box=document.createElement('div');
- box.className='related';
-
- questions.forEach(q=>{
-  const button=document.createElement('button');
-  button.textContent='↗  '+q;
-  button.onclick=()=>quickAsk(q);
-  box.appendChild(button);
+function renderVideos(parent,items){
+ if(!items?.length){
+  const note=document.createElement('div');note.style.cssText='color:#999;font-size:12px';
+  note.textContent='No playable videos were found for this search. Try a different topic.';
+  parent.appendChild(note);return;
+ }
+ addLabel(parent,'VIDEOS');
+ const grid=document.createElement('div');grid.className='videos';
+ items.forEach(v=>{
+  const card=document.createElement('div');card.className='video-card';
+  if(v.type==='youtube'){
+   const frame=document.createElement('iframe');
+   frame.src='https://www.youtube-nocookie.com/embed/'+encodeURIComponent(v.id);
+   frame.title=v.title;frame.loading='lazy';
+   frame.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+   frame.allowFullscreen=true;
+   card.appendChild(frame);
+  }else{
+   const video=document.createElement('video');
+   video.src=v.url;video.controls=true;video.preload='metadata';video.playsInline=true;
+   card.appendChild(video);
+  }
+  const info=document.createElement('div');info.className='video-info';
+  const title=document.createElement('strong');title.textContent=v.title;
+  const desc=document.createElement('small');desc.textContent=v.description||'Video result';
+  const link=document.createElement('a');link.className='video-link';link.href=v.page||v.url;
+  link.target='_blank';link.rel='noopener noreferrer';link.textContent='Open video source';
+  info.append(title,desc,link);card.appendChild(info);grid.appendChild(card);
  });
-
+ parent.appendChild(grid);
+}
+function renderRelated(parent,items){
+ if(!items?.length)return;
+ addLabel(parent,'EXPLORE FURTHER');
+ const box=document.createElement('div');box.className='related';
+ items.forEach(q=>{
+  const b=document.createElement('button');b.textContent='↗  '+q;b.onclick=()=>quickAsk(q);box.appendChild(b);
+ });
  parent.appendChild(box);
 }
-
-/* MAIN BOT RESPONSE */
-
 function renderBot(data,save=true){
- const reply=document.createElement('div');
- reply.className='message bot';
-
+ const reply=document.createElement('div');reply.className='message bot';
  addLabel(reply,'VEX AI');
-
- if(data.imageOnly){
+ if(data.mode==='images'){
   renderImages(reply,data.images);
- }else if(data.videoOnly){
+ }else if(data.mode==='videos'){
   renderVideos(reply,data.videos);
  }else{
-  const answer=document.createElement('div');
-  answer.className='answer';
-  answer.textContent=data.answer||'No information found.';
+  const answer=document.createElement('div');answer.className='answer';answer.textContent=data.answer||'No information found.';
   reply.appendChild(answer);
-
-  if(data.results?.length){
-   addLabel(reply,'WEB SOURCES');
-
-   const grid=document.createElement('div');
-   grid.className='sources';
-
-   data.results.forEach(item=>addSource(grid,item));
-   reply.appendChild(grid);
-  }
-
-  renderImages(reply,data.images);
-  renderVideos(reply,data.videos);
+  renderSources(reply,data.results);
+  if(data.images?.length)renderImages(reply,data.images);
   renderRelated(reply,data.related);
  }
-
- const actions=document.createElement('div');
- actions.className='actions';
-
- const copy=document.createElement('button');
- copy.textContent='Copy answer';
- copy.onclick=()=>{
-  copyText(data.answer||'').then(()=>{
-   copy.textContent='Copied';
-   setTimeout(()=>copy.textContent='Copy answer',1400);
-  }).catch(()=>copy.textContent='Copy failed');
- };
-
- actions.appendChild(copy);
- reply.appendChild(actions);
-
+ const actions=document.createElement('div');actions.className='actions';
+ const copy=document.createElement('button');copy.textContent='Copy answer';
+ copy.onclick=()=>copyText(data.answer||'').then(()=>{copy.textContent='Copied'}).catch(()=>{copy.textContent='Copy failed'});
+ actions.appendChild(copy);reply.appendChild(actions);
  chat.appendChild(reply);
-
  if(save)storeMessage({type:'bot',data});
  scrollDown();
 }
 
-/* SEND MESSAGE */
+/* INTENT DETECTION */
+function isVideoRequest(q){return /\b(video|videos|watch|documentary|clip|clips|movie|movies)\b/i.test(q)}
+function isImageRequest(q){return /\b(image|images|picture|pictures|photo|photos|wallpaper|wallpapers)\b/i.test(q)}
 
+/* MAIN */
 async function sendMessage(){
- const query=input.value.trim();
+ const q=input.value.trim();if(!q||searching)return;
+ searching=true;sendButton.disabled=true;
+ addUser(q);input.value='';input.style.height='30px';
 
- if(!query||searching)return;
-
- searching=true;
- sendButton.disabled=true;
-
- addUser(query);
-
- input.value='';
- input.style.height='30px';
-
- const progress=document.createElement('div');
- progress.className='message bot progress';
- progress.textContent='Preparing your search...';
-
- chat.appendChild(progress);
- scrollDown();
+ const progress=document.createElement('div');progress.className='message bot progress';
+ progress.textContent='Preparing your search...';chat.appendChild(progress);scrollDown();
 
  try{
   let data;
-
-  if(isImageOnlyRequest(query)){
+  if(isVideoRequest(q)){
+   progress.textContent='Searching for videos...';
+   const videos=await searchVideos(q);
+   data={mode:'videos',videos};
+  }else if(isImageRequest(q)){
    progress.textContent='Searching for images...';
-
-   data={
-    imageOnly:true,
-    images:await searchImages(query)
-   };
-
-  }else if(isVideoRequest(query)){
-   progress.textContent='Searching for relevant videos...';
-
-   data={
-    videoOnly:true,
-    videos:await searchVideos(query)
-   };
-
+   const images=await searchImages(q);
+   data={mode:'images',images};
   }else{
-   data=await runSearch(query,progress);
+   data=await runSearch(q,progress);
   }
-
-  progress.remove();
-  renderBot(data,true);
-
+  progress.remove();renderBot(data,true);
  }catch(e){
   progress.classList.remove('progress');
-
-  progress.textContent=
-   'VEX could not connect to the search service. '+
-   (e.name==='AbortError'?'The request timed out.':e.message||'Network request failed.')+
-   ' Check your internet connection and try again.';
-
-  const retry=document.createElement('button');
-  retry.className='icon-btn';
-  retry.textContent='↻ Retry';
-
-  retry.onclick=()=>{
-   progress.remove();
-   input.value=query;
-   sendMessage();
-  };
-
-  progress.appendChild(document.createTextNode(' '));
+  progress.textContent='Search failed: '+(e.name==='AbortError'?'Request timed out.':e.message||'Network error')+'. Check your connection and try again.';
+  const retry=document.createElement('button');retry.className='icon-btn';retry.textContent='↻ Retry';
+  retry.onclick=()=>{progress.remove();input.value=q;sendMessage()};
   progress.appendChild(retry);
-
  }finally{
-  searching=false;
-  sendButton.disabled=false;
-  input.focus();
+  searching=false;sendButton.disabled=false;input.focus();
  }
 }
-
-function quickAsk(text){
- input.value=text;
- sendMessage();
-}
-
+function quickAsk(q){input.value=q;sendMessage()}
 sendButton.addEventListener('click',sendMessage);
-
-input.addEventListener('keydown',e=>{
- if(e.key==='Enter'&&!e.shiftKey){
-  e.preventDefault();
-  sendMessage();
- }
-});
-
-input.addEventListener('input',function(){
- this.style.height='auto';
- this.style.height=Math.min(this.scrollHeight,130)+'px';
-});
-
+input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});
+input.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,130)+'px'});
 loadHistory();
 </script>
 </body>
