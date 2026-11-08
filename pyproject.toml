@@ -1,4 +1,3 @@
-
 [project]
 name = "vex-ai"
 version = "1.0.0"
@@ -14,14 +13,12 @@ dependencies = [
     "vex-native-ads"
 ]
 
-[tool.uv.sources]
-vex-native-ads = { path = "vex_native_ads" }
-
 [tool.flet]
 org = "com.aveesharma"
 product = "VEX AI"
 company = "Avee Sharma"
 description = "Independent AI Assistant"
+dev_packages = { "vex-native-ads" = "vex_native_ads" }
 
 [tool.flet.app]
 module = "vex_ui"
