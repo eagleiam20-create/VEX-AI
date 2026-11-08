@@ -6,79 +6,42 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta name="theme-color" content="#000000">
 <title>VEX AI</title>
-
 <style>
 *{box-sizing:border-box}
 :root{color-scheme:dark}
 body{margin:0;background:#000;color:#fff;font-family:Inter,"Segoe UI",Arial,sans-serif}
 button,input{font:inherit}
 button{cursor:pointer}
-
 .app{display:flex;width:100%;height:100dvh;overflow:hidden;background:#000}
-
-/* SIDEBAR */
-.sidebar{
- width:255px;flex-shrink:0;background:#101010;
- border-right:1px solid #252525;
- display:flex;flex-direction:column;
- padding:17px 12px;transition:transform .25s ease;z-index:15
-}
+.sidebar{width:255px;flex-shrink:0;background:#101010;border-right:1px solid #252525;display:flex;flex-direction:column;padding:17px 12px;transition:transform .25s;z-index:15}
 .sideTop{display:flex;align-items:center;padding:5px 9px 23px}
 .brand{font-size:21px;font-weight:800;letter-spacing:1.4px}
 .brand span{color:#888}
-.sideButton{
- width:100%;display:flex;align-items:center;gap:11px;
- padding:12px;border:1px solid #292929;border-radius:10px;
- background:#171717;color:#eee;text-align:left;font-size:13px;
- margin-bottom:9px
-}
+.sideButton{width:100%;display:flex;align-items:center;gap:11px;padding:12px;border:1px solid #292929;border-radius:10px;background:#171717;color:#eee;text-align:left;font-size:13px;margin-bottom:9px}
 .sideButton:hover{background:#222}
 .sideHeading{font-size:11px;color:#777;padding:22px 10px 10px;letter-spacing:1px}
 .historyList{flex:1;overflow-y:auto}
-.historyItem{
- padding:10px;border-radius:8px;color:#aaa;font-size:13px;
- white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
- cursor:pointer;margin-bottom:3px
-}
+.historyItem{padding:10px;border-radius:8px;color:#aaa;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;margin-bottom:3px}
 .historyItem:hover{background:#202020;color:#fff}
 .sideBottom{border-top:1px solid #292929;padding-top:13px}
 .profile{display:flex;align-items:center;gap:11px;padding:10px}
-.avatar{
- width:34px;height:34px;border-radius:50%;background:#252525;
- display:grid;place-items:center;font-weight:700;font-size:13px
-}
+.avatar{width:34px;height:34px;border-radius:50%;background:#252525;display:grid;place-items:center;font-weight:700;font-size:13px}
 .profile small{display:block;color:#888;margin-top:3px;font-size:11px}
-
-/* MAIN */
 .main{flex:1;min-width:0;display:flex;flex-direction:column;position:relative}
-header{
- height:62px;flex-shrink:0;border-bottom:1px solid #1d1d1d;
- display:flex;align-items:center;justify-content:space-between;
- padding:0 25px;background:#000
-}
+header{height:62px;flex-shrink:0;border-bottom:1px solid #1d1d1d;display:flex;align-items:center;justify-content:space-between;padding:0 25px;background:#000}
 .headerLeft{display:flex;align-items:center;gap:13px}
 .headerTitle{font-size:17px;font-weight:650}
 .headerVersion{font-size:10px;color:#888;border:1px solid #292929;padding:5px 8px;border-radius:20px}
 .menuButton{display:none;border:0;background:transparent;color:#fff;font-size:23px;padding:5px}
 .headerRight{font-size:11px;color:#888}
-
-/* CHAT */
 main{flex:1;overflow-y:auto;padding:35px 22px 155px;scroll-behavior:smooth}
 .chat{max-width:790px;margin:0 auto}
-.welcome{
- text-align:center;position:absolute;left:50%;top:42%;
- transform:translate(-50%,-50%);width:90%;max-width:650px
-}
+.welcome{text-align:center;position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:90%;max-width:650px}
 .welcome h1{font-size:37px;letter-spacing:-1.2px;font-weight:650;margin:0 0 12px}
 .welcome p{font-size:16px;color:#929292;line-height:1.6}
 .message{margin:0 0 29px}
 .user{display:flex;justify-content:flex-end}
-.userBubble{
- background:#212121;border:1px solid #292929;
- border-radius:19px 19px 5px 19px;padding:13px 17px;
- max-width:82%;font-size:15px;line-height:1.6;
- white-space:pre-wrap;overflow-wrap:anywhere
-}
+.userBubble{background:#212121;border:1px solid #292929;border-radius:19px 19px 5px 19px;padding:13px 17px;max-width:82%;font-size:15px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
 .answer{font-size:15px;line-height:1.8;color:#e8e8e8}
 .answer h2{font-size:21px;color:#fff;margin:10px 0 15px}
 .answer h3{font-size:16px;color:#fff;margin:20px 0 8px}
@@ -87,173 +50,100 @@ main{flex:1;overflow-y:auto;padding:35px 22px 155px;scroll-behavior:smooth}
 .answer li{margin:7px 0}
 .answer strong{color:#fff}
 .sectionLabel{font-size:11px;letter-spacing:1.4px;color:#888;font-weight:700;margin:25px 0 12px}
-
-/* SOURCES */
 .sources{display:grid;gap:9px}
-.source{
- display:block;text-decoration:none;color:#ddd;
- border:1px solid #292929;border-radius:11px;
- padding:13px;background:#090909;transition:.2s
-}
+.source{display:block;text-decoration:none;color:#ddd;border:1px solid #292929;border-radius:11px;padding:13px;background:#090909;transition:.2s}
 .source:hover{background:#151515;border-color:#555}
 .source b{display:block;font-size:13px;margin-bottom:6px}
 .source small{display:block;color:#888;line-height:1.5;overflow-wrap:anywhere;margin-top:3px}
-
-/* IMAGES */
 .mediaGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .mediaItem{border:1px solid #292929;background:#090909;border-radius:11px;overflow:hidden}
 .mediaItem img{width:100%;height:155px;object-fit:cover;display:block;cursor:pointer;background:#111}
 .mediaItem p{font-size:12px;color:#bbb;padding:9px;margin:0;line-height:1.4}
-
-/* VIDEOS */
 .videoGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .videoItem{border:1px solid #292929;border-radius:11px;overflow:hidden;background:#090909}
 .videoItem iframe{width:100%;aspect-ratio:16/9;border:0;display:block}
 .videoItem a{display:block;padding:11px;color:#ddd;text-decoration:none;font-size:13px}
-
-/* FOLLOWUPS */
 .followups{display:grid;gap:8px}
-.followup{
- background:#090909;border:1px solid #292929;color:#ddd;
- text-align:left;padding:12px 14px;border-radius:10px;font-size:13px
-}
+.followup{background:#090909;border:1px solid #292929;color:#ddd;text-align:left;padding:12px 14px;border-radius:10px;font-size:13px}
 .followup:hover{background:#1a1a1a;border-color:#555}
-
-/* BUTTONS */
 .answerTools{display:flex;gap:8px;margin-top:15px;flex-wrap:wrap}
-.smallBtn{
- background:transparent;border:1px solid #292929;color:#aaa;
- border-radius:8px;padding:8px 11px;font-size:12px
-}
+.smallBtn{background:transparent;border:1px solid #292929;color:#aaa;border-radius:8px;padding:8px 11px;font-size:12px}
 .smallBtn:hover{background:#1b1b1b;color:#fff}
-
-/* COMPOSER */
-.composerWrap{
- position:absolute;bottom:0;left:0;right:0;
- padding:20px 20px 13px;
- background:linear-gradient(transparent,#000 20%,#000);z-index:5
-}
-.composer{
- max-width:790px;margin:auto;border:1px solid #333;
- background:#171717;border-radius:24px;padding:9px 10px 9px 17px;
- display:flex;align-items:center;gap:10px;min-height:57px
-}
+.composerWrap{position:absolute;bottom:0;left:0;right:0;padding:20px 20px 13px;background:linear-gradient(transparent,#000 20%,#000);z-index:5}
+.composer{max-width:790px;margin:auto;border:1px solid #333;background:#171717;border-radius:24px;padding:9px 10px 9px 17px;display:flex;align-items:center;gap:10px;min-height:57px}
 .composer:focus-within{border-color:#555}
-.composer input{
- flex:1;min-width:0;background:transparent;border:0;
- outline:0;color:#fff;padding:10px 2px;font-size:15px
-}
+.composer input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:#fff;padding:10px 2px;font-size:15px}
 .composer input::placeholder{color:#858585}
-.send{
- width:38px;height:38px;flex-shrink:0;border:0;
- border-radius:50%;background:#fff;color:#000;
- font-size:22px;font-weight:700;display:grid;place-items:center
-}
+.send{width:38px;height:38px;flex-shrink:0;border:0;border-radius:50%;background:#fff;color:#000;font-size:22px;font-weight:700;display:grid;place-items:center}
 .send:hover{background:#ddd}
 .send:disabled{opacity:.4}
 .composerHint{text-align:center;color:#666;font-size:10px;margin:10px 0 0}
 .loading{color:#aaa;font-size:13px;padding:12px 0}
 .empty{color:#777;font-size:13px}
-
-/* IMAGE VIEWER */
-.viewer{
- display:none;position:fixed;inset:0;background:rgba(0,0,0,.97);
- z-index:30;align-items:center;justify-content:center;padding:55px 15px 20px
-}
+.viewer{display:none;position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:30;align-items:center;justify-content:center;padding:55px 15px 20px}
 .viewer.open{display:flex}
 .viewer img{max-width:100%;max-height:100%;object-fit:contain}
-.closeViewer{
- position:absolute;right:18px;top:15px;background:#171717;color:#fff;
- border:1px solid #444;border-radius:50%;width:40px;height:40px;font-size:22px
-}
+.closeViewer{position:absolute;right:18px;top:15px;background:#171717;color:#fff;border:1px solid #444;border-radius:50%;width:40px;height:40px;font-size:22px}
 .sidebarOverlay{display:none}
-
-/* MOBILE */
 @media(max-width:760px){
- .sidebar{
-  position:fixed;left:0;top:0;bottom:0;width:275px;
-  transform:translateX(-105%)
- }
- .sidebar.open{transform:translateX(0)}
- .sidebarOverlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:14
- }
- .sidebarOverlay.open{display:block}
- .menuButton{display:block}
- header{height:58px;padding:0 14px}
- .headerRight{display:none}
- main{padding:25px 15px 145px}
- .welcome{top:42%}
- .welcome h1{font-size:30px}
- .welcome p{font-size:14px}
- .mediaGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
- .mediaItem img{height:125px}
- .videoGrid{grid-template-columns:1fr}
- .composerWrap{padding:15px 12px 10px}
- .composer{border-radius:22px}
- .userBubble{max-width:90%}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:275px;transform:translateX(-105%)}
+.sidebar.open{transform:translateX(0)}
+.sidebarOverlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:14}
+.sidebarOverlay.open{display:block}
+.menuButton{display:block}
+header{height:58px;padding:0 14px}
+.headerRight{display:none}
+main{padding:25px 15px 145px}
+.welcome{top:42%}
+.welcome h1{font-size:30px}
+.welcome p{font-size:14px}
+.mediaGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.mediaItem img{height:125px}
+.videoGrid{grid-template-columns:1fr}
+.composerWrap{padding:15px 12px 10px}
+.composer{border-radius:22px}
+.userBubble{max-width:90%}
 }
 </style>
 </head>
-
 <body>
 <div class="app">
-
 <aside class="sidebar" id="sidebar">
- <div class="sideTop">
-  <div class="brand">VEX<span> AI</span></div>
- </div>
-
- <button class="sideButton" id="newChat"><span>＋</span> New chat</button>
-
- <div class="sideHeading">RECENT</div>
- <div class="historyList" id="historyList"></div>
-
- <div class="sideBottom">
-  <button class="sideButton" id="settingsButton"><span>⚙</span> Settings</button>
-  <div class="profile">
-   <div class="avatar">V</div>
-   <div>
-    <div style="font-size:13px;font-weight:600">VEX AI</div>
-    <small>Personal AI assistant</small>
-   </div>
-  </div>
- </div>
+<div class="sideTop"><div class="brand">VEX<span> AI</span></div></div>
+<button class="sideButton" id="newChat"><span>＋</span> New chat</button>
+<div class="sideHeading">RECENT</div>
+<div class="historyList" id="historyList"></div>
+<div class="sideBottom">
+<button class="sideButton" id="settingsButton"><span>⚙</span> Settings</button>
+<div class="profile"><div class="avatar">V</div><div><div style="font-size:13px;font-weight:600">VEX AI</div><small>Personal AI assistant</small></div></div>
+</div>
 </aside>
-
 <div class="sidebarOverlay" id="sidebarOverlay"></div>
-
 <section class="main">
- <header>
-  <div class="headerLeft">
-   <button class="menuButton" id="menuButton">☰</button>
-   <div class="headerTitle">VEX AI</div>
-   <div class="headerVersion">V3</div>
-  </div>
-  <div class="headerRight">Independent web search</div>
- </header>
-
- <main id="mainArea">
-  <div class="welcome" id="welcome">
-   <h1>VEX AI</h1>
-   <p>How can I help you today?</p>
-  </div>
-  <div class="chat" id="chat"></div>
- </main>
-
- <div class="composerWrap">
-  <form class="composer" id="form">
-   <input id="question" autocomplete="off" placeholder="Message VEX AI..." aria-label="Ask VEX">
-   <button class="send" id="send" type="submit">↑</button>
-  </form>
-  <div class="composerHint">VEX AI can make mistakes. Verify important information.</div>
- </div>
+<header>
+<div class="headerLeft">
+<button class="menuButton" id="menuButton">☰</button>
+<div class="headerTitle">VEX AI</div>
+<div class="headerVersion">V3</div>
+</div>
+<div class="headerRight">Independent web search</div>
+</header>
+<main id="mainArea">
+<div class="welcome" id="welcome"><h1>VEX AI</h1><p>How can I help you today?</p></div>
+<div class="chat" id="chat"></div>
+</main>
+<div class="composerWrap">
+<form class="composer" id="form">
+<input id="question" autocomplete="off" placeholder="Message VEX AI..." aria-label="Ask VEX">
+<button class="send" id="send" type="submit">↑</button>
+</form>
+<div class="composerHint">VEX AI can make mistakes. Verify important information.</div>
+</div>
 </section>
 </div>
-
 <div class="viewer" id="viewer" onclick="closeViewer()">
- <button class="closeViewer" onclick="closeViewer()">×</button>
- <img id="viewerImage" alt="Expanded image">
+<button class="closeViewer" onclick="closeViewer()">×</button>
+<img id="viewerImage" alt="Expanded image">
 </div>
 
 <script>
@@ -265,638 +155,446 @@ const input=document.getElementById("question");
 const sendButton=document.getElementById("send");
 const welcome=document.getElementById("welcome");
 const historyList=document.getElementById("historyList");
-
 const sidebar=document.getElementById("sidebar");
 const overlay=document.getElementById("sidebarOverlay");
+const mainArea=document.getElementById("mainArea");
 
-const STOP=new Set((
- "the a an is are was were be been being do does did have has had can could would should will shall may might must "+
- "i me my we our you your he she it they them this that these those what why how when where which who whom "+
- "explain explanation scientifically science tell me about please give show find search for of to in on at by "+
- "from with without and or but if then than as into about after before over under more most much many some any "+
- "there here its their his her very really just"
-).split(/\s+/));
+const STOP=new Set(("the a an is are was were be been being do does did have has had can could would should will shall may might must i me my we our you your he she it they them this that these those what why how when where which who whom explain explanation scientifically science tell me about please give show find search for of to in on at by from with without and or but if then than as into about after before over under more most much many some any there here its their his her very really just").split(/\s+/));
 
-const BAD_TERMS=[
- "peptide","lighting","light fixture","lyrics","band","music store",
- "shopping","official store","product","buy now","office lighting",
- "classroom lighting","financial planning","beverage club",
- "wallpaper","game artwork","video game","game screenshot",
- "album cover","book cover","logo","advertisement"
-];
-
-const SCIENCE_TERMS=[
- "science","scientific","physics","chemistry","biology","atmosphere",
- "wavelength","scattering","molecule","experiment","research",
- "theory","NASA","NOAA","university","journal"
-];
+const BAD_TERMS=["peptide","lighting","light fixture","lyrics","band","music store","shopping","official store","product","buy now","office lighting","classroom lighting","financial planning","beverage club","wallpaper","game artwork","video game","game screenshot","album cover","book cover","logo","advertisement"];
 
 function esc(v){
- return String(v??"").replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- }[c]));
+return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
-function cleanText(s){
- return String(s||"").replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim();
-}
-function tokens(s){
- return cleanText(s.toLowerCase())
- .replace(/[^a-z0-9\s-]/g," ")
- .split(/\s+/)
- .filter(w=>w.length>2&&!STOP.has(w));
-}
-function unique(a){return [...new Set(a)]}
-function overlapCount(text,terms){
- const t=new Set(tokens(text));
- return terms.filter(x=>t.has(x)).length;
-}
-function safeURL(url){
- try{
-  const u=new URL(url);
-  return ["http:","https:"].includes(u.protocol)?u.href:null;
- }catch{return null}
-}
-async function getJSON(url){
- const r=await fetch(url,{headers:{"Accept":"application/json"}});
- if(!r.ok)throw new Error("Service error "+r.status);
- return await r.json();
-}
-function topicPhrase(question){
- let s=question.toLowerCase().trim();
- s=s.replace(/[?!.]/g," ");
- s=s.replace(/\b(explain|scientifically|in detail|in simple words|please|tell me|about)\b/g," ");
- s=s.replace(/^\s*(what is|what are|why is|why are|why does|why do|how does|how do|how is|how are|who is|who was|when did|where is|can you|could you)\s+/,"");
- s=s.replace(/^\s*(show|find|search|give|get|display)\s+(me\s+)?(only\s+)?(an?\s+)?(image|images|photo|photos|picture|pictures|video|videos)\s+(of\s+)?/,"");
- s=s.replace(/\b(the|a|an)\b/g," ");
- return s.replace(/\s+/g," ").trim()||question.trim();
-}
-function isBadResult(r){
- const text=(r.title+" "+r.description+" "+r.url).toLowerCase();
- return BAD_TERMS.some(x=>text.includes(x));
-}
-function scoreResult(r,terms,phrase,question){
- const title=cleanText(r.title||"").toLowerCase();
- const desc=cleanText(r.description||"").toLowerCase();
- const url=String(r.url||"").toLowerCase();
- const full=title+" "+desc+" "+url;
- const titleHits=overlapCount(title,terms);
- const descHits=overlapCount(desc,terms);
- const score=titleHits*5+descHits*2+overlapCount(url,terms)*.3+
-  (title.includes(phrase)?10:0);
- const scienceHits=overlapCount(full,SCIENCE_TERMS);
- const scienceQuestion=/why|how|scientific|science|physics|chemistry|biology/i.test(question);
- return {score:score+(scienceQuestion?scienceHits*1.5:0),titleHits,descHits,scienceHits};
-}
-function passesSpecialFilter(r,question){
- const q=question.toLowerCase();
- const text=(r.title+" "+r.description+" "+r.url).toLowerCase();
+function cleanText(s){return String(s||"").replace(/<[^>]*>/g," ").replace(/\s+/g," ").trim();}
+function tokens(s){return cleanText(s.toLowerCase()).replace(/[^a-z0-9\s-]/g," ").split(/\s+/).filter(w=>w.length>2&&!STOP.has(w));}
+function unique(a){return [...new Set(a)];}
+function overlapCount(text,terms){const t=new Set(tokens(text));return terms.filter(x=>t.has(x)).length;}
+function safeURL(url){try{const u=new URL(url);return ["http:","https:"].includes(u.protocol)?u.href:null;}catch{return null;}}
+async function getJSON(url){const r=await fetch(url,{headers:{"Accept":"application/json"}});if(!r.ok)throw new Error("Service error "+r.status);return r.json();}
 
- if(/sky.*blue|blue.*sky/.test(q)){
-  const terms=["rayleigh","scattering","scatter","atmosphere","sunlight","wavelength","light","molecules"];
-  return terms.some(x=>text.includes(x));
- }
- if(/sunset|sunrise/.test(q)){
-  const terms=["sunset","sunrise","atmosphere","scattering","red light","orange sky","wavelength","sunlight"];
-  return terms.some(x=>text.includes(x));
- }
- return !isBadResult(r);
+function topicPhrase(q){
+let s=q.toLowerCase().trim().replace(/[?!.]/g," ");
+s=s.replace(/\b(explain|scientifically|in detail|in simple words|please|tell me|about)\b/g," ");
+s=s.replace(/^\s*(what is|what are|why is|why are|why does|why do|how does|how do|how is|how are|who is|who was|when did|where is|can you|could you)\s+/,"");
+s=s.replace(/^\s*(show|find|search|give|get|display)\s+(me\s+)?(only\s+)?(an?\s+)?(image|images|photo|photos|picture|pictures|video|videos)\s+(of\s+)?/,"");
+s=s.replace(/\b(the|a|an)\b/g," ");
+return s.replace(/\s+/g," ").trim()||q.trim();
+}
+
+function isBadResult(r){
+const text=(r.title+" "+r.description+" "+r.url).toLowerCase();
+return BAD_TERMS.some(x=>text.includes(x));
+}
+
+function scoreResult(r,terms,phrase,q){
+const title=cleanText(r.title||"").toLowerCase();
+const desc=cleanText(r.description||"").toLowerCase();
+const url=String(r.url||"").toLowerCase();
+const full=title+" "+desc+" "+url;
+let score=overlapCount(title,terms)*5+overlapCount(desc,terms)*2+overlapCount(url,terms)*.3+(title.includes(phrase)?10:0);
+const scienceHits=overlapCount(full,["science","physics","chemistry","biology","atmosphere","research","NASA","university"]);
+return {...r,score:score+(/why|how|scientific|science|physics|chemistry|biology/i.test(q)?scienceHits*1.5:0),titleHits:overlapCount(title,terms),descHits:overlapCount(desc,terms)};
+}
+
+function passesSpecialFilter(r,q){
+const t=(r.title+" "+r.description+" "+r.url).toLowerCase();
+if(/sky.*blue|blue.*sky/.test(q))return ["rayleigh","scattering","scatter","atmosphere","sunlight","wavelength","light","molecules"].some(x=>t.includes(x));
+if(/sunset|sunrise/.test(q))return ["sunset","sunrise","atmosphere","scattering","red light","orange sky","wavelength","sunlight"].some(x=>t.includes(x));
+return !isBadResult(r);
 }
 
 /* Built-in explanations */
-function builtInAnswer(question){
- const q=question.toLowerCase();
+function builtInAnswer(q){
+const s=q.toLowerCase();
 
- if(/sky.*blue|blue.*sky/.test(q)){
-  return {
-   title:"Why is the sky blue?",
-   paragraphs:[
-    "Sunlight looks white, but it contains a mixture of colours. Each colour has a different wavelength.",
-    "When sunlight enters Earth's atmosphere, tiny gas molecules scatter the light. This is called <strong>Rayleigh scattering</strong>.",
-    "Shorter wavelengths are scattered much more strongly than longer wavelengths. Blue light is scattered far more than red light, so blue light reaches our eyes from all directions across the sky.",
-    "Violet light is scattered even more strongly, but our eyes are less sensitive to violet, and some violet light is absorbed in the upper atmosphere. The combined effect makes the daytime sky look blue."
-   ],
-   extra:"At sunset, sunlight travels through more atmosphere. Much of the blue light is scattered out of the direct path, leaving more red and orange light to reach your eyes."
-  };
- }
+if(/sky.*blue|blue.*sky/.test(s))return {
+title:"Why is the sky blue?",
+what:"The sky looks blue because air molecules scatter shorter-wavelength blue sunlight more strongly than longer-wavelength colours.",
+how:[
+"Sunlight contains a mixture of colours, each with a different wavelength.",
+"As sunlight enters the atmosphere, tiny gas molecules scatter light. This is called Rayleigh scattering.",
+"Blue light is scattered much more strongly than red light, sending blue light toward our eyes from across the sky.",
+"Violet scatters even more, but human eyes are less sensitive to it, so the sky appears blue."
+],
+uses:["This same scattering process helps explain why the sky looks different near sunrise and sunset."],
+extra:"At sunset, sunlight travels through more atmosphere. Much of the blue light is scattered out of the direct path, leaving more red and orange light."
+};
 
- if(/sunset|sunrise/.test(q)){
-  return {
-   title:"Why does the sky turn red at sunset?",
-   paragraphs:[
-    "At sunrise and sunset, sunlight passes through a much longer path in Earth's atmosphere than it does at midday.",
-    "Air molecules scatter shorter-wavelength blue light away from the direct path. The remaining direct sunlight contains a greater proportion of longer-wavelength red and orange light.",
-    "Dust, smoke and clouds can change the colours and make the reds and oranges more vivid."
-   ],
-   extra:"This is why sunsets can look red, orange, pink or purple depending on atmospheric conditions."
-  };
- }
+if(/sunset|sunrise/.test(s))return {
+title:"Why does the sky turn red at sunset?",
+what:"The sky often looks red or orange at sunset because sunlight travels through a longer path in the atmosphere.",
+how:[
+"Air molecules scatter shorter-wavelength blue light away from the direct path.",
+"More red and orange wavelengths remain in the sunlight that reaches your eyes directly.",
+"Dust, smoke, pollution and clouds can make the colours more vivid or change their appearance."
+],
+uses:["The same principle helps explain why sunrise colours can look similar to sunset colours."]
+};
 
- if(/rainbow/.test(q)){
-  return {
-   title:"How does a rainbow form?",
-   paragraphs:[
-    "A rainbow forms when sunlight enters water droplets in the air. The light bends as it enters the droplet, reflects inside it, and bends again as it leaves.",
-    "Different wavelengths bend by slightly different amounts. This separates white sunlight into its component colours, creating the familiar arc."
-   ]
-  };
- }
+if(/rainbow/.test(s))return {
+title:"How does a rainbow form?",
+what:"A rainbow is produced when sunlight interacts with water droplets in the air.",
+how:[
+"Sunlight bends as it enters a raindrop (refraction).",
+"Some light reflects inside the droplet.",
+"As light exits, it bends again. Different colours bend by different amounts, separating white light into a spectrum."
+],
+uses:["A rainbow is seen when the Sun is behind the observer and water droplets are in front."]
+};
 
- if(/ocean|sea.*blue|water.*blue/.test(q)){
-  return {
-   title:"Why does the ocean look blue?",
-   paragraphs:[
-    "Water absorbs longer wavelengths, especially red, orange and yellow, more strongly than blue light. Blue light can travel farther through clear water and is more likely to be scattered back toward our eyes.",
-    "The sky's reflection can also contribute, but it is not the main reason large bodies of clear water look blue. Depth, particles, algae and the seafloor can change the colour."
-   ]
-  };
- }
+if(/ocean|sea.*blue|water.*blue/.test(s))return {
+title:"Why does the ocean look blue?",
+what:"Clear water absorbs longer wavelengths such as red more strongly than blue light.",
+how:[
+"Sunlight enters the water and different wavelengths are absorbed at different rates.",
+"Blue light can travel farther through clear water and some is scattered back toward our eyes.",
+"Depth, algae, suspended particles and the seafloor can change the water's colour."
+],
+uses:["The sky's reflection can contribute, but it is not the only or main reason deep clear water looks blue."]
+};
 
- if(/black hole/.test(q)){
-  return {
-   title:"What is a black hole?",
-   paragraphs:[
-    "A black hole is a region of space where gravity is so strong that nothing, not even light, can escape from inside its event horizon.",
-    "In general relativity, a sufficiently concentrated amount of mass curves spacetime so strongly that all future paths inside the event horizon lead inward.",
-    "Black holes can be detected by observing how nearby stars and gas move, by detecting radiation from hot material around them, and through gravitational waves when black holes merge."
-   ]
-  };
- }
+if(/black hole/.test(s))return {
+title:"What is a black hole?",
+what:"A black hole is a region of space where gravity is so strong that nothing, not even light, can escape from inside its event horizon.",
+how:[
+"A large amount of mass is concentrated into a very small region.",
+"This curves spacetime so strongly that paths inside the event horizon lead inward.",
+"Scientists detect black holes by observing nearby stars and gas, radiation from hot material, and gravitational waves from mergers."
+],
+uses:["Black holes help scientists test gravity and study the evolution of stars and galaxies."]
+};
 
- if(/artificial intelligence|\bhow does ai learn\b/.test(q)){
-  return {
-   title:"How does artificial intelligence learn?",
-   paragraphs:[
-    "Many AI systems learn by adjusting numerical parameters inside a model. During training, the system processes examples and produces predictions.",
-    "A training algorithm measures how far those predictions are from the desired answers using a loss function. It then adjusts the parameters to reduce that error, often using gradient descent and backpropagation.",
-    "After training, the model uses patterns encoded in its parameters to make predictions on new inputs. It does not automatically know every fact on the internet."
-   ]
-  };
- }
- return null;
+if(/artificial intelligence|\bhow does ai learn\b/.test(s))return {
+title:"How does artificial intelligence learn?",
+what:"Many AI systems learn by adjusting numerical parameters in a model using examples.",
+how:[
+"The model processes training examples and makes predictions.",
+"A loss function measures how far predictions are from the desired outputs.",
+"An optimizer adjusts model parameters to reduce the loss, often using backpropagation and gradient descent.",
+"After training, the model uses patterns in its parameters to respond to new inputs."
+],
+uses:["AI is used in translation, image recognition, recommendations, search, accessibility and many other tasks."]
+};
+
+return null;
 }
 
-function sentenceList(text){
- return cleanText(text).replace(/([.!?])\s+/g,"$1|")
- .split("|").map(s=>s.trim())
- .filter(s=>s.length>45&&s.length<420);
+function sentenceList(t){
+return cleanText(t).replace(/([.!?])\s+/g,"$1|").split("|").map(x=>x.trim()).filter(x=>x.length>45&&x.length<420);
 }
+
 function makeEvidence(contexts,terms){
- const all=[];
- contexts.forEach((c,index)=>{
-  const text=[c.summary||"",...(c.passages||[]),c.content||""].join(" ");
-  sentenceList(text).forEach(s=>{
-   const score=overlapCount(s,terms)*3;
-   if(score>=6)all.push({text:s,score,index});
-  });
- });
- const seen=new Set();
- return all.sort((a,b)=>b.score-a.score).filter(x=>{
-  const k=x.text.toLowerCase().slice(0,100);
-  if(seen.has(k))return false;
-  seen.add(k);
-  return true;
- }).slice(0,5);
+let all=[];
+contexts.forEach((c,i)=>{
+const text=[c.summary||"",...(c.passages||[]),c.content||""].join(" ");
+sentenceList(text).forEach(s=>{
+const score=overlapCount(s,terms)*3;
+if(score>=3)all.push({text:s,score,index:i});
+});
+});
+let seen=new Set();
+return all.sort((a,b)=>b.score-a.score).filter(x=>{
+const k=x.text.toLowerCase().slice(0,100);
+if(seen.has(k))return false;
+seen.add(k);
+return true;
+}).slice(0,7);
 }
-function buildEvidenceAnswer(evidence){
- if(!evidence.length)return null;
- return {
-  title:"What the sources explain",
-  paragraphs:[
-   "The most relevant indexed sources provide these details:",
-   ...evidence.map(x=>x.text)
-  ]
- };
+
+function buildEvidenceAnswer(ev,topic){
+if(!ev.length)return null;
+const facts=ev.slice(0,5).map(x=>x.text);
+return {title:"Understanding "+topic,what:facts[0],how:facts.slice(1,4),uses:facts.slice(4)};
 }
-function renderAnswer(target,answer){
- const div=document.createElement("div");
- div.className="answer";
- let html="<h2>"+esc(answer.title||"VEX AI")+"</h2>";
- (answer.paragraphs||[]).forEach((p,i)=>{
-  if(answer.title==="What the sources explain"&&i>0)html+="<p>• "+esc(p)+"</p>";
-  else html+="<p>"+p+"</p>";
- });
- if(answer.extra)html+="<p><strong>Related detail:</strong> "+esc(answer.extra)+"</p>";
- div.innerHTML=html;
- target.appendChild(div);
+
+function renderAnswer(target,a){
+const d=document.createElement("div");
+d.className="answer";
+let h="<h2>"+esc(a.title||"VEX AI")+"</h2>";
+if(a.what)h+="<h3>What is it?</h3><p>"+esc(a.what)+"</p>";
+if(a.how?.length)h+="<h3>How does it work?</h3><ul>"+a.how.map(x=>"<li>"+esc(x)+"</li>").join("")+"</ul>";
+if(a.uses?.length)h+="<h3>Why is it useful?</h3><ul>"+a.uses.map(x=>"<li>"+esc(x)+"</li>").join("")+"</ul>";
+if(a.paragraphs?.length)h+=a.paragraphs.map(x=>"<p>"+esc(x)+"</p>").join("");
+if(a.extra)h+="<h3>Related detail</h3><p>"+esc(a.extra)+"</p>";
+d.innerHTML=h;
+target.appendChild(d);
 }
+
 function sourceHTML(s){
- const url=safeURL(s.url);
- if(!url)return "";
- let domain="";
- try{domain=new URL(url).hostname}catch{}
- return '<a class="source" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+
- '<b>'+esc(s.title||"Web source")+'</b>'+
- '<small>'+esc(s.description||"Relevant indexed information")+'</small>'+
- '<small>'+esc(domain)+'</small></a>';
+const url=safeURL(s.url);
+if(!url)return "";
+let domain="";
+try{domain=new URL(url).hostname}catch{}
+return '<a class="source" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer"><b>'+esc(s.title||"Web source")+'</b><small>'+esc(s.description||"Relevant indexed information")+'</small><small>'+esc(domain)+'</small></a>';
 }
+
 function addSection(parent,label){
- const wrap=document.createElement("section");
- wrap.innerHTML='<div class="sectionLabel">'+esc(label)+'</div>';
- parent.appendChild(wrap);
- return wrap;
+const w=document.createElement("section");
+w.innerHTML='<div class="sectionLabel">'+esc(label)+'</div>';
+parent.appendChild(w);
+return w;
 }
 
 /* Images */
 async function searchWikimediaImages(query){
- const url=COMMONS+
- "?action=query&generator=search"+
- "&gsrsearch="+encodeURIComponent(query)+
- "&gsrnamespace=6&gsrlimit=30"+
- "&prop=imageinfo&iiprop=url|extmetadata"+
- "&iiurlwidth=640&format=json&origin=*";
-
- const data=await getJSON(url);
- const pages=Object.values(data.query?.pages||{});
- const terms=unique(tokens(query));
-
- return pages.map(p=>{
-  const info=p.imageinfo?.[0]||{};
-  const metadata=info.extmetadata||{};
-  const title=(p.title||"").replace(/^File:/,"");
-  const description=cleanText(metadata.ImageDescription?.value||"");
-  const imageURL=info.thumburl||info.url;
-  const combined=title+" "+description;
-  const score=overlapCount(title,terms)*5+overlapCount(description,terms)*2;
-  return {title,description,url:imageURL,score};
- }).filter(x=>{
-  if(!safeURL(x.url)||x.score<3)return false;
-  const bad=(x.title+" "+x.description).toLowerCase();
-  if(BAD_TERMS.some(t=>bad.includes(t)))return false;
-  return true;
- }).sort((a,b)=>b.score-a.score);
+const url=COMMONS+"?action=query&generator=search&gsrsearch="+encodeURIComponent(query)+"&gsrnamespace=6&gsrlimit=30&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=640&format=json&origin=*";
+const data=await getJSON(url);
+const pages=Object.values(data.query?.pages||{});
+const terms=unique(tokens(query));
+return pages.map(p=>{
+const i=p.imageinfo?.[0]||{},m=i.extmetadata||{};
+const title=(p.title||"").replace(/^File:/,"");
+const description=cleanText(m.ImageDescription?.value||"");
+const url=i.thumburl||i.url;
+return {title,description,url,score:overlapCount(title,terms)*5+overlapCount(description,terms)*2};
+}).filter(x=>safeURL(x.url)&&x.score>=3&&!BAD_TERMS.some(t=>(x.title+" "+x.description).toLowerCase().includes(t))).sort((a,b)=>b.score-a.score);
 }
 
-async function searchPuriliImages(query){
- const data=await getJSON(API+"/api/images?q="+encodeURIComponent(query)+"&page=1");
- const items=Array.isArray(data)?data:(data.images||data.results||data.items||[]);
- const terms=unique(tokens(query));
-
- return items.map(item=>{
-  const title=item.title||item.name||"Image";
-  const description=item.description||item.caption||"";
-  const url=item.thumbUrl||item.thumbnail||item.image||item.url||item.src;
-  return {title,description,url,score:overlapCount(title+" "+description,terms)*4};
- }).filter(x=>{
-  if(!safeURL(x.url)||x.score<2)return false;
-  const bad=(x.title+" "+x.description).toLowerCase();
-  return !BAD_TERMS.some(t=>bad.includes(t));
- }).sort((a,b)=>b.score-a.score);
+async function searchPuriliImages(q){
+const d=await getJSON(API+"/api/images?q="+encodeURIComponent(q)+"&page=1");
+const items=Array.isArray(d)?d:(d.images||d.results||d.items||[]);
+const terms=unique(tokens(q));
+return items.map(x=>{
+const title=x.title||x.name||"Image";
+const description=x.description||x.caption||"";
+const url=x.thumbUrl||x.thumbnail||x.image||x.url||x.src;
+return {title,description,url,score:overlapCount(title+" "+description,terms)*4};
+}).filter(x=>safeURL(x.url)&&x.score>=2&&!BAD_TERMS.some(t=>(x.title+" "+x.description).toLowerCase().includes(t))).sort((a,b)=>b.score-a.score);
 }
 
 function openViewer(url){
- document.getElementById("viewerImage").src=url;
- document.getElementById("viewer").classList.add("open");
+document.getElementById("viewerImage").src=url;
+document.getElementById("viewer").classList.add("open");
 }
-function closeViewer(){
- document.getElementById("viewer").classList.remove("open");
-}
+function closeViewer(){document.getElementById("viewer").classList.remove("open");}
 
-async function showImages(target,query){
- let items=[];
- try{items=await searchWikimediaImages(query)}catch(e){}
- if(!items.length){
-  try{items=await searchPuriliImages(query)}catch(e){}
- }
-
- const section=addSection(target,"IMAGES");
- if(!items.length){
-  section.innerHTML+='<p class="empty">No sufficiently relevant images found.</p>';
-  return;
- }
-
- const grid=document.createElement("div");
- grid.className="mediaGrid";
-
- items.slice(0,9).forEach(item=>{
-  const url=safeURL(item.url);
-  if(!url)return;
-  const card=document.createElement("div");
-  card.className="mediaItem";
-  const img=document.createElement("img");
-  img.src=url;img.alt=item.title;img.loading="lazy";
-  img.onclick=()=>openViewer(url);
-  const caption=document.createElement("p");
-  caption.textContent=item.title;
-  card.append(img,caption);
-  grid.appendChild(card);
- });
- section.appendChild(grid);
+async function showImages(target,q){
+let items=[];
+try{items=await searchWikimediaImages(q)}catch{}
+if(!items.length){try{items=await searchPuriliImages(q)}catch{}}
+const sec=addSection(target,"IMAGES");
+if(!items.length){sec.innerHTML+='<p class="empty">No relevant images found.</p>';return;}
+const grid=document.createElement("div");
+grid.className="mediaGrid";
+items.slice(0,9).forEach(x=>{
+const u=safeURL(x.url);if(!u)return;
+const card=document.createElement("div");card.className="mediaItem";
+const img=document.createElement("img");img.src=u;img.alt=x.title;img.loading="lazy";img.onclick=()=>openViewer(u);
+const cap=document.createElement("p");cap.textContent=x.title;
+card.append(img,cap);grid.appendChild(card);
+});
+sec.appendChild(grid);
 }
 
 /* Videos */
-async function showVideos(target,query){
- const section=addSection(target,"VIDEOS");
- try{
-  const data=await getJSON(API+"/api/search?q="+
-   encodeURIComponent("site:youtube.com/watch "+query)+"&page=1&exact=0");
-  const terms=unique(tokens(query));
-  const results=(data.results||[]).filter(r=>{
-   return /youtube\.com\/watch|youtu\.be\//i.test(r.url||"")&&
-    overlapCount((r.title||"")+" "+(r.description||""),terms)>=1;
-  });
-
-  if(!results.length){
-   section.innerHTML+='<p class="empty">No relevant indexed videos found.</p>';
-   return;
-  }
-
-  const grid=document.createElement("div");
-  grid.className="videoGrid";
-
-  results.slice(0,4).forEach(r=>{
-   const url=safeURL(r.url);if(!url)return;
-   let id="";
-   try{
-    const u=new URL(url);
-    id=u.hostname.includes("youtu.be")?u.pathname.slice(1):u.searchParams.get("v")||"";
-   }catch(e){}
-
-   const card=document.createElement("div");
-   card.className="videoItem";
-   if(id&&/^[\w-]{11}$/.test(id)){
-    const frame=document.createElement("iframe");
-    frame.src="https://www.youtube-nocookie.com/embed/"+id;
-    frame.title=r.title||"YouTube video";
-    frame.loading="lazy";
-    frame.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-    frame.allowFullscreen=true;
-    card.appendChild(frame);
-   }
-   const link=document.createElement("a");
-   link.href=url;link.target="_blank";link.rel="noopener noreferrer";
-   link.textContent=r.title||"Watch video";
-   card.appendChild(link);grid.appendChild(card);
-  });
-  section.appendChild(grid);
- }catch(e){
-  section.innerHTML+='<p class="empty">Video search is temporarily unavailable.</p>';
- }
+async function showVideos(target,q){
+const sec=addSection(target,"VIDEOS");
+try{
+const d=await getJSON(API+"/api/search?q="+encodeURIComponent("site:youtube.com/watch "+q)+"&page=1&exact=0");
+const terms=unique(tokens(q));
+const rs=(d.results||[]).filter(r=>/youtube\.com\/watch|youtu\.be\//i.test(r.url||"")&&overlapCount((r.title||"")+" "+(r.description||""),terms)>=1);
+if(!rs.length){sec.innerHTML+='<p class="empty">No relevant videos found.</p>';return;}
+const grid=document.createElement("div");grid.className="videoGrid";
+rs.slice(0,4).forEach(r=>{
+const u=safeURL(r.url);if(!u)return;
+let id="";
+try{const x=new URL(u);id=x.hostname.includes("youtu.be")?x.pathname.slice(1):x.searchParams.get("v")||"";}catch{}
+const card=document.createElement("div");card.className="videoItem";
+if(/^[\w-]{11}$/.test(id)){
+const f=document.createElement("iframe");f.src="https://www.youtube-nocookie.com/embed/"+id;f.title=r.title||"YouTube video";f.loading="lazy";f.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";f.allowFullscreen=true;card.appendChild(f);
+}
+const a=document.createElement("a");a.href=u;a.target="_blank";a.rel="noopener noreferrer";a.textContent=r.title||"Watch video";card.appendChild(a);grid.appendChild(card);
+});
+sec.appendChild(grid);
+}catch{sec.innerHTML+='<p class="empty">Video search is temporarily unavailable.</p>';}
 }
 
-/* Follow-up questions */
-function makeFollowups(question){
- const q=question.toLowerCase();
+function isImageOnly(q){
+return /^(?:(?:show|give|find|display|get)\s+(?:me\s+)?(?:only\s+)?|only\s+)?(?:an?\s+)?(?:image|images|photo|photos|picture|pictures)(?:\s+of)?\s+.+$/i.test(q.trim())&&!/\b(explain|describe|what|why|how)\b/i.test(q);
+}
+function isVideoOnly(q){
+return /^(?:(?:show|give|find|display|get)\s+(?:me\s+)?(?:only\s+)?|only\s+)?(?:a\s+)?(?:video|videos|clip|clips)(?:\s+of)?\s+.+$/i.test(q.trim())&&!/\b(explain|describe|what|why|how)\b/i.test(q);
+}
 
- if(/sky.*blue|blue.*sky/.test(q)){
-  return [
-   "Why does blue light scatter more than red light?",
-   "Why does the sky turn orange at sunset?",
-   "Why does the sky look black from space?"
-  ];
- }
- if(/sunset|sunrise/.test(q)){
-  return [
-   "Why do sunsets sometimes look purple or pink?",
-   "How do dust and clouds change sunset colours?",
-   "Why is the sky blue during the day?"
-  ];
- }
- if(/black hole/.test(q)){
-  return [
-   "What would happen if someone fell into a black hole?",
-   "How do scientists detect black holes?",
-   "Can a black hole destroy Earth?"
-  ];
- }
- if(/artificial intelligence|\bai\b/.test(q)){
-  return [
-   "What is the difference between AI training and fine-tuning?",
-   "How do neural networks process information?",
-   "Can AI learn without internet access?"
-  ];
- }
-
- const topic=topicPhrase(question);
- return [
-  "Can you explain "+topic+" with a real-world example?",
-  "What are the main scientific facts about "+topic+"?",
-  "What are some common misconceptions about "+topic+"?"
- ];
+function makeFollowups(q){
+const t=topicPhrase(q);
+return [
+"Can you explain "+t+" with a real-world example?",
+"What are the main benefits and limitations of "+t+"?",
+"What should I learn next about "+t+"?"
+];
 }
 function addFollowups(target,q){
- const section=addSection(target,"YOU CAN ALSO ASK");
- const wrap=document.createElement("div");
- wrap.className="followups";
- makeFollowups(q).forEach(text=>{
-  const b=document.createElement("button");
-  b.className="followup";
-  b.textContent=text;
-  b.onclick=()=>ask(text);
-  wrap.appendChild(b);
- });
- section.appendChild(wrap);
+const s=addSection(target,"YOU CAN ALSO ASK");
+const w=document.createElement("div");w.className="followups";
+makeFollowups(q).forEach(t=>{
+const b=document.createElement("button");b.className="followup";b.textContent=t;b.onclick=()=>ask(t);w.appendChild(b);
+});
+s.appendChild(w);
 }
 
-/* Copy and share */
-function addTools(target,q,answerText){
- const tools=document.createElement("div");
- tools.className="answerTools";
-
- const copy=document.createElement("button");
- copy.className="smallBtn";copy.textContent="Copy answer";
- copy.onclick=async()=>{
-  try{await navigator.clipboard.writeText(answerText);copy.textContent="Copied"}
-  catch{copy.textContent="Copy unavailable"}
- };
-
- const share=document.createElement("button");
- share.className="smallBtn";share.textContent="Share question";
- share.onclick=async()=>{
-  const payload={title:"VEX AI",text:q,url:location.href};
-  if(navigator.share){try{await navigator.share(payload)}catch(e){}}
-  else{try{await navigator.clipboard.writeText(q);share.textContent="Question copied"}catch(e){}}
- };
-
- tools.append(copy,share);
- target.appendChild(tools);
+function addTools(target,q,text){
+const w=document.createElement("div");w.className="answerTools";
+const c=document.createElement("button");c.className="smallBtn";c.textContent="Copy answer";
+c.onclick=async()=>{try{await navigator.clipboard.writeText(text);c.textContent="Copied";}catch{c.textContent="Copy unavailable";}};
+const sh=document.createElement("button");sh.className="smallBtn";sh.textContent="Share question";
+sh.onclick=async()=>{
+if(navigator.share){try{await navigator.share({title:"VEX AI",text:q,url:location.href});}catch{}}
+else{try{await navigator.clipboard.writeText(q);sh.textContent="Question copied";}catch{}}
+};
+w.append(c,sh);target.appendChild(w);
 }
 
 /* Chat messages and history */
 function addUserMessage(q){
- const row=document.createElement("div");
- row.className="message user";
- const bubble=document.createElement("div");
- bubble.className="userBubble";
- bubble.textContent=q;
- row.appendChild(bubble);
- chat.appendChild(row);
- mainArea.scrollTop=mainArea.scrollHeight;
-
- const item=document.createElement("div");
- item.className="historyItem";
- item.textContent=q;
- item.title=q;
- item.onclick=()=>{
-  newChat();
-  ask(q);
-  closeSidebar();
- };
- historyList.prepend(item);
-
- while(historyList.children.length>30){
-  historyList.lastElementChild.remove();
- }
+const row=document.createElement("div");row.className="message user";
+const b=document.createElement("div");b.className="userBubble";b.textContent=q;row.appendChild(b);chat.appendChild(row);
+mainArea.scrollTop=mainArea.scrollHeight;
+const h=document.createElement("div");h.className="historyItem";h.textContent=q;h.title=q;
+h.onclick=()=>{newChat();ask(q);closeSidebar();};
+historyList.prepend(h);
+while(historyList.children.length>30)historyList.lastElementChild.remove();
 }
 function addAssistantMessage(){
- const row=document.createElement("div");
- row.className="message";
- const body=document.createElement("div");
- body.className="answer";
- row.appendChild(body);
- chat.appendChild(row);
- return {row,body};
+const r=document.createElement("div");r.className="message";
+const b=document.createElement("div");b.className="answer";r.appendChild(b);chat.appendChild(r);return b;
 }
 
-/* Search */
-async function searchResults(query){
- const data=await getJSON(API+"/api/search?q="+
-  encodeURIComponent(query)+"&page=1&exact=0");
- return data.results||[];
+/* Web search */
+async function searchResults(q){
+const d=await getJSON(API+"/api/search?q="+encodeURIComponent(q)+"&page=1&exact=0");
+return d.results||[];
 }
 
-async function ask(rawQuestion){
- const q=rawQuestion.trim();
- if(!q||sendButton.disabled)return;
+async function ask(raw){
+const q=raw.trim();
+if(!q||sendButton.disabled)return;
 
- welcome.style.display="none";
- input.value="";
- sendButton.disabled=true;
- addUserMessage(q);
+welcome.style.display="none";
+input.value="";
+sendButton.disabled=true;
+addUserMessage(q);
 
- const {body}=addAssistantMessage();
- body.innerHTML='<div class="loading">VEX is searching relevant information...</div>';
+const body=addAssistantMessage();
+body.innerHTML='<div class="loading">VEX is searching and preparing an explanation...</div>';
 
- try{
-  const imageOnly=/^(show|give|find|display|get)?\s*(me\s*)?(only\s*)?(an?\s*)?(image|images|photo|photos|picture|pictures)\b/i.test(q)
-   && !/\b(explain|describe|what|why|how)\b/i.test(q);
+try{
+const topic=topicPhrase(q);
+const imageOnly=isImageOnly(q);
+const videoOnly=isVideoOnly(q);
+const terms=unique(tokens(topic));
 
-  const videoRequest=/\b(video|videos|watch|youtube|clip|documentary)\b/i.test(q);
-  const topic=topicPhrase(q);
-  const terms=unique(tokens(topic));
-  const phrase=topic.toLowerCase();
+if(imageOnly){
+body.innerHTML="";
+await showImages(body,topic);
+sendButton.disabled=false;
+input.focus();
+return;
+}
 
-  if(imageOnly){
-   body.innerHTML="";
-   await showImages(body,topic);
-   mainArea.scrollTop=mainArea.scrollHeight;
-   sendButton.disabled=false;
-   input.focus();
-   return;
-  }
+if(videoOnly){
+body.innerHTML="";
+await showVideos(body,topic);
+sendButton.disabled=false;
+input.focus();
+return;
+}
 
-  const queries=unique([q,topic]);
-  const batches=await Promise.allSettled(queries.map(searchResults));
-  let raw=[];
-  batches.forEach(x=>{if(x.status==="fulfilled")raw.push(...x.value)});
+const batches=await Promise.allSettled(unique([q,topic]).map(searchResults));
+let rawResults=[];
+batches.forEach(x=>{if(x.status==="fulfilled")rawResults.push(...x.value);});
 
-  const byURL=new Map();
-  raw.forEach(r=>{
-   const url=safeURL(r.url);if(!url)return;
-   const old=byURL.get(url);
-   if(!old||String(r.description||"").length>String(old.description||"").length){
-    byURL.set(url,{...r,url});
-   }
-  });
+const map=new Map();
+rawResults.forEach(r=>{
+const u=safeURL(r.url);if(!u)return;
+const old=map.get(u);
+if(!old||String(r.description||"").length>String(old.description||"").length)map.set(u,{...r,url:u});
+});
 
-  const ranked=[...byURL.values()]
-   .map(r=>({...r,...scoreResult(r,terms,phrase,q)}))
-   .filter(r=>passesSpecialFilter(r,q))
-   .filter(r=>r.titleHits>=1&&r.descHits>=1||r.descHits>=2)
-   .sort((a,b)=>b.score-a.score);
+const selected=[...map.values()]
+.map(r=>scoreResult(r,terms,topic.toLowerCase(),q))
+.filter(r=>passesSpecialFilter(r,q))
+.filter(r=>(r.titleHits>=1&&r.descHits>=1)||r.descHits>=2)
+.sort((a,b)=>b.score-a.score).slice(0,6);
 
-  const selected=ranked.slice(0,5);
+const contexts=await Promise.all(selected.slice(0,5).map(async r=>{
+try{return {...await getJSON(API+"/api/context?url="+encodeURIComponent(r.url)),_result:r};}
+catch{return {...r,summary:r.description||"",content:"",passages:[],_result:r};}
+}));
 
-  const contexts=await Promise.all(selected.map(async r=>{
-   try{
-    const data=await getJSON(API+"/api/context?url="+encodeURIComponent(r.url));
-    return {...data,_result:r};
-   }catch{
-    return {...r,summary:r.description||"",content:"",passages:[],_result:r};
-   }
-  }));
+const evidence=makeEvidence(contexts,terms);
+const answer=builtInAnswer(q)||buildEvidenceAnswer(evidence,topic)||{
+title:"I couldn't build a reliable explanation yet",
+what:"The search service did not return enough closely matching information to explain this topic confidently.",
+how:[
+"Try adding context to your question, such as the country, product, person or specific process you mean.",
+"VEX avoids inventing details when its available sources are not relevant enough."
+]
+};
 
-  const custom=builtInAnswer(q);
-  const evidence=makeEvidence(contexts,terms);
-  const answer=custom||buildEvidenceAnswer(evidence)||{
-   title:"I couldn't find enough relevant information",
-   paragraphs:[
-    "The search index did not return enough closely matching information to build a reliable explanation.",
-    "Try making the question more specific. VEX will avoid filling the answer with unrelated pages."
-   ]
-  };
+body.innerHTML="";
+renderAnswer(body,answer);
+addTools(body,q,body.innerText);
 
-  body.innerHTML="";
-  renderAnswer(body,answer);
+if(selected.length){
+const ss=addSection(body,"WEB SOURCES");
+const wrap=document.createElement("div");wrap.className="sources";
+selected.slice(0,4).forEach(s=>{const h=sourceHTML(s);if(h)wrap.insertAdjacentHTML("beforeend",h);});
+if(wrap.children.length)ss.appendChild(wrap);
+else ss.innerHTML+='<p class="empty">No relevant source links found.</p>';
+}
 
-  const answerText=answer.title+"\n\n"+
-   (answer.paragraphs||[]).map(cleanText).join("\n\n")+
-   (answer.extra?"\n\n"+answer.extra:"");
+await showImages(body,topic);
 
-  addTools(body,q,answerText);
+if(/\b(video|videos|watch|youtube|clip|documentary)\b/i.test(q))await showVideos(body,topic);
 
-  const sourceSection=addSection(body,"WEB SOURCES");
-  const sourceWrap=document.createElement("div");
-  sourceWrap.className="sources";
+addFollowups(body,q);
 
-  selected.slice(0,4).forEach(s=>{
-   const html=sourceHTML(s);
-   if(html)sourceWrap.insertAdjacentHTML("beforeend",html);
-  });
+}catch(e){
+body.innerHTML='<p style="color:#ff9999">VEX could not reach the search service. Please try again.</p>';
+}
 
-  if(sourceWrap.children.length)sourceSection.appendChild(sourceWrap);
-  else sourceSection.innerHTML+='<p class="empty">No sufficiently relevant sources passed the filter.</p>';
-
-  await showImages(body,topic);
-  if(videoRequest)await showVideos(body,topic);
-  addFollowups(body,q);
-
- }catch(error){
-  body.innerHTML='<p style="color:#ff9999">VEX could not reach the search service. Please try again.</p>';
- }
-
- mainArea.scrollTop=mainArea.scrollHeight;
- sendButton.disabled=false;
- input.focus();
+mainArea.scrollTop=mainArea.scrollHeight;
+sendButton.disabled=false;
+input.focus();
 }
 
 /* New chat */
 function newChat(){
- chat.innerHTML="";
- welcome.style.display="block";
- input.value="";
- closeSidebar();
- input.focus();
+chat.innerHTML="";
+welcome.style.display="block";
+input.value="";
+closeSidebar();
+input.focus();
 }
 
 /* Sidebar controls */
 function closeSidebar(){
- sidebar.classList.remove("open");
- overlay.classList.remove("open");
+sidebar.classList.remove("open");
+overlay.classList.remove("open");
 }
 
 document.getElementById("menuButton").onclick=()=>{
- sidebar.classList.toggle("open");
- overlay.classList.toggle("open");
+sidebar.classList.toggle("open");
+overlay.classList.toggle("open");
 };
 overlay.onclick=closeSidebar;
 document.getElementById("newChat").onclick=newChat;
 
 document.getElementById("settingsButton").onclick=()=>{
- alert("VEX AI Settings will be available in a future update.");
- closeSidebar();
+alert("VEX AI Settings will be available in a future update.");
+closeSidebar();
 };
 
 /* Submit */
 document.getElementById("form").addEventListener("submit",e=>{
- e.preventDefault();
- ask(input.value);
+e.preventDefault();
+ask(input.value);
 });
 
 document.addEventListener("keydown",e=>{
- if(e.key==="Escape"){
-  closeViewer();
-  closeSidebar();
- }
+if(e.key==="Escape"){closeViewer();closeSidebar();}
 });
 </script>
 </body>
