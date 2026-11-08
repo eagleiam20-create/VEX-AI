@@ -1,29 +1,24 @@
 
-[build-system]
-requires = ["setuptools>=68", "wheel"]
-build-backend = "setuptools.build_meta"
-
 [project]
-name = "vex-native-ads"
-version = "0.1.0"
-description = "Native AdMob template control for VEX AI on Flet"
+name = "vex-ai"
+version = "1.0.0"
+description = "VEX AI - Independent AI Assistant"
 requires-python = ">=3.10"
 dependencies = [
-    "flet>=1.1.0"
+    "flet==1.1.0",
+    "flet-cli==1.1.0",
+    "flet-webview",
+    "requests",
+    "beautifulsoup4",
+    "ddgs",
+    "vex-native-ads @ git+https://github.com/eagleiam20-create/VEX-AI.git@main#subdirectory=vex_native_ads"
 ]
 
-[tool.setuptools]
-include-package-data = true
+[tool.flet]
+org = "com.aveesharma"
+product = "VEX AI"
+company = "Avee Sharma"
+description = "Independent AI Assistant"
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["flutter.vex_native_ads*"]
-namespaces = true
-
-[tool.setuptools.package-data]
-"flutter.vex_native_ads" = [
-    "lib/*.dart",
-    "lib/src/*.dart",
-    "pubspec.yaml",
-    "flet-extension.toml"
-]
+[tool.flet.app]
+module = "vex_ui"
