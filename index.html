@@ -10,95 +10,245 @@
 <style>
 *{box-sizing:border-box}
 :root{color-scheme:dark}
-body{margin:0;background:#000;color:#f5f5f5;font-family:Arial,sans-serif}
+body{margin:0;background:#000;color:#fff;font-family:Inter,"Segoe UI",Arial,sans-serif}
 button,input{font:inherit}
 button{cursor:pointer}
-.app{max-width:1050px;margin:auto;min-height:100vh;display:flex;flex-direction:column}
-header{height:62px;border-bottom:1px solid #191919;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;background:#000;z-index:5}
-.logo{font-size:21px;font-weight:800;letter-spacing:1.5px}
-.logo span{color:#777}
-.status{font-size:11px;color:#888;border:1px solid #252525;padding:5px 9px;border-radius:20px}
-main{flex:1;padding:28px 20px 150px}
-.welcome{text-align:center;margin:14vh auto 30px;max-width:620px}
-.welcome h1{font-size:38px;letter-spacing:-1px;margin:0 0 12px}
-.welcome p{color:#999;line-height:1.6}
-.chat{max-width:800px;margin:auto}
-.message{margin:0 0 28px}
+
+.app{display:flex;width:100%;height:100dvh;overflow:hidden;background:#000}
+
+/* SIDEBAR */
+.sidebar{
+ width:255px;flex-shrink:0;background:#101010;
+ border-right:1px solid #252525;
+ display:flex;flex-direction:column;
+ padding:17px 12px;transition:transform .25s ease;z-index:15
+}
+.sideTop{display:flex;align-items:center;padding:5px 9px 23px}
+.brand{font-size:21px;font-weight:800;letter-spacing:1.4px}
+.brand span{color:#888}
+.sideButton{
+ width:100%;display:flex;align-items:center;gap:11px;
+ padding:12px;border:1px solid #292929;border-radius:10px;
+ background:#171717;color:#eee;text-align:left;font-size:13px;
+ margin-bottom:9px
+}
+.sideButton:hover{background:#222}
+.sideHeading{font-size:11px;color:#777;padding:22px 10px 10px;letter-spacing:1px}
+.historyList{flex:1;overflow-y:auto}
+.historyItem{
+ padding:10px;border-radius:8px;color:#aaa;font-size:13px;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+ cursor:pointer;margin-bottom:3px
+}
+.historyItem:hover{background:#202020;color:#fff}
+.sideBottom{border-top:1px solid #292929;padding-top:13px}
+.profile{display:flex;align-items:center;gap:11px;padding:10px}
+.avatar{
+ width:34px;height:34px;border-radius:50%;background:#252525;
+ display:grid;place-items:center;font-weight:700;font-size:13px
+}
+.profile small{display:block;color:#888;margin-top:3px;font-size:11px}
+
+/* MAIN */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;position:relative}
+header{
+ height:62px;flex-shrink:0;border-bottom:1px solid #1d1d1d;
+ display:flex;align-items:center;justify-content:space-between;
+ padding:0 25px;background:#000
+}
+.headerLeft{display:flex;align-items:center;gap:13px}
+.headerTitle{font-size:17px;font-weight:650}
+.headerVersion{font-size:10px;color:#888;border:1px solid #292929;padding:5px 8px;border-radius:20px}
+.menuButton{display:none;border:0;background:transparent;color:#fff;font-size:23px;padding:5px}
+.headerRight{font-size:11px;color:#888}
+
+/* CHAT */
+main{flex:1;overflow-y:auto;padding:35px 22px 155px;scroll-behavior:smooth}
+.chat{max-width:790px;margin:0 auto}
+.welcome{
+ text-align:center;position:absolute;left:50%;top:42%;
+ transform:translate(-50%,-50%);width:90%;max-width:650px
+}
+.welcome h1{font-size:37px;letter-spacing:-1.2px;font-weight:650;margin:0 0 12px}
+.welcome p{font-size:16px;color:#929292;line-height:1.6}
+.message{margin:0 0 29px}
 .user{display:flex;justify-content:flex-end}
-.userBubble{background:#111;border:1px solid #252525;border-radius:18px 18px 4px 18px;padding:13px 16px;max-width:85%;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
-.answer{line-height:1.75;font-size:15px}
-.answer h2{font-size:19px;margin:20px 0 10px}
-.answer h3{font-size:15px;margin:18px 0 7px}
-.answer p{margin:10px 0;color:#e4e4e4}
-.answer ul{padding-left:22px;color:#e4e4e4}
+.userBubble{
+ background:#212121;border:1px solid #292929;
+ border-radius:19px 19px 5px 19px;padding:13px 17px;
+ max-width:82%;font-size:15px;line-height:1.6;
+ white-space:pre-wrap;overflow-wrap:anywhere
+}
+.answer{font-size:15px;line-height:1.8;color:#e8e8e8}
+.answer h2{font-size:21px;color:#fff;margin:10px 0 15px}
+.answer h3{font-size:16px;color:#fff;margin:20px 0 8px}
+.answer p{margin:10px 0}
+.answer ul{padding-left:22px}
 .answer li{margin:7px 0}
 .answer strong{color:#fff}
-.sectionLabel{font-size:11px;letter-spacing:1.5px;color:#888;font-weight:700;margin:22px 0 10px}
-.answerTools{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
-.smallBtn{background:#090909;border:1px solid #292929;color:#bbb;border-radius:8px;padding:7px 10px;font-size:12px}
-.smallBtn:hover{background:#171717;color:#fff}
-.sources{display:grid;gap:8px}
-.source{display:block;text-decoration:none;color:#ddd;border:1px solid #242424;border-radius:10px;padding:12px;background:#070707}
-.source:hover{border-color:#666}
-.source b{display:block;font-size:13px;margin-bottom:5px}
-.source small{display:block;color:#888;line-height:1.45;overflow-wrap:anywhere;margin-top:3px}
-.mediaGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
-.mediaItem{border:1px solid #242424;background:#080808;border-radius:10px;overflow:hidden;min-width:0}
+.sectionLabel{font-size:11px;letter-spacing:1.4px;color:#888;font-weight:700;margin:25px 0 12px}
+
+/* SOURCES */
+.sources{display:grid;gap:9px}
+.source{
+ display:block;text-decoration:none;color:#ddd;
+ border:1px solid #292929;border-radius:11px;
+ padding:13px;background:#090909;transition:.2s
+}
+.source:hover{background:#151515;border-color:#555}
+.source b{display:block;font-size:13px;margin-bottom:6px}
+.source small{display:block;color:#888;line-height:1.5;overflow-wrap:anywhere;margin-top:3px}
+
+/* IMAGES */
+.mediaGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.mediaItem{border:1px solid #292929;background:#090909;border-radius:11px;overflow:hidden}
 .mediaItem img{width:100%;height:155px;object-fit:cover;display:block;cursor:pointer;background:#111}
-.mediaItem p{font-size:12px;color:#bbb;padding:8px;margin:0;line-height:1.4}
+.mediaItem p{font-size:12px;color:#bbb;padding:9px;margin:0;line-height:1.4}
+
+/* VIDEOS */
 .videoGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.videoItem{border:1px solid #252525;border-radius:10px;overflow:hidden;background:#080808}
+.videoItem{border:1px solid #292929;border-radius:11px;overflow:hidden;background:#090909}
 .videoItem iframe{width:100%;aspect-ratio:16/9;border:0;display:block}
-.videoItem a{display:block;padding:10px;color:#ddd;text-decoration:none;font-size:13px}
-.followups{display:grid;gap:7px}
-.followup{background:#080808;border:1px solid #252525;color:#ddd;text-align:left;padding:11px 13px;border-radius:9px;font-size:13px}
-.followup:hover{background:#151515}
-.composerWrap{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(transparent,#000 18%);padding:22px 16px 16px;z-index:6}
-.composer{max-width:800px;margin:auto;border:1px solid #333;background:#090909;border-radius:17px;padding:10px;display:flex;gap:9px;align-items:flex-end}
-.composer input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:#fff;padding:10px 7px;font-size:15px}
-.send{background:#fff;color:#000;border:0;border-radius:11px;padding:11px 16px;font-weight:700}
+.videoItem a{display:block;padding:11px;color:#ddd;text-decoration:none;font-size:13px}
+
+/* FOLLOWUPS */
+.followups{display:grid;gap:8px}
+.followup{
+ background:#090909;border:1px solid #292929;color:#ddd;
+ text-align:left;padding:12px 14px;border-radius:10px;font-size:13px
+}
+.followup:hover{background:#1a1a1a;border-color:#555}
+
+/* BUTTONS */
+.answerTools{display:flex;gap:8px;margin-top:15px;flex-wrap:wrap}
+.smallBtn{
+ background:transparent;border:1px solid #292929;color:#aaa;
+ border-radius:8px;padding:8px 11px;font-size:12px
+}
+.smallBtn:hover{background:#1b1b1b;color:#fff}
+
+/* COMPOSER */
+.composerWrap{
+ position:absolute;bottom:0;left:0;right:0;
+ padding:20px 20px 13px;
+ background:linear-gradient(transparent,#000 20%,#000);z-index:5
+}
+.composer{
+ max-width:790px;margin:auto;border:1px solid #333;
+ background:#171717;border-radius:24px;padding:9px 10px 9px 17px;
+ display:flex;align-items:center;gap:10px;min-height:57px
+}
+.composer:focus-within{border-color:#555}
+.composer input{
+ flex:1;min-width:0;background:transparent;border:0;
+ outline:0;color:#fff;padding:10px 2px;font-size:15px
+}
+.composer input::placeholder{color:#858585}
+.send{
+ width:38px;height:38px;flex-shrink:0;border:0;
+ border-radius:50%;background:#fff;color:#000;
+ font-size:22px;font-weight:700;display:grid;place-items:center
+}
+.send:hover{background:#ddd}
 .send:disabled{opacity:.4}
-.composerHint{text-align:center;color:#666;font-size:10px;margin:8px 0 0}
+.composerHint{text-align:center;color:#666;font-size:10px;margin:10px 0 0}
 .loading{color:#aaa;font-size:13px;padding:12px 0}
 .empty{color:#777;font-size:13px}
-.viewer{display:none;position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:20;align-items:center;justify-content:center;padding:55px 15px 20px}
+
+/* IMAGE VIEWER */
+.viewer{
+ display:none;position:fixed;inset:0;background:rgba(0,0,0,.97);
+ z-index:30;align-items:center;justify-content:center;padding:55px 15px 20px
+}
 .viewer.open{display:flex}
 .viewer img{max-width:100%;max-height:100%;object-fit:contain}
-.closeViewer{position:absolute;right:18px;top:15px;background:#171717;color:#fff;border:1px solid #444;border-radius:50%;width:38px;height:38px;font-size:20px}
-@media(max-width:600px){
- main{padding:20px 14px 145px}
- .welcome{margin:11vh auto 25px}
- .welcome h1{font-size:32px}
+.closeViewer{
+ position:absolute;right:18px;top:15px;background:#171717;color:#fff;
+ border:1px solid #444;border-radius:50%;width:40px;height:40px;font-size:22px
+}
+.sidebarOverlay{display:none}
+
+/* MOBILE */
+@media(max-width:760px){
+ .sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:275px;
+  transform:translateX(-105%)
+ }
+ .sidebar.open{transform:translateX(0)}
+ .sidebarOverlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:14
+ }
+ .sidebarOverlay.open{display:block}
+ .menuButton{display:block}
+ header{height:58px;padding:0 14px}
+ .headerRight{display:none}
+ main{padding:25px 15px 145px}
+ .welcome{top:42%}
+ .welcome h1{font-size:30px}
+ .welcome p{font-size:14px}
  .mediaGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
  .mediaItem img{height:125px}
  .videoGrid{grid-template-columns:1fr}
- header{padding:0 15px}
+ .composerWrap{padding:15px 12px 10px}
+ .composer{border-radius:22px}
+ .userBubble{max-width:90%}
 }
 </style>
 </head>
 
 <body>
 <div class="app">
-<header>
- <div class="logo">VEX<span> AI</span></div>
- <div class="status">WEB CONNECTED</div>
-</header>
 
-<main>
- <div class="welcome" id="welcome">
-  <h1>What can I help with?</h1>
-  <p>Ask anything. VEX searches the web and presents relevant information.</p>
+<aside class="sidebar" id="sidebar">
+ <div class="sideTop">
+  <div class="brand">VEX<span> AI</span></div>
  </div>
- <div class="chat" id="chat"></div>
-</main>
 
-<div class="composerWrap">
- <form class="composer" id="form">
-  <input id="question" autocomplete="off" placeholder="Ask VEX anything..." aria-label="Ask VEX">
-  <button class="send" id="send" type="submit">↑</button>
- </form>
- <div class="composerHint">VEX AI · Independent web search</div>
-</div>
+ <button class="sideButton" id="newChat"><span>＋</span> New chat</button>
+
+ <div class="sideHeading">RECENT</div>
+ <div class="historyList" id="historyList"></div>
+
+ <div class="sideBottom">
+  <button class="sideButton" id="settingsButton"><span>⚙</span> Settings</button>
+  <div class="profile">
+   <div class="avatar">V</div>
+   <div>
+    <div style="font-size:13px;font-weight:600">VEX AI</div>
+    <small>Personal AI assistant</small>
+   </div>
+  </div>
+ </div>
+</aside>
+
+<div class="sidebarOverlay" id="sidebarOverlay"></div>
+
+<section class="main">
+ <header>
+  <div class="headerLeft">
+   <button class="menuButton" id="menuButton">☰</button>
+   <div class="headerTitle">VEX AI</div>
+   <div class="headerVersion">V3</div>
+  </div>
+  <div class="headerRight">Independent web search</div>
+ </header>
+
+ <main id="mainArea">
+  <div class="welcome" id="welcome">
+   <h1>VEX AI</h1>
+   <p>How can I help you today?</p>
+  </div>
+  <div class="chat" id="chat"></div>
+ </main>
+
+ <div class="composerWrap">
+  <form class="composer" id="form">
+   <input id="question" autocomplete="off" placeholder="Message VEX AI..." aria-label="Ask VEX">
+   <button class="send" id="send" type="submit">↑</button>
+  </form>
+  <div class="composerHint">VEX AI can make mistakes. Verify important information.</div>
+ </div>
+</section>
 </div>
 
 <div class="viewer" id="viewer" onclick="closeViewer()">
@@ -114,6 +264,10 @@ const chat=document.getElementById("chat");
 const input=document.getElementById("question");
 const sendButton=document.getElementById("send");
 const welcome=document.getElementById("welcome");
+const historyList=document.getElementById("historyList");
+
+const sidebar=document.getElementById("sidebar");
+const overlay=document.getElementById("sidebarOverlay");
 
 const STOP=new Set((
  "the a an is are was were be been being do does did have has had can could would should will shall may might must "+
@@ -176,58 +330,39 @@ function topicPhrase(question){
  s=s.replace(/\b(the|a|an)\b/g," ");
  return s.replace(/\s+/g," ").trim()||question.trim();
 }
-function isImageOnly(q){
- return /^(show|give|find|display|get)?\s*(me\s*)?(only\s*)?(an?\s*)?(image|images|photo|photos|picture|pictures)\b/i.test(q.trim())
- && !/\b(explain|describe|what|why|how)\b/i.test(q);
-}
-function asksVideo(q){return /\b(video|videos|watch|youtube|clip|documentary)\b/i.test(q)}
-
 function isBadResult(r){
  const text=(r.title+" "+r.description+" "+r.url).toLowerCase();
  return BAD_TERMS.some(x=>text.includes(x));
 }
-
 function scoreResult(r,terms,phrase,question){
  const title=cleanText(r.title||"").toLowerCase();
  const desc=cleanText(r.description||"").toLowerCase();
  const url=String(r.url||"").toLowerCase();
  const full=title+" "+desc+" "+url;
-
  const titleHits=overlapCount(title,terms);
  const descHits=overlapCount(desc,terms);
  const score=titleHits*5+descHits*2+overlapCount(url,terms)*.3+
   (title.includes(phrase)?10:0);
-
  const scienceHits=overlapCount(full,SCIENCE_TERMS);
  const scienceQuestion=/why|how|scientific|science|physics|chemistry|biology/i.test(question);
-
- return {
-  score:score+(scienceQuestion?scienceHits*1.5:0),
-  titleHits,descHits,scienceHits
- };
+ return {score:score+(scienceQuestion?scienceHits*1.5:0),titleHits,descHits,scienceHits};
 }
-
 function passesSpecialFilter(r,question){
  const q=question.toLowerCase();
  const text=(r.title+" "+r.description+" "+r.url).toLowerCase();
-
- if(isBadResult(r))return false;
 
  if(/sky.*blue|blue.*sky/.test(q)){
   const terms=["rayleigh","scattering","scatter","atmosphere","sunlight","wavelength","light","molecules"];
   return terms.some(x=>text.includes(x));
  }
-
  if(/sunset|sunrise/.test(q)){
   const terms=["sunset","sunrise","atmosphere","scattering","red light","orange sky","wavelength","sunlight"];
   return terms.some(x=>text.includes(x));
  }
-
- return true;
+ return !isBadResult(r);
 }
 
-/* Handwritten explanations for selected educational questions.
-   These do not depend on unrelated search snippets. */
+/* Built-in explanations */
 function builtInAnswer(question){
  const q=question.toLowerCase();
 
@@ -297,15 +432,12 @@ function builtInAnswer(question){
    ]
   };
  }
-
  return null;
 }
 
 function sentenceList(text){
- return cleanText(text)
- .replace(/([.!?])\s+/g,"$1|")
- .split("|")
- .map(s=>s.trim())
+ return cleanText(text).replace(/([.!?])\s+/g,"$1|")
+ .split("|").map(s=>s.trim())
  .filter(s=>s.length>45&&s.length<420);
 }
 function makeEvidence(contexts,terms){
@@ -364,19 +496,14 @@ function addSection(parent,label){
  return wrap;
 }
 
-/* Wikimedia Commons image search with strict relevance scoring. */
+/* Images */
 async function searchWikimediaImages(query){
  const url=COMMONS+
- "?action=query"+
- "&generator=search"+
+ "?action=query&generator=search"+
  "&gsrsearch="+encodeURIComponent(query)+
- "&gsrnamespace=6"+
- "&gsrlimit=30"+
- "&prop=imageinfo"+
- "&iiprop=url|extmetadata"+
- "&iiurlwidth=640"+
- "&format=json"+
- "&origin=*";
+ "&gsrnamespace=6&gsrlimit=30"+
+ "&prop=imageinfo&iiprop=url|extmetadata"+
+ "&iiurlwidth=640&format=json&origin=*";
 
  const data=await getJSON(url);
  const pages=Object.values(data.query?.pages||{});
@@ -387,14 +514,12 @@ async function searchWikimediaImages(query){
   const metadata=info.extmetadata||{};
   const title=(p.title||"").replace(/^File:/,"");
   const description=cleanText(metadata.ImageDescription?.value||"");
-  const url=info.thumburl||info.url;
+  const imageURL=info.thumburl||info.url;
   const combined=title+" "+description;
   const score=overlapCount(title,terms)*5+overlapCount(description,terms)*2;
-
-  return {title,description,url,score};
+  return {title,description,url:imageURL,score};
  }).filter(x=>{
-  if(!safeURL(x.url))return false;
-  if(x.score<3)return false;
+  if(!safeURL(x.url)||x.score<3)return false;
   const bad=(x.title+" "+x.description).toLowerCase();
   if(BAD_TERMS.some(t=>bad.includes(t)))return false;
   return true;
@@ -458,6 +583,7 @@ async function showImages(target,query){
  section.appendChild(grid);
 }
 
+/* Videos */
 async function showVideos(target,query){
  const section=addSection(target,"VIDEOS");
  try{
@@ -484,6 +610,7 @@ async function showVideos(target,query){
     const u=new URL(url);
     id=u.hostname.includes("youtu.be")?u.pathname.slice(1):u.searchParams.get("v")||"";
    }catch(e){}
+
    const card=document.createElement("div");
    card.className="videoItem";
    if(id&&/^[\w-]{11}$/.test(id)){
@@ -506,6 +633,7 @@ async function showVideos(target,query){
  }
 }
 
+/* Follow-up questions */
 function makeFollowups(question){
  const q=question.toLowerCase();
 
@@ -545,7 +673,6 @@ function makeFollowups(question){
   "What are some common misconceptions about "+topic+"?"
  ];
 }
-
 function addFollowups(target,q){
  const section=addSection(target,"YOU CAN ALSO ASK");
  const wrap=document.createElement("div");
@@ -560,6 +687,7 @@ function addFollowups(target,q){
  section.appendChild(wrap);
 }
 
+/* Copy and share */
 function addTools(target,q,answerText){
  const tools=document.createElement("div");
  tools.className="answerTools";
@@ -583,6 +711,7 @@ function addTools(target,q,answerText){
  target.appendChild(tools);
 }
 
+/* Chat messages and history */
 function addUserMessage(q){
  const row=document.createElement("div");
  row.className="message user";
@@ -591,8 +720,23 @@ function addUserMessage(q){
  bubble.textContent=q;
  row.appendChild(bubble);
  chat.appendChild(row);
-}
+ mainArea.scrollTop=mainArea.scrollHeight;
 
+ const item=document.createElement("div");
+ item.className="historyItem";
+ item.textContent=q;
+ item.title=q;
+ item.onclick=()=>{
+  newChat();
+  ask(q);
+  closeSidebar();
+ };
+ historyList.prepend(item);
+
+ while(historyList.children.length>30){
+  historyList.lastElementChild.remove();
+ }
+}
 function addAssistantMessage(){
  const row=document.createElement("div");
  row.className="message";
@@ -603,6 +747,7 @@ function addAssistantMessage(){
  return {row,body};
 }
 
+/* Search */
 async function searchResults(query){
  const data=await getJSON(API+"/api/search?q="+
   encodeURIComponent(query)+"&page=1&exact=0");
@@ -611,7 +756,7 @@ async function searchResults(query){
 
 async function ask(rawQuestion){
  const q=rawQuestion.trim();
- if(!q)return;
+ if(!q||sendButton.disabled)return;
 
  welcome.style.display="none";
  input.value="";
@@ -625,7 +770,7 @@ async function ask(rawQuestion){
   const imageOnly=/^(show|give|find|display|get)?\s*(me\s*)?(only\s*)?(an?\s*)?(image|images|photo|photos|picture|pictures)\b/i.test(q)
    && !/\b(explain|describe|what|why|how)\b/i.test(q);
 
-  const videoRequest=asksVideo(q);
+  const videoRequest=/\b(video|videos|watch|youtube|clip|documentary)\b/i.test(q);
   const topic=topicPhrase(q);
   const terms=unique(tokens(topic));
   const phrase=topic.toLowerCase();
@@ -633,7 +778,10 @@ async function ask(rawQuestion){
   if(imageOnly){
    body.innerHTML="";
    await showImages(body,topic);
-   sendButton.disabled=false;input.focus();return;
+   mainArea.scrollTop=mainArea.scrollHeight;
+   sendButton.disabled=false;
+   input.focus();
+   return;
   }
 
   const queries=unique([q,topic]);
@@ -706,15 +854,49 @@ async function ask(rawQuestion){
   body.innerHTML='<p style="color:#ff9999">VEX could not reach the search service. Please try again.</p>';
  }
 
+ mainArea.scrollTop=mainArea.scrollHeight;
  sendButton.disabled=false;
  input.focus();
 }
 
+/* New chat */
+function newChat(){
+ chat.innerHTML="";
+ welcome.style.display="block";
+ input.value="";
+ closeSidebar();
+ input.focus();
+}
+
+/* Sidebar controls */
+function closeSidebar(){
+ sidebar.classList.remove("open");
+ overlay.classList.remove("open");
+}
+
+document.getElementById("menuButton").onclick=()=>{
+ sidebar.classList.toggle("open");
+ overlay.classList.toggle("open");
+};
+overlay.onclick=closeSidebar;
+document.getElementById("newChat").onclick=newChat;
+
+document.getElementById("settingsButton").onclick=()=>{
+ alert("VEX AI Settings will be available in a future update.");
+ closeSidebar();
+};
+
+/* Submit */
 document.getElementById("form").addEventListener("submit",e=>{
- e.preventDefault();ask(input.value);
+ e.preventDefault();
+ ask(input.value);
 });
+
 document.addEventListener("keydown",e=>{
- if(e.key==="Escape")closeViewer();
+ if(e.key==="Escape"){
+  closeViewer();
+  closeSidebar();
+ }
 });
 </script>
 </body>
