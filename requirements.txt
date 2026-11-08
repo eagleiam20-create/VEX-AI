@@ -1,8 +1,6 @@
-
 flet==1.1.0
 flet-cli==1.1.0
 flet-webview
 requests
 beautifulsoup4
 ddgs
-./vex_native_ads
