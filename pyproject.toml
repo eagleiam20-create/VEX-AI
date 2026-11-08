@@ -1,47 +1,29 @@
-Skip to content
-eagleiam20-create
-VEX-AI
-Repository navigation
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security and quality
-Insights
-Settings
-Build VEX AI Android APK
-Update requirements.txt #84
-All jobs
-Run details
-Annotations
-2 errors and 1 notice
-Build VEX AI APK
-failed now in 8s
-Search logs
-1s
-0s
-4s
-Run flet-dev/flet-build-action@v1
-Set up uv
-1s
-Resolve Flet build
-3s
-Run uv run --directory "$ACTION_WORKING_DIRECTORY" python "$GITHUB_ACTION_PATH/scripts/flet_action.py" prepare
-  Downloading cpython-3.14.10-linux-x86_64-gnu (download) (35.1MiB)
-   Downloaded cpython-3.14.10-linux-x86_64-gnu (download)
-  Using CPython 3.14.10
-  Creating virtual environment at: .venv
-  Downloading lxml (5.0MiB)
-  Downloading primp (6.3MiB)
-   Downloaded lxml
-   Downloaded primp
-  Installed 22 packages in 13ms
-  + flet --version --json
-  Error: Could not parse `flet --version --json` output: Expecting value: line 1 column 1 (char 0).
-  Error: Process completed with exit code 1.
-0s
-0s
-1s
-0s
+[project]
+name = "vex-ai"
+version = "1.0.0"
+description = "VEX AI - Independent AI Assistant"
+requires-python = ">=3.10"
+dependencies = [
+    "flet==1.1.0",
+    "flet-webview",
+    "requests",
+    "beautifulsoup4",
+    "ddgs"
+]
+
+[dependency-groups]
+dev = [
+    "flet-cli==1.1.0"
+]
+
+[tool.flet]
+org = "com.aveesharma"
+product = "VEX AI"
+company = "Avee Sharma"
+description = "Independent AI Assistant"
+
+[tool.flet.app]
+module = "vex_ui"
+
+[tool.flet.dev_packages]
+vex-native-ads = "vex_native_ads"
