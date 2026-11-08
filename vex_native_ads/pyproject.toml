@@ -11,6 +11,12 @@ dependencies = ["flet>=1.1.0"]
 
 [tool.setuptools]
 packages = ["vex_native_ads"]
+package-dir = { "vex_native_ads" = "." }
+include-package-data = true
 
 [tool.setuptools.package-data]
-vex_native_ads = ["*.dart", "*.yaml", "*.toml"]
+vex_native_ads = [
+    "*.dart",
+    "*.yaml",
+    "*.toml"
+]
