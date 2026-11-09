@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,20 +61,19 @@ button{cursor:pointer}
 .video-card button{width:100%;border:0;background:transparent;color:#fff;text-align:left;padding:0}
 .video-card img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#111}
 .video-card strong{display:block;padding:10px;font-size:12px;line-height:1.5}
-.video-card .video-source{display:block;padding:0 10px 11px;color:#ddd;font-size:11px;text-decoration:none;cursor:pointer}
-.video-card .video-source:hover{color:#fff;text-decoration:underline}
 .followups{display:flex;flex-wrap:wrap;gap:8px}
 .followups button{background:#050505;border:1px solid #303030;color:#ddd;border-radius:18px;padding:9px 12px;font-size:11px;text-align:left}
 .followups button:hover{border-color:#fff;color:#fff}
-.media-viewer{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.97);display:none;align-items:center;justify-content:center;padding:24px}
+.media-viewer{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.96);display:none;align-items:center;justify-content:center;padding:24px}
 .media-viewer.open{display:flex}
 .viewer-inner{width:min(100%,1000px);max-height:100%;display:flex;flex-direction:column;align-items:center;gap:12px}
 .viewer-inner img{max-width:100%;max-height:78vh;object-fit:contain}
-.viewer-inner iframe,.viewer-inner video{width:min(100%,1000px);aspect-ratio:16/9;max-height:78vh;border:0;background:#000}
-.viewer-caption{color:#ddd;font-size:13px;text-align:center}
-.viewer-close{position:absolute;top:14px;right:18px;border:1px solid #555;background:#111;color:#fff;border-radius:50%;width:42px;height:42px;font-size:23px;z-index:2}
+.viewer-inner iframe,.viewer-inner video{width:min(100%,900px);aspect-ratio:16/9;border:0;background:#111}
+.video-card .video-source{display:block;padding:0 10px 11px;color:#aaa;font-size:11px;text-decoration:underline}
+.video-card .video-source:hover{color:#fff}
+.viewer-caption{color:#ddd;font-size:12px;text-align:center}
+.viewer-close{position:absolute;top:14px;right:18px;border:1px solid #555;background:#111;color:#fff;border-radius:50%;width:42px;height:42px;font-size:23px}
 .viewer-source{color:#aaa;font-size:11px;text-decoration:underline}
-.viewer-source:hover{color:#fff}
 .actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .actions button{background:transparent;border:1px solid #292929;color:#aaa;padding:7px 11px;border-radius:9px;font-size:12px}
 .actions button:hover{color:#fff;border-color:#777}
@@ -106,28 +104,64 @@ textarea::placeholder{color:#777}
 .welcome h1{font-size:30px}
 .user{max-width:90%}
 .sources{grid-template-columns:1fr}
-.media-viewer{padding:12px}
 }
 </style>
 </head>
 <body>
+
 <div class="app">
 <aside class="sidebar" id="sidebar">
-<div class="side-top"><div class="brand">VEX AI</div><button class="icon-btn" onclick="toggleSidebar()" aria-label="Close menu">×</button></div>
-<button class="new-chat" onclick="newChat()">＋ &nbsp; New chat</button>
-<div class="history-title">YOUR CHATS</div><div class="history" id="history"></div>
-<div class="profile"><div class="profile-name">VEX AI</div><div class="profile-info">Owner &amp; Creator: Avee Sharma<br>Experimental model: VEX V6<br>Knowledge: Public web sources<br>Independent AI project</div></div>
+ <div class="side-top">
+  <div class="brand">VEX AI</div>
+  <button class="icon-btn" onclick="toggleSidebar()" aria-label="Close menu">×</button>
+ </div>
+ <button class="new-chat" onclick="newChat()">＋ &nbsp; New chat</button>
+ <div class="history-title">YOUR CHATS</div>
+ <div class="history" id="history"></div>
+ <div class="profile">
+  <div class="profile-name">VEX AI</div>
+  <div class="profile-info">
+   Owner &amp; Creator: Avee Sharma<br>
+   Experimental model: VEX V6<br>
+   Knowledge: Public web sources<br>
+   Independent AI project
+  </div>
+ </div>
 </aside>
+
 <main class="main">
-<div class="topbar"><button class="icon-btn" onclick="toggleSidebar()" aria-label="Open menu">☰</button><div class="mobile-brand">VEX AI</div><div class="model-label">VEX AI <span>Knowledge Assistant</span></div></div>
-<section id="chat"><div class="welcome" id="welcome"><h1>What can I help with?</h1><p>Explore knowledge. Discover ideas. Ask VEX anything.</p><div class="suggestions"><button onclick="quickAsk('Explain artificial intelligence')">Explain AI</button><button onclick="quickAsk('Latest space discoveries')">Space</button><button onclick="quickAsk('How does the internet work?')">Technology</button><button onclick="quickAsk('Explain quantum computing')">Science</button></div></div></section>
-<div class="composer-area"><div class="composer"><textarea id="question" rows="1" placeholder="Message VEX AI..."></textarea><button class="send" id="send" aria-label="Send message">↑</button></div><div class="bottom-note">VEX AI · Built by Avee Sharma</div></div>
+ <div class="topbar">
+  <button class="icon-btn" onclick="toggleSidebar()" aria-label="Open menu">☰</button>
+  <div class="mobile-brand">VEX AI</div>
+  <div class="model-label">VEX AI <span>Knowledge Assistant</span></div>
+ </div>
+
+ <section id="chat">
+  <div class="welcome" id="welcome">
+   <h1>What can I help with?</h1>
+   <p>Explore knowledge. Discover ideas. Ask VEX anything.</p>
+   <div class="suggestions">
+    <button onclick="quickAsk('Explain artificial intelligence')">Explain AI</button>
+    <button onclick="quickAsk('Latest space discoveries')">Space</button>
+    <button onclick="quickAsk('How does the internet work?')">Technology</button>
+    <button onclick="quickAsk('Explain quantum computing')">Science</button>
+   </div>
+  </div>
+ </section>
+
+ <div class="composer-area">
+  <div class="composer">
+   <textarea id="question" rows="1" placeholder="Message VEX AI..."></textarea>
+   <button class="send" id="send" aria-label="Send message">↑</button>
+  </div>
+  <div class="bottom-note">VEX AI · Built by Avee Sharma</div>
+ </div>
 </main>
 </div>
 
 <div class="media-viewer" id="mediaViewer" role="dialog" aria-modal="true" aria-label="Media viewer" onclick="if(event.target===this)closeViewer()">
-<button class="viewer-close" onclick="closeViewer()" aria-label="Close">×</button>
-<div class="viewer-inner" id="viewerInner"></div>
+ <button class="viewer-close" onclick="closeViewer()" aria-label="Close">×</button>
+ <div class="viewer-inner" id="viewerInner"></div>
 </div>
 
 <script>
@@ -143,7 +177,15 @@ const historyBox=document.getElementById('history');
 
 let conversations=[],activeId=null,searching=false;
 
-const WELCOME=`<div class="welcome" id="welcome"><h1>What can I help with?</h1><p>Explore knowledge. Discover ideas. Ask VEX anything.</p><div class="suggestions"><button onclick="quickAsk('Explain artificial intelligence')">Explain AI</button><button onclick="quickAsk('Latest space discoveries')">Space</button><button onclick="quickAsk('How does the internet work?')">Technology</button><button onclick="quickAsk('Explain quantum computing')">Science</button></div></div>`;
+const WELCOME=`<div class="welcome" id="welcome">
+<h1>What can I help with?</h1>
+<p>Explore knowledge. Discover ideas. Ask VEX anything.</p>
+<div class="suggestions">
+<button onclick="quickAsk('Explain artificial intelligence')">Explain AI</button>
+<button onclick="quickAsk('Latest space discoveries')">Space</button>
+<button onclick="quickAsk('How does the internet work?')">Technology</button>
+<button onclick="quickAsk('Explain quantum computing')">Science</button>
+</div></div>`;
 
 function scrollDown(){chat.scrollTop=chat.scrollHeight}
 
@@ -214,6 +256,7 @@ function storeMessage(m){
 
 function addUser(text,save=true){
  document.getElementById('welcome')?.remove();
+
  const wrap=document.createElement('div');
  wrap.className='message user-wrap';
 
@@ -251,6 +294,7 @@ async function shareText(text){
  }catch(e){
   if(e.name==='AbortError')return;
  }
+
  try{
   await copyText(text);
   alert('Question copied. You can paste it into WhatsApp or another app.');
@@ -264,6 +308,7 @@ async function copyText(text){
   await navigator.clipboard.writeText(text);
   return;
  }
+
  const area=document.createElement('textarea');
  area.value=text;
  area.style.position='fixed';
@@ -272,6 +317,7 @@ async function copyText(text){
  area.select();
  const ok=document.execCommand('copy');
  area.remove();
+
  if(!ok)throw new Error('Copy failed');
 }
 
@@ -296,6 +342,7 @@ function absoluteURL(value){
 
 function addSource(parent,item){
  if(!validURL(item.url))return;
+
  const a=document.createElement('a');
  a.className='source';
  a.href=absoluteURL(item.url);
@@ -316,11 +363,17 @@ function addSource(parent,item){
  parent.appendChild(a);
 }
 
+// NETWORK HELPERS
+
 function parseApiResponse(raw,status){
  let data;
  try{data=JSON.parse(raw)}
  catch(e){throw new Error('Purili returned non-JSON data (HTTP '+status+').')}
- if(status<200||status>=300)throw new Error(data.error||('Purili HTTP '+status));
+
+ if(status<200||status>=300){
+  throw new Error(data.error||('Purili HTTP '+status));
+ }
+
  return data;
 }
 
@@ -330,10 +383,12 @@ function xhrJSON(url,timeoutMs){
    const x=new XMLHttpRequest();
    x.open('GET',url,true);
    x.timeout=timeoutMs||15000;
+
    x.onload=()=>{
     try{resolve(parseApiResponse(x.responseText,x.status))}
     catch(e){reject(e)}
    };
+
    x.onerror=()=>reject(new Error('XHR network/CORS error'));
    x.ontimeout=()=>reject(new Error('Request timed out'));
    x.send();
@@ -350,6 +405,7 @@ async function fetchJSON(path,timeoutMs=18000){
   if(typeof window.fetch==='function'){
    try{
     let timer;
+
     const response=await Promise.race([
      window.fetch(url,{
       method:'GET',
@@ -364,54 +420,74 @@ async function fetchJSON(path,timeoutMs=18000){
 
     const raw=await response.text();
     return parseApiResponse(raw,response.status);
+
    }catch(e){
     errors.push((e&&e.message)||'Fetch failed');
    }
   }
 
-  try{return await xhrJSON(url,timeoutMs)}
-  catch(e){errors.push((e&&e.message)||'XHR failed')}
+  try{
+   return await xhrJSON(url,timeoutMs);
+  }catch(e){
+   errors.push((e&&e.message)||'XHR failed');
+  }
  }
 
- throw new Error('All search routes failed ('+errors.join(' / ')+'); endpoint: '+target);
+ throw new Error(
+  'All search routes failed ('+errors.join(' / ')+'); endpoint: '+target
+ );
 }
 
 async function fetchWithRetry(path,attempts=2){
  let last;
+
  for(let i=0;i<attempts;i++){
-  try{return await fetchJSON(path,18000)}
-  catch(e){
+  try{
+   return await fetchJSON(path,18000);
+  }catch(e){
    last=e;
-   if(i+1<attempts)await new Promise(r=>setTimeout(r,900*(i+1)));
+   if(i+1<attempts){
+    await new Promise(r=>setTimeout(r,900*(i+1)));
+   }
   }
  }
+
  throw last||new Error('Request failed');
 }
 
+// TEXT PROCESSING
+
 function getWords(query){
- return query.toLowerCase().normalize('NFKD')
- .replace(/[^\p{L}\p{N}\s]/gu,' ')
- .split(/\s+/)
- .filter(w=>w.length>2&&![
-  'what','when','where','which','who','whom','whose','with','from',
-  'that','this','then','than','have','does','doing','about','into',
-  'your','you','the','and','for','are','was','were','will','would',
-  'could','should','can','how','why','tell','explain','please'
- ].includes(w));
+ return query.toLowerCase()
+  .normalize('NFKD')
+  .replace(/[^\p{L}\p{N}\s]/gu,' ')
+  .split(/\s+/)
+  .filter(w=>w.length>2&&![
+   'what','when','where','which','who','whom','whose',
+   'with','from','that','this','then','than','have',
+   'does','doing','about','into','your','you','the',
+   'and','for','are','was','were','will','would',
+   'could','should','can','how','why','tell','explain',
+   'please'
+  ].includes(w));
 }
 
 function extractRelevant(text,query,maxChars=4200){
  if(!text)return '';
+
  const words=getWords(query);
+
  const chunks=text.replace(/\r/g,'')
- .split(/\n+|(?<=[.!?])\s+/)
- .map(s=>s.trim())
- .filter(s=>s.length>55);
+  .split(/\n+|(?<=[.!?])\s+/)
+  .map(s=>s.trim())
+  .filter(s=>s.length>55);
 
  const scored=chunks.map((s,i)=>{
   const low=s.toLowerCase();
   let score=words.reduce((n,w)=>n+(low.includes(w)?2:0),0);
+
   if(words.length&&words.every(w=>low.includes(w)))score+=3;
+
   return {s,score,i};
  }).filter(x=>x.score>0)
  .sort((a,b)=>b.score-a.score||a.i-b.i);
@@ -422,24 +498,38 @@ function extractRelevant(text,query,maxChars=4200){
  for(const x of scored){
   const key=x.s.toLowerCase().slice(0,100);
   if(seen.has(key))continue;
+
   seen.add(key);
+
   if(size+x.s.length>maxChars)continue;
+
   chosen.push(x.s);
   size+=x.s.length;
+
   if(chosen.length>=8)break;
  }
+
  return chosen.join('\n\n');
 }
 
 async function getContext(result){
  try{
-  const d=await fetchJSON('/api/context?url='+encodeURIComponent(result.url),11000);
+  const d=await fetchJSON(
+   '/api/context?url='+encodeURIComponent(result.url),
+   11000
+  );
+
   return {
    title:d.title||result.title,
-   text:[d.summary,d.content,Array.isArray(d.passages)?d.passages.join('\n'):''].filter(Boolean).join('\n'),
+   text:[
+    d.summary,
+    d.content,
+    Array.isArray(d.passages)?d.passages.join('\n'):''
+   ].filter(Boolean).join('\n'),
    structured:d.structured||null,
    coverage:d.coverage||'unknown'
   };
+
  }catch(e){
   return {
    title:result.title,
@@ -451,9 +541,15 @@ async function getContext(result){
 }
 
 async function getInfocard(query){
- try{return await fetchJSON('/api/infocard?q='+encodeURIComponent(query),9000)}
- catch(e){return null}
+ try{
+  return await fetchJSON(
+   '/api/infocard?q='+encodeURIComponent(query),
+   9000
+  );
+ }catch(e){return null}
 }
+
+// REQUEST DETECTION
 
 function isImageOnlyRequest(q){
  return /\b(images?|pictures?|photos?)\b/i.test(q)&&
@@ -472,11 +568,14 @@ function isVideoOnlyRequest(q){
 }
 
 function mediaQuery(q){
- return q.replace(/\b(show|give|send|find|display|me|some|only|just|images?|pictures?|photos?|videos?|clips?|documentary|trailer|of|about)\b/gi,' ')
- .replace(/\s+/g,' ').trim()||q;
+ return q.replace(
+  /\b(show|give|send|find|display|me|some|only|just|images?|pictures?|photos?|videos?|clips?|documentary|trailer|of|about)\b/gi,
+  ' '
+ ).replace(/\s+/g,' ').trim()||q;
 }
 
-/* VEX MEDIA PLAYER */
+// MEDIA VIEWER
+
 function openViewer(kind,url,title,source,embedUrl,mediaType){
  const viewer=document.getElementById('mediaViewer');
  const inner=document.getElementById('viewerInner');
@@ -486,30 +585,24 @@ function openViewer(kind,url,title,source,embedUrl,mediaType){
  if(kind==='video'){
   const target=embedUrl||url;
 
-  if(mediaType==='file'||/\.(mp4|webm|ogg)(\?|$)/i.test(target)){
+  if(mediaType==='file'||/\.(mp4|webm|ogg|m3u8)(\?|$)/i.test(target)){
    const player=document.createElement('video');
    player.src=target;
    player.controls=true;
    player.autoplay=true;
    player.playsInline=true;
-   player.preload='metadata';
-   player.style.width='100%';
    player.style.maxHeight='78vh';
-   player.style.background='#000';
    inner.appendChild(player);
   }else{
    const frame=document.createElement('iframe');
    frame.src=target;
-   frame.title=title||'VEX AI Video Player';
-   frame.allow='autoplay; encrypted-media; fullscreen; picture-in-picture; accelerometer; gyroscope; clipboard-write; web-share';
+   frame.title=title||'VEX video';
+   frame.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
    frame.allowFullscreen=true;
    frame.referrerPolicy='strict-origin-when-cross-origin';
-   frame.style.width='min(100%, 1000px)';
-   frame.style.aspectRatio='16/9';
-   frame.style.border='0';
-   frame.style.background='#000';
    inner.appendChild(frame);
   }
+
  }else{
   const img=document.createElement('img');
   img.src=url;
@@ -528,7 +621,7 @@ function openViewer(kind,url,title,source,embedUrl,mediaType){
   link.href=source;
   link.target='_blank';
   link.rel='noopener noreferrer';
-  link.textContent='Open original website';
+  link.textContent='Open original video website';
   inner.appendChild(link);
  }
 
@@ -538,22 +631,8 @@ function openViewer(kind,url,title,source,embedUrl,mediaType){
 
 function closeViewer(){
  const viewer=document.getElementById('mediaViewer');
- const inner=document.getElementById('viewerInner');
-
  viewer.classList.remove('open');
-
- /* Stop video playback when closing the player */
- inner.querySelectorAll('iframe,video').forEach(el=>{
-  if(el.tagName==='VIDEO'){
-   el.pause();
-   el.removeAttribute('src');
-   el.load();
-  }else{
-   el.src='about:blank';
-  }
- });
-
- inner.textContent='';
+ document.getElementById('viewerInner').textContent='';
  document.body.style.overflow='';
 }
 
@@ -561,21 +640,32 @@ document.addEventListener('keydown',e=>{
  if(e.key==='Escape')closeViewer();
 });
 
+// IMAGE SEARCH
+
 async function searchImages(query){
  try{
-  const d=await fetchJSON('/api/images?q='+encodeURIComponent(query)+'&page=1',10000);
-  return (Array.isArray(d.images)?d.images:[]).slice(0,8).map(x=>({
-   title:x.title||'Image',
-   image:absoluteURL(x.thumbUrl||x.url),
-   url:absoluteURL(x.url||x.thumbUrl),
-   license:x.license||'',
-   source:x.source||'Wikimedia Commons',
-   sourceUrl:absoluteURL(x.sourceUrl||x.pageUrl||x.sourcePage||'')
-  })).filter(x=>x.image&&x.url);
+  const d=await fetchJSON(
+   '/api/images?q='+encodeURIComponent(query)+'&page=1',
+   10000
+  );
+
+  return (Array.isArray(d.images)?d.images:[])
+   .slice(0,8)
+   .map(x=>({
+    title:x.title||'Image',
+    image:absoluteURL(x.thumbUrl||x.url),
+    url:absoluteURL(x.url||x.thumbUrl),
+    license:x.license||'',
+    source:x.source||'Wikimedia Commons',
+    sourceUrl:absoluteURL(x.sourceUrl||x.pageUrl||x.sourcePage||'')
+   }))
+   .filter(x=>x.image&&x.url);
+
  }catch(e){return []}
 }
 
-/* VIDEO URL RECOGNITION */
+// VIDEO SEARCH
+
 function videoInfo(url){
  try{
   const u=new URL(url);
@@ -584,13 +674,14 @@ function videoInfo(url){
   if(host.includes('youtube.com')||host==='youtu.be'){
    const id=host==='youtu.be'
     ?u.pathname.split('/').filter(Boolean)[0]
-    :(u.searchParams.get('v')||u.pathname.match(/\/(?:shorts|embed|live)\/([^/?]+)/)?.[1]);
+    :(u.searchParams.get('v')||
+      u.pathname.match(/\/(?:shorts|embed|live)\/([^/?]+)/)?.[1]);
 
    if(id){
     return {
      id,
      kind:'youtube',
-     embedUrl:'https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0',
+     embedUrl:'https://www.youtube-nocookie.com/embed/'+id,
      thumbnail:'https://i.ytimg.com/vi/'+id+'/hqdefault.jpg'
     };
    }
@@ -598,11 +689,12 @@ function videoInfo(url){
 
   if(host.includes('vimeo.com')){
    const id=u.pathname.split('/').filter(Boolean).pop();
+
    if(/^\d+$/.test(id||'')){
     return {
      id,
      kind:'embed',
-     embedUrl:'https://player.vimeo.com/video/'+id+'?autoplay=1'
+     embedUrl:'https://player.vimeo.com/video/'+id
     };
    }
   }
@@ -617,20 +709,26 @@ function videoInfo(url){
     return {
      id,
      kind:'embed',
-     embedUrl:'https://www.dailymotion.com/embed/video/'+id+'?autoplay=1'
+     embedUrl:'https://www.dailymotion.com/embed/video/'+id
     };
    }
   }
 
-  if(/\.(mp4|webm|ogg)(\?|$)/i.test(u.pathname+u.search)){
-   return {id:url,kind:'file',embedUrl:url,thumbnail:''};
+  if(/\.(mp4|webm|ogg|m3u8)(\?|$)/i.test(u.pathname+u.search)){
+   return {
+    id:url,
+    kind:'file',
+    embedUrl:url,
+    thumbnail:''
+   };
   }
 
-  if(/\.m3u8(\?|$)/i.test(u.pathname+u.search)){
-   return {id:url,kind:'file',embedUrl:url,thumbnail:''};
-  }
-
-  return {id:url,kind:'page',embedUrl:url,thumbnail:''};
+  return {
+   id:url,
+   kind:'page',
+   embedUrl:url,
+   thumbnail:''
+  };
 
  }catch(e){return null}
 }
@@ -673,7 +771,6 @@ function findThumbnail(item,structured,video){
  return candidates.find(x=>/^https?:\/\//i.test(x))||'';
 }
 
-/* SEARCH VIDEO RESULTS */
 async function searchVideos(query){
  const topic=(query||'').trim();
  if(!topic)return [];
@@ -684,19 +781,23 @@ async function searchVideos(query){
   topic+' tutorial video'
  ];
 
- const batches=await Promise.all(searchTerms.map(async term=>{
-  try{
-   const d=await fetchWithRetry(
-    '/api/search?q='+encodeURIComponent(term)+'&page=1&exact=0',2
-   );
-   return Array.isArray(d.results)?d.results:[];
-  }catch(e){return []}
- }));
+ const batches=await Promise.all(
+  searchTerms.map(async term=>{
+   try{
+    const d=await fetchWithRetry(
+     '/api/search?q='+encodeURIComponent(term)+'&page=1&exact=0',
+     2
+    );
+    return Array.isArray(d.results)?d.results:[];
+   }catch(e){return []}
+  })
+ );
 
  const merged=[],seen=new Set();
 
  for(const row of batches.flat()){
   const url=String(row.url||'');
+
   if(!validURL(url)||seen.has(url))continue;
 
   seen.add(url);
@@ -707,9 +808,12 @@ async function searchVideos(query){
    url
   ).toLowerCase();
 
-  if(!/(video|watch|youtube|vimeo|dailymotion|\.mp4|\.webm|\.m3u8|\.mov|\.avi|\.mkv|trailer|documentary|stream)/i.test(text))continue;
+  if(!/(video|watch|youtube|vimeo|dailymotion|\.mp4|\.webm|\.m3u8|\.mov|\.avi|\.mkv|trailer|documentary|stream)/i.test(text)){
+   continue;
+  }
 
   merged.push(row);
+
   if(merged.length>=18)break;
  }
 
@@ -729,7 +833,8 @@ async function searchVideos(query){
   const structured=ctx.structured||{};
   const thumb=findThumbnail(row,structured,info);
 
-  const isVideo=info.kind!=='page'||
+  const isVideo=
+   info.kind!=='page'||
    /videoobject|\bvideo\b|watch|play|stream/i.test(
     JSON.stringify(structured)+' '+(ctx.text||'')+' '+(row.title||'')
    );
@@ -745,8 +850,9 @@ async function searchVideos(query){
    description:row.description||'',
    thumbnail:thumb,
    source:(()=>{
-    try{return new URL(row.url).hostname.replace(/^www\./,'')}
-    catch(e){return 'Website'}
+    try{
+     return new URL(row.url).hostname.replace(/^www\./,'');
+    }catch(e){return 'Website'}
    })()
   });
  }
@@ -754,8 +860,87 @@ async function searchVideos(query){
  return out;
 }
 
+// EXPLANATION AND FOLLOW-UP FUNCTIONS
+
+function makeFollowups(query,results){
+ const title=(results||[])
+  .map(x=>x.title||'')
+  .find(Boolean)||query;
+
+ let topic=title
+  .replace(/\s[-|:].*$/,'')
+  .replace(/\b(official|homepage|website)\b/gi,'')
+  .trim();
+
+ if(topic.length>68)topic=topic.slice(0,68).trim();
+ if(!topic)topic=query;
+
+ const candidates=[
+  `How does ${topic} work?`,
+  `What are the main benefits and challenges of ${topic}?`,
+  `What are the latest developments related to ${topic}?`
+ ];
+
+ const q=query.toLowerCase();
+
+ return candidates
+  .filter(x=>!q.includes(x.toLowerCase().replace(/[?]/g,'')))
+  .slice(0,3);
+}
+
+function answerFromSources(query,parts,card){
+ const instant=card?.instantAnswer?.answer;
+
+ const facts=Array.isArray(card?.facts)
+  ?card.facts.filter(x=>x&&x.label&&x.value).slice(0,5)
+  :[];
+
+ const relevant=parts.map(p=>({
+  title:p.title,
+  text:extractRelevant(p.text,query,1600)
+ })).filter(p=>p.text);
+
+ let out='';
+
+ if(instant){
+  out='SHORT ANSWER\n'+String(instant).trim();
+ }
+
+ if(facts.length){
+  if(out)out+='\n\n';
+  out+='IMPORTANT FACTS\n'+
+   facts.map(f=>'• '+f.label+': '+f.value).join('\n');
+ }
+
+ if(relevant.length){
+  const excerpts=relevant.slice(0,4).map(p=>p.text);
+
+  if(out)out+='\n\n';
+
+  out+='EXPLANATION\n'+excerpts.join('\n\n');
+ }
+
+ if(!out){
+  const snippets=parts
+   .map(p=>p.text)
+   .filter(Boolean)
+   .slice(0,4);
+
+  out=snippets.join('\n\n');
+ }
+
+ if(out){
+  out+='\n\nNote: This explanation is compiled from the indexed source material shown below; it is not a response generated by the VEX V6 language model.';
+ }
+
+ return out.trim();
+}
+
+// SEARCH MODES
+
 async function runImageSearch(query){
  const topic=mediaQuery(query);
+
  return {
   mode:'images',
   answer:'',
@@ -778,20 +963,27 @@ async function runVideoSearch(query,progress){
   images:[],
   videos,
   note:videos.length
-   ?'Select a video to try playing it inside VEX. Some websites restrict embedded playback.'
+   ?'Video pages from different indexed websites are shown below. Playback depends on each website’s embed and sharing settings.'
    :'No matching video pages were found in the current web index. Try a shorter topic or different keywords.'
  };
 }
+
+// NORMAL WEB SEARCH
 
 async function runSearch(query,progress){
  progress.textContent='Searching the web index...';
 
  const [searchData,card]=await Promise.all([
-  fetchWithRetry('/api/search?q='+encodeURIComponent(query)+'&page=1&exact=0',2),
+  fetchWithRetry(
+   '/api/search?q='+encodeURIComponent(query)+'&page=1&exact=0',
+   2
+  ),
   getInfocard(query)
  ]);
 
- const results=Array.isArray(searchData.results)?searchData.results:[];
+ const results=Array.isArray(searchData.results)
+  ?searchData.results
+  :[];
 
  if(!results.length){
   const direct=card?.instantAnswer?.answer||'';
@@ -838,9 +1030,13 @@ async function runSearch(query,progress){
  };
 }
 
+// DISPLAY RESULTS
+
 function renderBot(data,save=true){
  const reply=document.createElement('div');
  reply.className='message bot';
+
+ // IMAGE ONLY MODE
 
  if(data.mode==='images'){
   if(data.images?.length){
@@ -857,7 +1053,12 @@ function renderBot(data,save=true){
 
     const button=document.createElement('button');
     button.type='button';
-    button.onclick=()=>openViewer('image',item.image,item.title,item.sourceUrl);
+    button.onclick=()=>openViewer(
+     'image',
+     item.image,
+     item.title,
+     item.sourceUrl
+    );
 
     const img=document.createElement('img');
     img.src=item.image;
@@ -882,6 +1083,7 @@ function renderBot(data,save=true){
    });
 
    if(gallery.childElementCount)reply.appendChild(gallery);
+
   }else{
    const empty=document.createElement('div');
    empty.textContent='No images were found for this search.';
@@ -893,6 +1095,8 @@ function renderBot(data,save=true){
   scrollDown();
   return;
  }
+
+ // VIDEO ONLY MODE
 
  if(data.mode==='videos'){
   if(data.videos?.length){
@@ -907,10 +1111,14 @@ function renderBot(data,save=true){
 
     const button=document.createElement('button');
     button.type='button';
-    button.title='Play video inside VEX';
-    button.onclick=()=>{
-     openViewer('video',v.url,v.title,v.url,v.embedUrl,v.kind);
-    };
+    button.onclick=()=>openViewer(
+     'video',
+     v.url,
+     v.title,
+     v.url,
+     v.embedUrl,
+     v.kind
+    );
 
     const img=document.createElement('img');
     img.src=v.thumbnail||'';
@@ -928,13 +1136,10 @@ function renderBot(data,save=true){
 
     const source=document.createElement('a');
     source.className='video-source';
-    source.href='#';
-    source.textContent='▶ Play in VEX';
-
-    source.onclick=(e)=>{
-     e.preventDefault();
-     openViewer('video',v.url,v.title,v.url,v.embedUrl,v.kind);
-    };
+    source.href=v.url;
+    source.target='_blank';
+    source.rel='noopener noreferrer';
+    source.textContent='Watch on '+(v.source||'original website')+' ↗';
 
     card.appendChild(source);
     grid.appendChild(card);
@@ -956,6 +1161,8 @@ function renderBot(data,save=true){
   return;
  }
 
+ // NORMAL ANSWER
+
  addLabel(reply,'VEX AI');
 
  const answer=document.createElement('div');
@@ -970,6 +1177,8 @@ function renderBot(data,save=true){
   reply.appendChild(note);
  }
 
+ // WEB SOURCES
+
  if(data.results?.length){
   addLabel(reply,'WEB SOURCES');
 
@@ -980,6 +1189,8 @@ function renderBot(data,save=true){
 
   if(grid.childElementCount)reply.appendChild(grid);
  }
+
+ // RELATED IMAGES
 
  if(data.images?.length){
   addLabel(reply,'RELATED IMAGES');
@@ -995,7 +1206,12 @@ function renderBot(data,save=true){
 
    const button=document.createElement('button');
    button.type='button';
-   button.onclick=()=>openViewer('image',item.image,item.title,item.sourceUrl);
+   button.onclick=()=>openViewer(
+    'image',
+    item.image,
+    item.title,
+    item.sourceUrl
+   );
 
    const img=document.createElement('img');
    img.src=item.image;
@@ -1022,6 +1238,8 @@ function renderBot(data,save=true){
   if(gallery.childElementCount)reply.appendChild(gallery);
  }
 
+ // RELATED VIDEOS
+
  if(data.videos?.length){
   addLabel(reply,'RELATED VIDEOS');
 
@@ -1034,10 +1252,14 @@ function renderBot(data,save=true){
 
    const button=document.createElement('button');
    button.type='button';
-   button.title='Play video inside VEX';
-   button.onclick=()=>{
-    openViewer('video',v.url,v.title,v.url,v.embedUrl,v.kind);
-   };
+   button.onclick=()=>openViewer(
+    'video',
+    v.url,
+    v.title,
+    v.url,
+    v.embedUrl,
+    v.kind
+   );
 
    const thumb=document.createElement('img');
    thumb.src=v.thumbnail||'';
@@ -1055,13 +1277,10 @@ function renderBot(data,save=true){
 
    const source=document.createElement('a');
    source.className='video-source';
-   source.href='#';
-   source.textContent='▶ Play in VEX';
-
-   source.onclick=(e)=>{
-    e.preventDefault();
-    openViewer('video',v.url,v.title,v.url,v.embedUrl,v.kind);
-   };
+   source.href=v.url;
+   source.target='_blank';
+   source.rel='noopener noreferrer';
+   source.textContent='Watch on '+(v.source||'original website')+' ↗';
 
    card.appendChild(source);
    videoGrid.appendChild(card);
@@ -1069,6 +1288,8 @@ function renderBot(data,save=true){
 
   reply.appendChild(videoGrid);
  }
+
+ // FOLLOW-UP QUESTIONS
 
  if(data.followups?.length){
   addLabel(reply,'YOU MAY ALSO ASK');
@@ -1087,6 +1308,8 @@ function renderBot(data,save=true){
   reply.appendChild(follow);
  }
 
+ // COPY ANSWER
+
  const actions=document.createElement('div');
  actions.className='actions';
 
@@ -1098,7 +1321,9 @@ function renderBot(data,save=true){
    copy.textContent='Copied';
    setTimeout(()=>copy.textContent='Copy answer',1400);
   })
-  .catch(()=>{copy.textContent='Copy failed'});
+  .catch(()=>{
+   copy.textContent='Copy failed';
+  });
 
  actions.appendChild(copy);
  reply.appendChild(actions);
@@ -1106,11 +1331,15 @@ function renderBot(data,save=true){
  chat.appendChild(reply);
 
  if(save)storeMessage({type:'bot',data});
+
  scrollDown();
 }
 
+// SEND MESSAGE
+
 async function sendMessage(){
  const query=input.value.trim();
+
  if(!query||searching)return;
 
  searching=true;
@@ -1134,16 +1363,21 @@ async function sendMessage(){
   if(isImageOnlyRequest(query)){
    progress.textContent='Searching images...';
    data=await runImageSearch(query);
+
   }else if(isVideoOnlyRequest(query)){
    data=await runVideoSearch(query,progress);
+
   }else{
    data=await runSearch(query,progress);
 
    if(isVideoRequest(query)){
     progress.textContent='Finding matching videos...';
+
     data.videos=await searchVideos(mediaQuery(query));
 
-    if(data.videos.length)data.followups=makeFollowups(query,data.results);
+    if(data.videos.length){
+     data.followups=makeFollowups(query,data.results);
+    }
    }
   }
 
@@ -1153,7 +1387,9 @@ async function sendMessage(){
  }catch(e){
   progress.classList.remove('progress');
 
-  progress.textContent='VEX search connection error: '+(e.message||'Network request failed')+
+  progress.textContent=
+   'VEX search connection error: '+
+   (e.message||'Network request failed')+
    '. Check that this endpoint opens on this device: https://puri.li/api/search?q=test&page=1';
 
   const retry=document.createElement('button');
@@ -1196,6 +1432,7 @@ input.addEventListener('input',function(){
 });
 
 loadHistory();
+
 </script>
 </body>
 </html>
