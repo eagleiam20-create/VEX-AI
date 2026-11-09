@@ -1,132 +1,78 @@
 
-name: VEX AI - Verify and Build Android APK
+name: Build VEX AI Android APK
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'vex_ui.py'
+      - 'vex_search.py'
+      - 'pyproject.toml'
+      - 'requirements.txt'
+      - '.github/workflows/build-apk.yml'
 
 permissions:
   contents: read
 
 jobs:
-  pre-build-check:
-    name: Verify VEX Native Ads Extension
+  build-apk:
+    name: Build Android APK
     runs-on: ubuntu-latest
+    timeout-minutes: 60
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.14"
+          python-version: '3.12'
 
-      - name: Check project files
-        run: |
-          python - <<'PY'
-          from pathlib import Path
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
 
-          required = [
-              "pyproject.toml",
-              "vex_ui.py",
-              "vex_native_ads/pyproject.toml",
-              "vex_native_ads/src/vex_native_ads/__init__.py",
-              "vex_native_ads/src/vex_native_ads/vex_native_ads.py",
-              "vex_native_ads/src/flutter/vex_native_ads/pubspec.yaml",
-              "vex_native_ads/src/flutter/vex_native_ads/flet-extension.toml",
-              "vex_native_ads/src/flutter/vex_native_ads/lib/vex_native_ads.dart",
-              "vex_native_ads/src/flutter/vex_native_ads/lib/src/extension.dart",
-              "vex_native_ads/src/flutter/vex_native_ads/lib/src/vex_native_ad_control.dart",
-          ]
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
 
-          missing = [f for f in required if not Path(f).is_file()]
-
-          if missing:
-              print("MISSING FILES:")
-              for f in missing:
-                  print(" -", f)
-              raise SystemExit(1)
-
-          print("All required files exist.")
-          PY
-
-      - name: Validate TOML files
-        run: |
-          python - <<'PY'
-          import tomllib
-
-          for path in [
-              "pyproject.toml",
-              "vex_native_ads/pyproject.toml",
-          ]:
-              with open(path, "rb") as f:
-                  tomllib.load(f)
-              print("Valid TOML:", path)
-          PY
-
-      - name: Check Python syntax
-        run: |
-          python -m compileall -q vex_native_ads/src
-
-      - name: Install app and local extension
+      - name: Install Flet
         run: |
           python -m pip install --upgrade pip
-          python -m pip install .
+          pip install "flet==1.1.0" flet-cli
 
-      - name: Verify VEX Native Ads import
+      - name: Install dependencies
         run: |
-          python - <<'PY'
-          from vex_native_ads import VexNativeAd
-          print("VexNativeAd import successful:", VexNativeAd)
-          PY
+          pip install -r requirements.txt
+          pip install flet-webview
 
-      - name: Verify extension package contents
+      - name: Verify AdMob dependency removal
         run: |
-          python - <<'PY'
-          from importlib.metadata import distribution
+          if grep -RniE 'google_mobile_ads|vex_native_ads' pyproject.toml requirements.txt; then
+            echo "ERROR: AdMob dependency still exists!"
+            exit 1
+          fi
+          echo "No AdMob dependency found in project manifests."
 
-          dist = distribution("vex-native-ads")
-          files = [str(f).replace("\\", "/") for f in (dist.files or [])]
-
-          required = [
-              "flutter/vex_native_ads/pubspec.yaml",
-              "flutter/vex_native_ads/flet-extension.toml",
-              "flutter/vex_native_ads/lib/vex_native_ads.dart",
-              "flutter/vex_native_ads/lib/src/extension.dart",
-              "flutter/vex_native_ads/lib/src/vex_native_ad_control.dart",
-          ]
-
-          for item in required:
-              if not any(f.endswith(item) for f in files):
-                  raise SystemExit("Extension package file missing: " + item)
-              print("Included:", item)
-
-          print("Extension packaging check passed.")
-          PY
-
-  build-apk:
-    name: Build VEX AI APK
-    runs-on: ubuntu-latest
-    needs: pre-build-check
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Build VEX AI
-        id: build
-        uses: flet-dev/flet-build-action@v1
-        with:
-          target: apk
-          runner-python-version: "3.14"
-          bundled-python-version: "3.14"
-          build-number: ${{ github.run_number }}
-          extra-args: --arch arm64-v8a
+      - name: Build VEX AI APK
+        run: |
+          flet build apk \
+            --yes \
+            --verbose \
+            --output build_output \
+            --build-number 108 \
+            --arch arm64-v8a
 
       - name: Upload APK
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
-          name: VEX-AI-ARM64-APK
-          path: ${{ steps.build.outputs.archive-path }}
-          archive: false
+          name: VEX-AI-Android-APK
+          path: build_output/**/*.apk
           if-no-files-found: error
+          retention-days: 30
