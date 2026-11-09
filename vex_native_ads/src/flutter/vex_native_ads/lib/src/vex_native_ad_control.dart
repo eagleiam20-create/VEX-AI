@@ -1,6 +1,5 @@
 
 import 'package:flet/flet.dart';
-import 'package:flutter/widgets.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -63,10 +62,7 @@ class _VexNativeAdControlState
 
         nativeTemplateStyle: NativeTemplateStyle(
           templateType: TemplateType.small,
-
-          mainBackgroundColor:
-              const Color(0xFF101010),
-
+          mainBackgroundColor: const Color(0xFF101010),
           cornerRadius: 10,
 
           primaryTextStyle: NativeTemplateTextStyle(
@@ -118,9 +114,7 @@ class _VexNativeAdControlState
               _nativeAd = null;
             }
 
-            debugPrint(
-              'VEX Native Ad failed: $error',
-            );
+            debugPrint('VEX Native Ad failed: $error');
 
             if (mounted) {
               setState(() {
@@ -155,7 +149,6 @@ class _VexNativeAdControlState
   void dispose() {
     _nativeAd?.dispose();
     _nativeAd = null;
-
     super.dispose();
   }
 
@@ -170,9 +163,7 @@ class _VexNativeAdControlState
       content = SizedBox(
         width: double.infinity,
         height: adHeight,
-        child: AdWidget(
-          ad: _nativeAd!,
-        ),
+        child: AdWidget(ad: _nativeAd!),
       );
     } else if (_hasFailed) {
       content = const SizedBox.shrink();
