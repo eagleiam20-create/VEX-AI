@@ -1,3 +1,4 @@
+
 name: vex_native_ads
 description: VEX AI Native AdMob Flet extension.
 version: 0.1.0
@@ -13,4 +14,4 @@ dependencies:
 
   flet: ^1.1.0
   material_ui: ^1.6.0
-  google_mobile_ads: ^9.2.0
+  google_mobile_ads: ^2.4.0
