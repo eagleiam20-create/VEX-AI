@@ -1,10 +1,35 @@
+
 import requests
 from bs4 import BeautifulSoup
 from ddgs import DDGS
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120 Safari/537.36"
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 Chrome/120 Safari/537.36"
+    )
 }
+
+
+def is_image_request(query):
+    q = query.lower().strip()
+
+    keywords = [
+        "generate image", "generating image",
+        "create image", "make image",
+        "create a picture", "make a picture",
+        "draw", "show me image", "show image",
+        "find image", "search image", "images of",
+        "picture of", "photo of", "wallpaper",
+        "image banao", "photo banao", "tasveer",
+        "image dikhao", "photo dikhao",
+        "tasveer dikhao", "picture dikhao",
+        "ki image", "ki photo", "iski image",
+        "iski photo", "ek image", "ek photo",
+        "mujhe image", "mujhe photo",
+    ]
+
+    return any(word in q for word in keywords)
 
 
 def search_web(query, limit=5):
@@ -12,14 +37,21 @@ def search_web(query, limit=5):
 
     try:
         with DDGS() as ddgs:
-            for item in ddgs.text(query, max_results=limit):
-                results.append({
-                    "title": item.get("title", "Web result"),
-                    "url": item.get("href", ""),
-                    "snippet": item.get("body", "")
-                })
+            for item in ddgs.text(
+                query,
+                max_results=limit
+            ):
+                url = item.get("href", "")
+
+                if url:
+                    results.append({
+                        "title": item.get("title", "Web result"),
+                        "url": url,
+                        "snippet": item.get("body", "")
+                    })
+
     except Exception as error:
-        print("Search error:", error)
+        print("Search error:", repr(error))
 
     return results
 
@@ -29,8 +61,9 @@ def read_page(url):
         response = requests.get(
             url,
             headers=HEADERS,
-            timeout=10
+            timeout=12
         )
+
         response.raise_for_status()
 
         soup = BeautifulSoup(
@@ -39,20 +72,21 @@ def read_page(url):
         )
 
         for tag in soup([
-            "script", "style", "nav", "footer", "header"
+            "script", "style", "nav",
+            "footer", "header", "noscript"
         ]):
             tag.decompose()
 
-        text = soup.get_text(" ", strip=True)
+        return soup.get_text(" ", strip=True)[:7000]
 
-        return text[:7000]
-
-    except Exception:
+    except Exception as error:
+        print("Page read error:", repr(error))
         return ""
 
 
 def search_images(query, limit=4):
     images = []
+    seen = set()
 
     try:
         with DDGS() as ddgs:
@@ -60,16 +94,27 @@ def search_images(query, limit=4):
                 query,
                 max_results=limit
             ):
-                image_url = item.get("image")
+                image_url = item.get("image", "")
+                source_url = item.get("url", "")
 
-                if image_url:
-                    images.append({
-                        "url": image_url,
-                        "title": item.get("title", query)
-                    })
+                if not image_url:
+                    continue
+
+                if image_url in seen:
+                    continue
+
+                seen.add(image_url)
+
+                images.append({
+                    "title": item.get("title", "Related image"),
+                    "image": image_url,
+                    "url": image_url,
+                    "source": source_url,
+                    "thumbnail": item.get("thumbnail", ""),
+                })
 
     except Exception as error:
-        print("Image error:", error)
+        print("Image search error:", repr(error))
 
     return images
 
@@ -81,7 +126,7 @@ def make_answer(query, results, pages):
     source_text = []
 
     for result, page in zip(results, pages):
-        content = page if page else result["snippet"]
+        content = page if page else result.get("snippet", "")
 
         if content:
             source_text.append(content)
@@ -98,11 +143,13 @@ def make_answer(query, results, pages):
     candidates = []
 
     for text in source_text:
-        for sentence in (
+        sentences = (
             text.replace("!", ".")
             .replace("?", ".")
             .split(".")
-        ):
+        )
+
+        for sentence in sentences:
             sentence = sentence.strip()
 
             if len(sentence) < 45:
@@ -139,17 +186,30 @@ def make_answer(query, results, pages):
 
 
 def ask_vex(query):
-    results = search_web(query)
+    if is_image_request(query):
+        images = search_images(query, 4)
+
+        return {
+            "answer": (
+                "Here are some images related to your request."
+                if images else
+                "I couldn't find images for this request. Try different keywords."
+            ),
+            "sources": [],
+            "images": images
+        }
+
+    results = search_web(query, 5)
+
     pages = [
         read_page(item["url"])
         for item in results
     ]
 
     answer = make_answer(query, results, pages)
-    images = search_images(query)
 
     return {
         "answer": answer,
         "sources": results,
-        "images": images
+        "images": []
     }
