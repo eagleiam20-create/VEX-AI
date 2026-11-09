@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,6 +20,8 @@ button{cursor:pointer}
 .icon-btn:hover,.history-item:hover{background:#181818}
 .new-chat{background:#000;border:1px solid #333;color:#fff;padding:13px;border-radius:12px;text-align:left}
 .new-chat:hover{border-color:#fff}
+.code-menu{margin-top:9px;background:#080808;border:1px solid #333;color:#fff;padding:13px;border-radius:12px;text-align:left}
+.code-menu:hover{border-color:#fff;background:#151515}
 .history-title{font-size:10px;letter-spacing:2px;color:#888;margin:25px 8px 10px}
 .history{overflow:auto;flex:1}
 .history-item{font-size:13px;padding:11px;border-radius:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;color:#ddd}
@@ -93,15 +96,62 @@ textarea::placeholder{color:#777}
 .hidden{display:none!important}
 #chat::-webkit-scrollbar,.history::-webkit-scrollbar{width:5px}
 #chat::-webkit-scrollbar-thumb,.history::-webkit-scrollbar-thumb{background:#333;border-radius:9px}
+
+/* VEX CODE BUILDER */
+#codeWorkspace{position:absolute;z-index:4;top:58px;bottom:0;left:0;right:0;background:#000;display:none;flex-direction:column;overflow:hidden}
+#codeWorkspace.active{display:flex}
+.code-head{height:54px;flex-shrink:0;border-bottom:1px solid #252525;display:flex;align-items:center;justify-content:space-between;padding:0 16px;gap:10px}
+.code-head-title{font-weight:bold;font-size:14px;letter-spacing:1px}
+.code-head-actions{display:flex;gap:7px;flex-wrap:wrap}
+.cb-btn{background:#080808;color:#fff;border:1px solid #383838;border-radius:8px;padding:9px 12px;font-size:12px}
+.cb-btn:hover{border-color:#fff}
+.cb-primary{background:#fff;color:#000;border-color:#fff;font-weight:bold}
+.code-prompt-area{padding:13px 16px;border-bottom:1px solid #222;flex-shrink:0}
+.code-prompt-row{display:flex;gap:9px}
+#codePrompt{flex:1;min-width:0;background:#090909;border:1px solid #333;border-radius:10px;color:white;padding:12px;outline:none;resize:vertical;min-height:45px;max-height:100px;font-size:13px}
+#codePrompt:focus{border-color:#aaa}
+.code-hint{font-size:10px;color:#777;margin-top:8px}
+.code-work-area{display:grid;grid-template-columns:190px minmax(0,1fr) minmax(0,1fr);flex:1;min-height:0}
+.code-files{border-right:1px solid #252525;padding:13px;overflow:auto}
+.code-section-title{font-size:10px;color:#888;letter-spacing:1.5px;margin:5px 0 12px}
+.code-file{padding:10px 8px;border-radius:7px;font-size:12px;color:#ccc;cursor:pointer;overflow-wrap:anywhere}
+.code-file.active,.code-file:hover{background:#191919;color:#fff}
+.code-editor-panel,.code-preview-panel{display:flex;flex-direction:column;min-width:0;min-height:0}
+.code-editor-panel{border-right:1px solid #252525}
+.code-panel-head{height:39px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid #222;font-size:11px;color:#aaa}
+#codeEditor{width:100%;height:100%;flex:1;min-height:0;resize:none;border:0;border-radius:0;background:#050505;color:#eee;outline:none;padding:14px;font:12px/1.7 Consolas,monospace;tab-size:2;white-space:pre;overflow:auto}
+#codePreview{width:100%;height:100%;flex:1;min-height:0;border:0;background:white}
+.code-status{height:31px;flex-shrink:0;border-top:1px solid #222;padding:7px 12px;font-size:10px;color:#999;display:flex;justify-content:space-between}
+.code-knowledge{display:none;position:absolute;inset:0;background:#000;z-index:8;flex-direction:column;padding:18px;overflow:auto}
+.code-knowledge.active{display:flex}
+.knowledge-results{display:grid;gap:9px;margin-top:15px}
+.knowledge-result{border:1px solid #333;border-radius:10px;padding:12px;color:white;text-decoration:none;background:#070707}
+.knowledge-result strong{font-size:13px}
+.knowledge-result p{font-size:11px;color:#999;line-height:1.5}
+.knowledge-result small{color:#777}
+.code-info{font-size:11px;color:#888;line-height:1.6;padding:12px;border-top:1px solid #222}
+@media(max-width:850px){
+ .code-work-area{grid-template-columns:115px minmax(0,1fr)}
+ .code-preview-panel{display:none}
+ .code-files{padding:8px}
+}
 @media(max-width:700px){
-.sidebar{position:fixed;top:0;bottom:0;left:-270px;transition:left .2s;width:260px}
-.sidebar.open{left:0}
-.mobile-brand{display:block}
-.topbar{padding:0 10px}
-#chat{padding:20px 14px 150px}
-.composer-area{padding:22px 11px 12px}
-.welcome h1{font-size:29px}
-.welcome{margin-top:18vh}
+ .sidebar{position:fixed;top:0;bottom:0;left:-270px;transition:left .2s;width:260px}
+ .sidebar.open{left:0}
+ .mobile-brand{display:block}
+ .topbar{padding:0 10px}
+ #chat{padding:20px 14px 150px}
+ .composer-area{padding:22px 11px 12px}
+ .welcome h1{font-size:29px}
+ .welcome{margin-top:18vh}
+ .code-head{padding:0 8px}
+ .code-head-title{font-size:11px}
+ .cb-btn{padding:8px;font-size:10px}
+ .code-prompt-area{padding:9px}
+ .code-prompt-row{flex-wrap:wrap}
+ #codePrompt{width:100%;flex-basis:100%}
+ .code-work-area{grid-template-columns:85px minmax(0,1fr)}
+ #codeEditor{font-size:11px;padding:9px}
 }
 </style>
 </head>
@@ -113,6 +163,7 @@ textarea::placeholder{color:#777}
   <button class="icon-btn" onclick="toggleSidebar()">×</button>
  </div>
  <button class="new-chat" onclick="newChat()">＋ &nbsp; New chat</button>
+ <button class="code-menu" onclick="openCodeBuilder()">⌘ &nbsp; Code Builder</button>
  <div class="history-title">YOUR CHATS</div>
  <div class="history" id="history"></div>
  <div class="profile">
@@ -145,6 +196,56 @@ textarea::placeholder{color:#777}
   </div>
   <div class="bottom-note">VEX AI · Built by Avee Sharma</div>
  </div>
+
+ <!-- CODE WORKSPACE -->
+ <section id="codeWorkspace">
+  <div class="code-head">
+   <div class="code-head-title">⌘ VEX CODE BUILDER</div>
+   <div class="code-head-actions">
+    <button class="cb-btn" onclick="openCodeKnowledge()">Knowledge</button>
+    <button class="cb-btn" onclick="runCode()">▶ Run</button>
+    <button class="cb-btn" onclick="saveCodeProject()">Save</button>
+    <button class="cb-btn cb-primary" onclick="downloadCode()">Download</button>
+    <button class="cb-btn" onclick="closeCodeBuilder()">✕</button>
+   </div>
+  </div>
+  <div class="code-prompt-area">
+   <div class="code-prompt-row">
+    <textarea id="codePrompt" placeholder="Describe the app you want to build... Example: Make a modern calculator app with dark theme"></textarea>
+    <button class="cb-btn cb-primary" onclick="buildCode()">Build project</button>
+   </div>
+   <div class="code-hint">Describe your idea. VEX uses built-in project templates and coding rules. No external AI model is connected.</div>
+  </div>
+  <div class="code-work-area">
+   <div class="code-files">
+    <div class="code-section-title">PROJECT FILES</div>
+    <div id="codeFileList"></div>
+    <div class="code-info">VEX Builder v1<br>Browser-based workspace<br>HTML / CSS / JS preview</div>
+   </div>
+   <div class="code-editor-panel">
+    <div class="code-panel-head"><span id="codeFileName">index.html</span><span>EDITOR</span></div>
+    <textarea id="codeEditor" spellcheck="false" wrap="off"></textarea>
+   </div>
+   <div class="code-preview-panel">
+    <div class="code-panel-head"><span>LIVE PREVIEW</span><span id="previewStatus">Not running</span></div>
+    <iframe id="codePreview" title="VEX app preview" sandbox="allow-scripts allow-forms"></iframe>
+   </div>
+  </div>
+  <div class="code-status"><span id="codeStatus">Ready · Describe your project to begin</span><span>VEX AI</span></div>
+  <div class="code-knowledge" id="codeKnowledge">
+   <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+    <strong>VEX CODING KNOWLEDGE</strong>
+    <button class="cb-btn" onclick="closeCodeKnowledge()">Close ✕</button>
+   </div>
+   <p style="font-size:12px;color:#888;line-height:1.6">Search programming documentation, tutorials and examples from the existing VEX web search system.</p>
+   <div class="code-prompt-row">
+    <input id="knowledgeQuery" placeholder="Search: JavaScript functions, Python loops, Kotlin..." style="flex:1;min-width:0;background:#080808;border:1px solid #333;border-radius:9px;padding:12px;color:white">
+    <button class="cb-btn cb-primary" onclick="searchCodingKnowledge()">Search</button>
+   </div>
+   <div id="knowledgeStatus" style="font-size:11px;color:#888;margin-top:12px"></div>
+   <div class="knowledge-results" id="knowledgeResults"></div>
+  </div>
+ </section>
 </main>
 </div>
 
@@ -279,18 +380,12 @@ function makeFollowups(q){
  return ['How does '+t+' work?','What are the advantages and disadvantages of '+t+'?','What are the latest developments about '+t+'?'];
 }
 
-// IMAGE URL FIXES
-
+// IMAGE SEARCH
 function imageCandidates(item){
- const urls=[
-  item.image,item.thumbUrl,item.url,item.imageUrl,item.thumbnail,
-  item.thumbnailUrl,item.src,item.original,item.fullUrl
- ];
+ const urls=[item.image,item.thumbUrl,item.url,item.imageUrl,item.thumbnail,item.thumbnailUrl,item.src,item.original,item.fullUrl];
  return [...new Set(urls.filter(validURL).map(absoluteURL))];
 }
-function imageProxy(url){
- return PROXY+url;
-}
+function imageProxy(url){return PROXY+url}
 function createImageCard(item){
  const card=document.createElement('div');card.className='image-card';
  const btn=document.createElement('button');btn.type='button';
@@ -298,65 +393,31 @@ function createImageCard(item){
  const img=document.createElement('img');
  const candidates=imageCandidates(item);
  let index=0;
- const fallback=document.createElement('div');fallback.className='image-fallback';fallback.textContent='Image unavailable';
- fallback.style.display='none';
- frame.append(img,fallback);
- img.loading='lazy';img.referrerPolicy='no-referrer';
+ const fallback=document.createElement('div');fallback.className='image-fallback';fallback.textContent='Image unavailable';fallback.style.display='none';
+ frame.append(img,fallback);img.loading='lazy';img.referrerPolicy='no-referrer';
  function tryNext(){
-  if(index<candidates.length){
-   const url=candidates[index++];
-   img.style.display='block';
-   img.src=url;
-  }else if(index===candidates.length){
-   index++;
-   if(candidates[0]){
-    img.src=imageProxy(candidates[0]);
-    img.style.display='block';
-   }else{
-    img.style.display='none';fallback.style.display='block';
-   }
-  }else{
-   img.style.display='none';fallback.style.display='block';
-  }
+  if(index<candidates.length){const url=candidates[index++];img.style.display='block';img.src=url}
+  else if(index===candidates.length){index++;if(candidates[0]){img.src=imageProxy(candidates[0]);img.style.display='block'}else{img.style.display='none';fallback.style.display='block'}}
+  else{img.style.display='none';fallback.style.display='block'}
  }
- img.onerror=tryNext;
- img.onclick=()=>{};
- btn.onclick=()=>{
-  if(img.naturalWidth>0)openViewer('image',img.src,item.title,item.sourceUrl);
-  else if(candidates.length)openViewer('image',candidates[0],item.title,item.sourceUrl);
- };
+ img.onerror=tryNext;img.onclick=()=>{};
+ btn.onclick=()=>{if(img.naturalWidth>0)openViewer('image',img.src,item.title,item.sourceUrl);else if(candidates.length)openViewer('image',candidates[0],item.title,item.sourceUrl)};
  const caption=document.createElement('div');caption.className='image-caption';caption.textContent=item.title||'Image';
  btn.append(frame,caption);card.appendChild(btn);
- if(item.license){
-  const lic=document.createElement('div');lic.className='image-caption';lic.textContent='Licence: '+item.license;card.appendChild(lic);
- }
- if(item.sourceUrl){
-  const a=document.createElement('a');a.className='image-source';a.href=item.sourceUrl;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Image source ↗';card.appendChild(a);
- }
+ if(item.license){const lic=document.createElement('div');lic.className='image-caption';lic.textContent='Licence: '+item.license;card.appendChild(lic)}
+ if(item.sourceUrl){const a=document.createElement('a');a.className='image-source';a.href=item.sourceUrl;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Image source ↗';card.appendChild(a)}
  if(candidates.length)tryNext();else{img.style.display='none';fallback.style.display='block'}
  return card;
 }
-
 async function searchImages(q){
  try{
   const d=await fetchRetry('/api/images?q='+encodeURIComponent(q)+'&page=1');
   const rows=Array.isArray(d.images)?d.images:[];
-  return rows.slice(0,12).map(x=>({
-   title:x.title||'Image',
-   image:x.thumbUrl||x.url||x.imageUrl||x.thumbnail||'',
-   thumbUrl:x.thumbUrl||'',
-   url:x.url||'',
-   imageUrl:x.imageUrl||'',
-   thumbnail:x.thumbnail||'',
-   license:x.license||'',
-   source:x.source||'Image source',
-   sourceUrl:x.sourceUrl||x.pageUrl||x.sourcePage||''
-  }));
+  return rows.slice(0,12).map(x=>({title:x.title||'Image',image:x.thumbUrl||x.url||x.imageUrl||x.thumbnail||'',thumbUrl:x.thumbUrl||'',url:x.url||'',imageUrl:x.imageUrl||'',thumbnail:x.thumbnail||'',license:x.license||'',source:x.source||'Image source',sourceUrl:x.sourceUrl||x.pageUrl||x.sourcePage||''}));
  }catch(e){console.warn('Image search:',e);return []}
 }
 
-// VIDEO THUMBNAILS + EMBEDS
-
+// VIDEO SEARCH
 function videoInfo(url){
  try{
   const u=new URL(url),host=u.hostname.toLowerCase(),path=u.pathname;
@@ -364,10 +425,7 @@ function videoInfo(url){
    const id=host==='youtu.be'?path.split('/').filter(Boolean)[0]:(u.searchParams.get('v')||path.match(/\/(?:shorts|embed|live)\/([^/?]+)/)?.[1]);
    if(id)return {kind:'youtube',id,embed:'https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0',thumbs:['https://i.ytimg.com/vi/'+id+'/maxresdefault.jpg','https://i.ytimg.com/vi/'+id+'/hqdefault.jpg']};
   }
-  if(host.includes('vimeo.com')){
-   const id=path.split('/').filter(Boolean).pop();
-   if(/^\d+$/.test(id||''))return {kind:'vimeo',id,embed:'https://player.vimeo.com/video/'+id+'?autoplay=1',thumbs:[]};
-  }
+  if(host.includes('vimeo.com')){const id=path.split('/').filter(Boolean).pop();if(/^\d+$/.test(id||''))return {kind:'vimeo',id,embed:'https://player.vimeo.com/video/'+id+'?autoplay=1',thumbs:[]}}
   if(host.includes('dailymotion.com')||host==='dai.ly'){
    const id=path.match(/\/(?:video|embed)\/([a-zA-Z0-9]+)/)?.[1]||path.match(/^\/([a-zA-Z0-9]+)/)?.[1];
    if(id)return {kind:'dailymotion',id,embed:'https://www.dailymotion.com/embed/video/'+id+'?autoplay=1',thumbs:['https://www.dailymotion.com/thumbnail/video/'+id]};
@@ -383,77 +441,38 @@ function metadataThumb(obj){
  for(const k of keys){
   const v=obj[k];
   if(typeof v==='string'&&validURL(v))return v;
-  if(Array.isArray(v)&&v.length){
-   const x=typeof v[0]==='string'?v[0]:v[0]?.url;
-   if(validURL(x))return x;
-  }
+  if(Array.isArray(v)&&v.length){const x=typeof v[0]==='string'?v[0]:v[0]?.url;if(validURL(x))return x}
   if(v&&typeof v==='object'&&validURL(v.url))return v.url;
  }
- for(const [k,v] of Object.entries(obj)){
-  if(typeof v==='object'&&v){
-   const found=metadataThumb(v);if(found)return found;
-  }
- }
+ for(const [k,v] of Object.entries(obj)){if(typeof v==='object'&&v){const found=metadataThumb(v);if(found)return found}}
  return '';
 }
-function videoThumbnail(row,context,info){
- const meta=metadataThumb(context?.structured)||metadataThumb(row);
- return meta||info?.thumbs?.[1]||info?.thumbs?.[0]||'';
-}
+function videoThumbnail(obj,context,info){return metadataThumb(context?.structured)||metadataThumb(obj)||info?.thumbs?.[1]||info?.thumbs?.[0]||''}
 async function searchVideos(q){
  const terms=[q+' video',q+' watch',q+' tutorial video'];
- const groups=await Promise.all(terms.map(async term=>{
-  try{const d=await fetchRetry('/api/search?q='+encodeURIComponent(term)+'&page=1&exact=0');return d.results||[]}catch(e){return []}
- }));
+ const groups=await Promise.all(terms.map(async term=>{try{const d=await fetchRetry('/api/search?q='+encodeURIComponent(term)+'&page=1&exact=0');return d.results||[]}catch(e){return []}}));
  const seen=new Set(),rows=[];
  for(const x of groups.flat()){
   if(!validURL(x.url)||seen.has(x.url))continue;
-  seen.add(x.url);
-  const info=videoInfo(x.url);
-  const text=(x.title+' '+x.description+' '+x.url).toLowerCase();
+  seen.add(x.url);const info=videoInfo(x.url);const text=(x.title+' '+x.description+' '+x.url).toLowerCase();
   if(info&&(info.kind!=='page'||/video|watch|youtube|vimeo|dailymotion|stream|trailer/i.test(text)))rows.push({...x,info});
   if(rows.length>=12)break;
  }
  const contexts=await Promise.all(rows.map(getContext));
- return rows.map((r,i)=>{
-  const c=contexts[i]||{};
-  return {
-   title:r.title||c.title||'Video',
-   url:r.url,
-   description:r.description||'',
-   kind:r.info.kind,
-   embedUrl:r.info.embed,
-   thumbnail:videoThumbnail(r,c,r.info),
-   thumbs:r.info.thumbs,
-   source:(()=>{try{return new URL(r.url).hostname.replace(/^www\./,'')}catch(e){return 'Website'}})()
-  };
- });
+ return rows.map((r,i)=>{const c=contexts[i]||{};return {title:r.title||c.title||'Video',url:r.url,description:r.description||'',kind:r.info.kind,embedUrl:r.info.embed,thumbnail:videoThumbnail(r,c,r.info),thumbs:r.info.thumbs,source:(()=>{try{return new URL(r.url).hostname.replace(/^www\./,'')}catch(e){return 'Website'}})()}});
 }
 function openViewer(kind,url,title,source,embed,mediaType){
- const viewer=document.getElementById('mediaViewer'),inner=document.getElementById('viewerInner');
- inner.textContent='';
- if(kind==='image'){
-  const img=document.createElement('img');img.src=url;img.alt=title||'Image';inner.appendChild(img);
- }else if(mediaType==='file'){
-  const v=document.createElement('video');v.src=url;v.controls=true;v.autoplay=true;v.playsInline=true;inner.appendChild(v);
- }else if(mediaType==='hls'){
-  const msg=document.createElement('div');msg.style.color='#ddd';msg.textContent='This HLS stream may not be supported by this browser. Try opening the original source.';inner.appendChild(msg);
- }else{
-  const frame=document.createElement('iframe');frame.src=embed||url;frame.title=title||'Video';frame.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';frame.allowFullscreen=true;frame.referrerPolicy='strict-origin-when-cross-origin';inner.appendChild(frame);
- }
+ const viewer=document.getElementById('mediaViewer'),inner=document.getElementById('viewerInner');inner.textContent='';
+ if(kind==='image'){const img=document.createElement('img');img.src=url;img.alt=title||'Image';inner.appendChild(img)}
+ else if(mediaType==='file'){const v=document.createElement('video');v.src=url;v.controls=true;v.autoplay=true;v.playsInline=true;inner.appendChild(v)}
+ else if(mediaType==='hls'){const msg=document.createElement('div');msg.style.color='#ddd';msg.textContent='This HLS stream may not be supported by this browser. Try opening the original source.';inner.appendChild(msg)}
+ else{const frame=document.createElement('iframe');frame.src=embed||url;frame.title=title||'Video';frame.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';frame.allowFullscreen=true;frame.referrerPolicy='strict-origin-when-cross-origin';inner.appendChild(frame)}
  const caption=document.createElement('div');caption.className='viewer-caption';caption.textContent=title||'';inner.appendChild(caption);
- if(source){
-  const a=document.createElement('a');a.className='viewer-source';a.href=source;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Open original website';inner.appendChild(a);
- }
+ if(source){const a=document.createElement('a');a.className='viewer-source';a.href=source;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Open original website';inner.appendChild(a)}
  viewer.classList.add('open');document.body.style.overflow='hidden';
 }
-function closeViewer(){
- document.getElementById('mediaViewer').classList.remove('open');
- document.getElementById('viewerInner').textContent='';
- document.body.style.overflow='';
-}
+function closeViewer(){document.getElementById('mediaViewer').classList.remove('open');document.getElementById('viewerInner').textContent='';document.body.style.overflow=''}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeViewer()});
-
 function isImageOnly(q){return /\b(images?|pictures?|photos?)\b/i.test(q)&&/\b(only|just|show|give|send|find|display)\b/i.test(q)&&!/\b(video|videos|explain|describe|what is|who is|how)\b/i.test(q)}
 function isVideo(q){return /\b(video|videos|watch|clip|documentary|trailer)\b/i.test(q)}
 function isVideoOnly(q){return isVideo(q)&&/\b(only|just|show|give|send|find|play)\b/i.test(q)&&!/\b(images?|pictures?|photos?|explain)\b/i.test(q)}
@@ -461,10 +480,7 @@ function mediaQuery(q){return q.replace(/\b(show|give|send|find|display|me|some|
 
 async function runSearch(q,progress){
  progress.textContent='Searching the web...';
- const [sd,card]=await Promise.all([
-  fetchRetry('/api/search?q='+encodeURIComponent(q)+'&page=1&exact=0'),
-  getInfocard(q)
- ]);
+ const [sd,card]=await Promise.all([fetchRetry('/api/search?q='+encodeURIComponent(q)+'&page=1&exact=0'),getInfocard(q)]);
  const results=Array.isArray(sd.results)?sd.results:[];
  if(!results.length)return {answer:card?.instantAnswer?.answer||'No matching pages were found in the web index.',results:[],images:[],followups:[]};
  progress.textContent='Reading web pages...';
@@ -475,107 +491,345 @@ async function runSearch(q,progress){
  const images=await searchImages(q);
  return {answer,results:results.slice(0,8).map(x=>({title:x.title,url:x.url,description:x.description||x.displayUrl||'',source:x.source||'WEB SOURCE'})),images,followups:makeFollowups(q)};
 }
-
 async function runImageSearch(q){return {mode:'images',images:await searchImages(mediaQuery(q))}}
-async function runVideoSearch(q,progress){
- progress.textContent='Finding video pages and thumbnails...';
- const videos=await searchVideos(mediaQuery(q));
- return {mode:'videos',videos,note:videos.length?'Select a thumbnail to open the video inside VEX. Some websites may block embedded playback.':'No matching video pages found. Try a shorter search.'};
-}
+async function runVideoSearch(q,progress){progress.textContent='Finding video pages and thumbnails...';const videos=await searchVideos(mediaQuery(q));return {mode:'videos',videos,note:videos.length?'Select a thumbnail to open the video inside VEX. Some websites may block embedded playback.':'No matching video pages found. Try a shorter search.'}}
 
-function renderImageGrid(parent,items){
- const grid=document.createElement('div');grid.className='images';
- items.forEach(item=>grid.appendChild(createImageCard(item)));
- parent.appendChild(grid);
-}
+function renderImageGrid(parent,items){const grid=document.createElement('div');grid.className='images';items.forEach(item=>grid.appendChild(createImageCard(item)));parent.appendChild(grid)}
 function renderVideoGrid(parent,items){
  const grid=document.createElement('div');grid.className='videos';
  items.forEach(v=>{
-  const card=document.createElement('div');card.className='video-card';
-  const btn=document.createElement('button');btn.type='button';
-  btn.onclick=()=>openViewer('video',v.url,v.title,v.url,v.embedUrl,v.kind);
-  const thumb=document.createElement('div');thumb.className='video-thumb';
-  const img=document.createElement('img');
-  img.loading='lazy';img.referrerPolicy='no-referrer';
-  img.alt=v.title;
-  const candidates=[v.thumbnail,...(v.thumbs||[])].filter(Boolean);
-  let i=0;
-  function nextThumb(){
-   if(i<candidates.length){img.src=candidates[i++];}
-   else{img.remove();const t=document.createElement('div');t.className='image-fallback';t.textContent='Video thumbnail unavailable';thumb.appendChild(t)}
-  }
+  const card=document.createElement('div');card.className='video-card';const btn=document.createElement('button');btn.type='button';btn.onclick=()=>openViewer('video',v.url,v.title,v.url,v.embedUrl,v.kind);
+  const thumb=document.createElement('div');thumb.className='video-thumb';const img=document.createElement('img');img.loading='lazy';img.referrerPolicy='no-referrer';img.alt=v.title;
+  const candidates=[v.thumbnail,...(v.thumbs||[])].filter(Boolean);let i=0;
+  function nextThumb(){if(i<candidates.length){img.src=candidates[i++]}else{img.remove();const t=document.createElement('div');t.className='image-fallback';t.textContent='Video thumbnail unavailable';thumb.appendChild(t)}}
   img.onerror=nextThumb;
-  if(candidates.length){thumb.appendChild(img);nextThumb()}
-  else{const t=document.createElement('div');t.className='image-fallback';t.textContent='Video';thumb.appendChild(t)}
+  if(candidates.length){thumb.appendChild(img);nextThumb()}else{const t=document.createElement('div');t.className='image-fallback';t.textContent='Video';thumb.appendChild(t)}
   const play=document.createElement('div');play.className='play-overlay';play.textContent='▶';thumb.appendChild(play);
-  const title=document.createElement('strong');title.textContent=v.title;
-  btn.append(thumb,title);card.appendChild(btn);
-  const a=document.createElement('a');a.className='video-source';a.href=v.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Open original website ↗';card.appendChild(a);
-  grid.appendChild(card);
+  const title=document.createElement('strong');title.textContent=v.title;btn.append(thumb,title);card.appendChild(btn);
+  const a=document.createElement('a');a.className='video-source';a.href=v.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Open original website ↗';card.appendChild(a);grid.appendChild(card);
  });
  parent.appendChild(grid);
 }
-
 function renderBot(data,save=true){
  const reply=document.createElement('div');reply.className='message bot';
- if(data.mode==='images'){
-  if(data.images?.length){addLabel(reply,'IMAGES');renderImageGrid(reply,data.images)}
-  else reply.textContent='No images found. Try another search.';
-  chat.appendChild(reply);if(save)storeMessage({type:'bot',data});scrollDown();return;
- }
- if(data.mode==='videos'){
-  if(data.videos?.length){addLabel(reply,'VIDEOS');renderVideoGrid(reply,data.videos)}
-  const note=document.createElement('div');note.style.cssText='font-size:12px;color:#888;margin-top:12px';note.textContent=data.note||'';reply.appendChild(note);
-  chat.appendChild(reply);if(save)storeMessage({type:'bot',data});scrollDown();return;
- }
- addLabel(reply,'VEX AI');
- const answer=document.createElement('div');answer.className='answer';answer.textContent=data.answer||'No information found.';reply.appendChild(answer);
- if(data.results?.length){
-  addLabel(reply,'WEB SOURCES');
-  const grid=document.createElement('div');grid.className='sources';data.results.forEach(x=>addSource(grid,x));reply.appendChild(grid);
- }
+ if(data.mode==='images'){if(data.images?.length){addLabel(reply,'IMAGES');renderImageGrid(reply,data.images)}else reply.textContent='No images found. Try another search.';chat.appendChild(reply);if(save)storeMessage({type:'bot',data});scrollDown();return}
+ if(data.mode==='videos'){if(data.videos?.length){addLabel(reply,'VIDEOS');renderVideoGrid(reply,data.videos)}const note=document.createElement('div');note.style.cssText='font-size:12px;color:#888;margin-top:12px';note.textContent=data.note||'';reply.appendChild(note);chat.appendChild(reply);if(save)storeMessage({type:'bot',data});scrollDown();return}
+ addLabel(reply,'VEX AI');const answer=document.createElement('div');answer.className='answer';answer.textContent=data.answer||'No information found.';reply.appendChild(answer);
+ if(data.results?.length){addLabel(reply,'WEB SOURCES');const grid=document.createElement('div');grid.className='sources';data.results.forEach(x=>addSource(grid,x));reply.appendChild(grid)}
  if(data.images?.length){addLabel(reply,'RELATED IMAGES');renderImageGrid(reply,data.images)}
  if(data.videos?.length){addLabel(reply,'RELATED VIDEOS');renderVideoGrid(reply,data.videos)}
- if(data.followups?.length){
-  addLabel(reply,'YOU MAY ALSO ASK');
-  const follow=document.createElement('div');follow.className='followups';
-  data.followups.forEach(q=>{const b=document.createElement('button');b.textContent=q;b.onclick=()=>quickAsk(q);follow.appendChild(b)});
-  reply.appendChild(follow);
- }
- const actions=document.createElement('div');actions.className='actions';
- const copy=document.createElement('button');copy.textContent='Copy answer';
- copy.onclick=async()=>{try{await navigator.clipboard.writeText(data.answer||'');copy.textContent='Copied'}catch(e){copy.textContent='Copy unavailable'}};
- actions.appendChild(copy);reply.appendChild(actions);
+ if(data.followups?.length){addLabel(reply,'YOU MAY ALSO ASK');const follow=document.createElement('div');follow.className='followups';data.followups.forEach(q=>{const b=document.createElement('button');b.textContent=q;b.onclick=()=>quickAsk(q);follow.appendChild(b)});reply.appendChild(follow)}
+ const actions=document.createElement('div');actions.className='actions';const copy=document.createElement('button');copy.textContent='Copy answer';copy.onclick=async()=>{try{await navigator.clipboard.writeText(data.answer||'');copy.textContent='Copied'}catch(e){copy.textContent='Copy unavailable'}};actions.appendChild(copy);reply.appendChild(actions);
  chat.appendChild(reply);if(save)storeMessage({type:'bot',data});scrollDown();
 }
-
 async function sendMessage(){
  const q=input.value.trim();if(!q||searching)return;
- searching=true;sendButton.disabled=true;addUser(q);
- input.value='';input.style.height='30px';
+ searching=true;sendButton.disabled=true;addUser(q);input.value='';input.style.height='30px';
  const progress=document.createElement('div');progress.className='message bot progress';progress.textContent='Preparing search...';chat.appendChild(progress);scrollDown();
  try{
   let data;
   if(isImageOnly(q)){progress.textContent='Searching images...';data=await runImageSearch(q)}
   else if(isVideoOnly(q)){data=await runVideoSearch(q,progress)}
-  else{
-   data=await runSearch(q,progress);
-   if(isVideo(q)){
-    progress.textContent='Finding related videos...';
-    data.videos=await searchVideos(mediaQuery(q));
-   }
-  }
+  else{data=await runSearch(q,progress);if(isVideo(q)){progress.textContent='Finding related videos...';data.videos=await searchVideos(mediaQuery(q))}}
   progress.remove();renderBot(data);
- }catch(e){
-  progress.classList.remove('progress');
-  progress.textContent='VEX search error: '+(e.message||'Connection failed')+'. Please try again.';
-  const b=document.createElement('button');b.className='icon-btn';b.textContent='↻ Retry';b.onclick=()=>{progress.remove();input.value=q;sendMessage()};progress.appendChild(b);
- }finally{searching=false;sendButton.disabled=false;input.focus()}
+ }catch(e){progress.classList.remove('progress');progress.textContent='VEX search error: '+(e.message||'Connection failed')+'. Please try again.';const b=document.createElement('button');b.className='icon-btn';b.textContent='↻ Retry';b.onclick=()=>{progress.remove();input.value=q;sendMessage()};progress.appendChild(b)}
+ finally{searching=false;sendButton.disabled=false;input.focus()}
 }
 function quickAsk(q){input.value=q;sendMessage()}
 sendButton.addEventListener('click',sendMessage);
 input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});
 input.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,130)+'px'});
+
+// =====================================================
+// VEX CODE ENGINE V1
+// Template-based generation: no external AI model/API.
+// =====================================================
+
+let codeProject={name:'VEX Project',files:{'index.html':'<!-- Describe your project and click Build project -->'},activeFile:'index.html'};
+
+const codeEditor=document.getElementById('codeEditor');
+const codePrompt=document.getElementById('codePrompt');
+const codeStatus=document.getElementById('codeStatus');
+
+function setCodeStatus(message){codeStatus.textContent=message}
+function openCodeBuilder(){
+ document.getElementById('codeWorkspace').classList.add('active');
+ document.getElementById('chat').style.display='none';
+ document.querySelector('.composer-area').style.display='none';
+ document.getElementById('sidebar').classList.remove('open');
+ loadCodeProject();
+}
+function closeCodeBuilder(){
+ document.getElementById('codeWorkspace').classList.remove('active');
+ document.getElementById('chat').style.display='';
+ document.querySelector('.composer-area').style.display='';
+}
+function openCodeKnowledge(){
+ document.getElementById('codeKnowledge').classList.add('active');
+ document.getElementById('knowledgeQuery').focus();
+}
+function closeCodeKnowledge(){document.getElementById('codeKnowledge').classList.remove('active')}
+
+function renderCodeFiles(){
+ const box=document.getElementById('codeFileList');box.textContent='';
+ Object.keys(codeProject.files).forEach(name=>{
+  const item=document.createElement('div');
+  item.className='code-file'+(name===codeProject.activeFile?' active':'');
+  item.textContent='📄 '+name;
+  item.onclick=()=>selectCodeFile(name);
+  box.appendChild(item);
+ });
+}
+function selectCodeFile(name){
+ if(!Object.prototype.hasOwnProperty.call(codeProject.files,name))return;
+ codeProject.activeFile=name;
+ codeEditor.value=codeProject.files[name];
+ document.getElementById('codeFileName').textContent=name;
+ renderCodeFiles();
+}
+codeEditor.addEventListener('input',()=>{
+ codeProject.files[codeProject.activeFile]=codeEditor.value;
+ setCodeStatus('Unsaved changes');
+});
+codeEditor.addEventListener('keydown',e=>{
+ if(e.key==='Tab'){
+  e.preventDefault();
+  const start=codeEditor.selectionStart,end=codeEditor.selectionEnd;
+  codeEditor.setRangeText('  ',start,end,'end');
+  codeProject.files[codeProject.activeFile]=codeEditor.value;
+ }
+});
+
+function escapeHTMLText(value){
+ return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function makeAppShell(title,body,css,js){
+ return '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n<title>'+escapeHTMLText(title)+'</title>\n<style>\n'+css+'\n</style>\n</head>\n<body>\n'+body+'\n<script>\n'+js+'\n<\/script>\n</body>\n</html>';
+}
+
+const baseCSS=`
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:#080808;color:#fff;font-family:Arial,system-ui,sans-serif}
+button,input{font:inherit}
+button{cursor:pointer}
+.container{width:min(900px,92%);margin:50px auto}
+.card{background:#121212;border:1px solid #292929;border-radius:16px;padding:22px}
+h1{font-size:clamp(28px,5vw,44px);margin:0 0 12px}
+p{color:#aaa;line-height:1.6}
+.btn{background:white;color:black;border:0;border-radius:9px;padding:12px 17px;font-weight:bold}
+.btn:hover{opacity:.85}
+input{background:#080808;color:white;border:1px solid #444;border-radius:9px;padding:12px;outline:none}
+`;
+
+function calculatorTemplate(){
+ const css=baseCSS+`
+ .calc{max-width:380px;margin:7vh auto;padding:22px}
+ .display{width:100%;height:75px;text-align:right;font-size:30px;margin:10px 0 15px;background:#050505}
+ .keys{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+ .keys button{height:60px;border:1px solid #333;border-radius:12px;background:#1b1b1b;color:white;font-size:19px}
+ .keys button:hover{background:#333}
+ .keys .equal{background:white;color:black}
+ .keys .clear{color:#ff7777}
+ `;
+ const body=`<main class="card calc"><h1>Calculator</h1><p>Simple calculator built with VEX AI</p><input id="display" class="display" value="0" readonly><div class="keys">
+ <button class="clear" data-v="C">C</button><button data-v="(">(</button><button data-v=")">)</button><button data-v="/">÷</button>
+ <button data-v="7">7</button><button data-v="8">8</button><button data-v="9">9</button><button data-v="*">×</button>
+ <button data-v="4">4</button><button data-v="5">5</button><button data-v="6">6</button><button data-v="-">−</button>
+ <button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="+">+</button>
+ <button data-v="0">0</button><button data-v=".">.</button><button data-v="DEL">⌫</button><button class="equal" data-v="=">=</button>
+ </div></main>`;
+ const js=`
+ const display=document.getElementById('display');let expression='';
+ document.querySelectorAll('[data-v]').forEach(button=>button.addEventListener('click',()=>{
+  const v=button.dataset.v;
+  if(v==='C'){expression='';display.value='0';return}
+  if(v==='DEL'){expression=expression.slice(0,-1);display.value=expression||'0';return}
+  if(v==='='){
+   try{
+    if(!/^[0-9+*/().% -]+$/.test(expression))throw Error();
+    const result=Function('"use strict";return ('+expression+')')();
+    if(!Number.isFinite(result))throw Error();
+    expression=String(result);display.value=expression;
+   }catch(e){display.value='Error';expression=''}
+   return;
+  }
+  expression+=v;display.value=expression;
+ }));
+ `;
+ return makeAppShell('VEX Calculator',body,css,js);
+}
+function todoTemplate(){
+ const css=baseCSS+`
+ .todo{max-width:620px;margin:7vh auto}
+ .entry{display:flex;gap:8px;margin:20px 0}
+ .entry input{flex:1;min-width:0}
+ ul{list-style:none;padding:0}
+ li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px;margin:8px 0;background:#1b1b1b;border:1px solid #333;border-radius:10px}
+ li span{overflow-wrap:anywhere}
+ li.done span{text-decoration:line-through;color:#777}
+ .remove{background:none;border:0;color:#ff7777;font-size:18px}
+ `;
+ const body=`<main class="card todo"><h1>My To-Do List</h1><p>Keep your tasks organized.</p><div class="entry"><input id="taskInput" placeholder="Write a task..."><button class="btn" id="addTask">Add</button></div><ul id="tasks"></ul><p id="count">0 tasks</p></main>`;
+ const js=`
+ const input=document.getElementById('taskInput'),list=document.getElementById('tasks'),count=document.getElementById('count');
+ function updateCount(){count.textContent=list.children.length+' tasks'}
+ function addTask(){
+  const value=input.value.trim();if(!value)return;
+  const li=document.createElement('li'),span=document.createElement('span'),remove=document.createElement('button');
+  span.textContent=value;remove.textContent='×';remove.className='remove';remove.setAttribute('aria-label','Delete task');
+  span.onclick=()=>{li.classList.toggle('done')};
+  remove.onclick=()=>{li.remove();updateCount()};
+  li.append(span,remove);list.appendChild(li);input.value='';input.focus();updateCount();
+ }
+ document.getElementById('addTask').onclick=addTask;
+ input.addEventListener('keydown',e=>{if(e.key==='Enter')addTask()});
+ `;
+ return makeAppShell('VEX To-Do App',body,css,js);
+}
+function portfolioTemplate(){
+ const css=baseCSS+`
+ .hero{min-height:80vh;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+ .hero h1{font-size:clamp(42px,8vw,78px);max-width:750px}
+ .accent{color:#aaa}
+ .links{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+ .links a{color:white;border:1px solid #555;padding:11px 15px;border-radius:9px;text-decoration:none}
+ section{padding:50px 0;border-top:1px solid #292929}
+ `;
+ const body=`<main class="container"><nav style="padding:15px 0;font-weight:bold;letter-spacing:2px">MY PORTFOLIO</nav><div class="hero"><p>HELLO, I'M</p><h1>Your Name.<br><span class="accent">Creative Developer.</span></h1><p>I build useful digital experiences and turn ideas into reality.</p><div class="links"><a href="#about">About me</a><a href="#projects">My projects</a><a href="mailto:hello@example.com">Contact</a></div></div><section id="about"><h1>About me</h1><p>Write a short introduction about yourself, your skills and your interests here.</p></section><section id="projects"><h1>Projects</h1><div class="card"><h2>Project One</h2><p>Describe your first project here.</p></div></section></main>`;
+ return makeAppShell('My Portfolio',body,css,'');
+}
+function landingTemplate(){
+ const css=baseCSS+`
+ .hero{text-align:center;padding:12vh 15px 10vh}
+ .hero h1{max-width:750px;margin:0 auto 18px}
+ .hero p{max-width:600px;margin:0 auto 25px}
+ .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:25px}
+ .feature{padding:20px;background:#141414;border:1px solid #333;border-radius:14px}
+ `;
+ const body=`<main class="container"><div class="hero"><p>WELCOME TO OUR WEBSITE</p><h1>Build Something Amazing.</h1><p>A clean, modern landing page for your next big idea. Customize this content for your project.</p><button class="btn" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">Explore more</button></div><section id="features"><h1>What We Offer</h1><div class="features"><div class="feature"><h2>Fast</h2><p>Designed to be simple and efficient.</p></div><div class="feature"><h2>Modern</h2><p>A clean layout with responsive design.</p></div><div class="feature"><h2>Flexible</h2><p>Customize the page for your needs.</p></div></div></section></main>`;
+ return makeAppShell('VEX Landing Page',body,css,'');
+}
+function quizTemplate(){
+ const css=baseCSS+`
+ .quiz{max-width:650px;margin:8vh auto}
+ .option{display:block;width:100%;text-align:left;margin:9px 0;padding:13px;background:#171717;border:1px solid #444;color:white;border-radius:10px}
+ .option:hover{border-color:white}
+ `;
+ const body=`<main class="card quiz"><h1>Quick Quiz</h1><p id="question">What does HTML stand for?</p><div id="options"></div><p id="result"></p><button class="btn" id="next">Next question</button></main>`;
+ const js=`
+ const questions=[
+ {q:'What does HTML stand for?',a:['Hyper Text Markup Language','High Text Machine Language','Home Tool Markup Language'],correct:0},
+ {q:'Which language styles a web page?',a:['Python','CSS','SQL'],correct:1},
+ {q:'Which language adds interactivity to a web page?',a:['JavaScript','HTML','XML'],correct:0}
+ ];
+ let index=0,score=0,answered=false;
+ const q=document.getElementById('question'),options=document.getElementById('options'),result=document.getElementById('result');
+ function show(){
+  answered=false;result.textContent='';const item=questions[index];q.textContent=(index+1)+'. '+item.q;options.textContent='';
+  item.a.forEach((answer,i)=>{const b=document.createElement('button');b.className='option';b.textContent=answer;b.onclick=()=>{if(answered)return;answered=true;if(i===item.correct){score++;result.textContent='Correct!'}else result.textContent='Not quite. Correct answer: '+item.a[item.correct];};options.appendChild(b)});
+ }
+ document.getElementById('next').onclick=()=>{if(!answered){result.textContent='Choose an answer first.';return}index++;if(index>=questions.length){q.textContent='Quiz completed! Your score: '+score+'/'+questions.length;options.textContent='';result.textContent='You can refresh the page to try again.';document.getElementById('next').style.display='none'}else show()};
+ show();
+ `;
+ return makeAppShell('VEX Quiz',body,css,js);
+}
+function genericTemplate(prompt){
+ const description=escapeHTMLText(prompt||'Your new project');
+ const css=baseCSS+`
+ .hero{max-width:720px;margin:10vh auto;text-align:center}
+ .hero h1{font-size:clamp(30px,6vw,52px)}
+ .panel{margin-top:25px;text-align:left}
+ `;
+ const body=`<main class="container hero"><p>VEX AI GENERATED STARTER PROJECT</p><h1>${description}</h1><p>This is your project starting point. Edit the code in the VEX editor to customize the app.</p><div class="card panel"><h2>Project workspace</h2><p>Start adding your own features, pages and interactions.</p><button class="btn" id="hello">Test interaction</button><p id="message"></p></div></main>`;
+ const js=`document.getElementById('hello').onclick=()=>{document.getElementById('message').textContent='Your app is running successfully.'};`;
+ return makeAppShell('VEX Starter Project',body,css,js);
+}
+function buildCode(){
+ const prompt=codePrompt.value.trim();
+ if(!prompt){setCodeStatus('First describe the app you want to build.');codePrompt.focus();return}
+ const q=prompt.toLowerCase();
+ let html;
+ let projectName='VEX Project';
+ if(/\b(calculator|calculate|math app)\b/.test(q)){html=calculatorTemplate();projectName='Calculator App'}
+ else if(/\b(todo|to-do|task manager|task list)\b/.test(q)){html=todoTemplate();projectName='To-Do App'}
+ else if(/\b(portfolio|personal website|resume website)\b/.test(q)){html=portfolioTemplate();projectName='Portfolio Website'}
+ else if(/\b(landing page|business website|website homepage)\b/.test(q)){html=landingTemplate();projectName='Landing Page'}
+ else if(/\b(quiz|mcq|question game)\b/.test(q)){html=quizTemplate();projectName='Quiz App'}
+ else{html=genericTemplate(prompt);projectName='Starter Project'}
+ codeProject={name:projectName,files:{'index.html':html},activeFile:'index.html'};
+ selectCodeFile('index.html');
+ runCode();
+ setCodeStatus(projectName+' created using a built-in template. Customize the code to add features.');
+}
+function runCode(){
+ const code=codeProject.files[codeProject.activeFile]||'';
+ if(!code.trim()){setCodeStatus('No code to run.');return}
+ if(codeProject.activeFile!=='index.html'){
+  setCodeStatus('This first version runs index.html only. Select index.html to preview.');
+  return;
+ }
+ const preview=document.getElementById('codePreview');
+ preview.srcdoc=code;
+ document.getElementById('previewStatus').textContent='Running';
+ setCodeStatus('Preview refreshed. Check the preview panel.');
+}
+function saveCodeProject(){
+ try{
+  localStorage.setItem('vex_code_project',JSON.stringify(codeProject));
+  setCodeStatus('Project saved in this browser.');
+ }catch(e){setCodeStatus('Could not save project. Browser storage may be full.')}
+}
+function loadCodeProject(){
+ try{
+  const saved=localStorage.getItem('vex_code_project');
+  if(saved){
+   const parsed=JSON.parse(saved);
+   if(parsed&&parsed.files&&typeof parsed.files==='object')codeProject=parsed;
+  }
+ }catch(e){}
+ if(!codeProject.files||!Object.keys(codeProject.files).length)codeProject={name:'VEX Project',files:{'index.html':'<!-- Your project code goes here -->'},activeFile:'index.html'};
+ if(!codeProject.files[codeProject.activeFile])codeProject.activeFile=Object.keys(codeProject.files)[0];
+ selectCodeFile(codeProject.activeFile);
+}
+function downloadCode(){
+ const code=codeProject.files['index.html'];
+ if(!code){setCodeStatus('No index.html file found.');return}
+ const blob=new Blob([code],{type:'text/html;charset=utf-8'});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');a.href=url;a.download=(codeProject.name||'vex-project').toLowerCase().replace(/[^a-z0-9]+/g,'-')+'.html';
+ document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+ setCodeStatus('HTML file download started.');
+}
+
+// Search programming knowledge using the existing VEX search service.
+async function searchCodingKnowledge(){
+ const query=document.getElementById('knowledgeQuery').value.trim();
+ const status=document.getElementById('knowledgeStatus');
+ const resultsBox=document.getElementById('knowledgeResults');
+ if(!query){status.textContent='Enter a programming topic first.';return}
+ status.textContent='Searching programming documentation...';
+ resultsBox.textContent='';
+ try{
+  const searchQuery=query+' programming documentation tutorial code examples';
+  const data=await fetchRetry('/api/search?q='+encodeURIComponent(searchQuery)+'&page=1&exact=0');
+  const rows=Array.isArray(data.results)?data.results:[];
+  if(!rows.length){status.textContent='No coding results found. Try another search.';return}
+  rows.slice(0,10).forEach(row=>{
+   if(!validURL(row.url))return;
+   const a=document.createElement('a');a.className='knowledge-result';a.href=absoluteURL(row.url);a.target='_blank';a.rel='noopener noreferrer';
+   const title=document.createElement('strong');title.textContent=row.title||'Programming resource';
+   const desc=document.createElement('p');desc.textContent=row.description||'Open this page to read the documentation or code example.';
+   const url=document.createElement('small');url.textContent=row.displayUrl||row.url;
+   a.append(title,desc,url);resultsBox.appendChild(a);
+  });
+  status.textContent='Found '+resultsBox.children.length+' programming resources. Open a result to read it.';
+ }catch(e){
+  status.textContent='Coding search failed: '+(e.message||'Connection error')+'. Try again later.';
+ }
+}
+document.getElementById('knowledgeQuery').addEventListener('keydown',e=>{if(e.key==='Enter')searchCodingKnowledge()});
+codePrompt.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();buildCode()}});
+
 loadHistory();
 </script>
 </body>
