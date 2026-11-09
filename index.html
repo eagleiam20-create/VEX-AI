@@ -6,23 +6,24 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <title>VEX AI</title>
+
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;background:#000;color:#fff;font-family:Arial,system-ui,sans-serif}
 body{overflow:hidden}
-button,textarea{font:inherit}
+button,textarea,input{font:inherit}
 button{cursor:pointer}
+.hidden{display:none!important}
 .app{height:100dvh;display:flex;background:#000}
-.sidebar{width:260px;flex-shrink:0;border-right:1px solid #222;padding:15px;display:flex;flex-direction:column;background:#000;z-index:5}
+.sidebar{width:260px;flex-shrink:0;border-right:1px solid #222;padding:15px;display:flex;flex-direction:column;background:#000;z-index:20}
 .side-top{display:flex;justify-content:space-between;align-items:center;padding:8px 4px 22px}
 .brand{font-size:22px;font-weight:900;letter-spacing:3px}
 .icon-btn{background:none;border:0;color:#fff;padding:9px;border-radius:9px;font-size:19px}
 .icon-btn:hover,.history-item:hover{background:#181818}
-.new-chat{background:#000;border:1px solid #333;color:#fff;padding:13px;border-radius:12px;text-align:left}
-.new-chat:hover{border-color:#fff}
-.code-menu{margin-top:9px;background:#080808;border:1px solid #333;color:#fff;padding:13px;border-radius:12px;text-align:left}
-.code-menu:hover{border-color:#fff;background:#151515}
-.history-title{font-size:10px;letter-spacing:2px;color:#888;margin:25px 8px 10px}
+.new-chat,.menu-button{background:#000;border:1px solid #333;color:#fff;padding:13px;border-radius:12px;text-align:left;width:100%;margin-bottom:9px}
+.new-chat:hover,.menu-button:hover{border-color:#fff}
+.menu-button.active{background:#171717;border-color:#777}
+.history-title{font-size:10px;letter-spacing:2px;color:#888;margin:20px 8px 10px}
 .history{overflow:auto;flex:1}
 .history-item{font-size:13px;padding:11px;border-radius:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;color:#ddd}
 .profile{border-top:1px solid #222;padding:15px 6px 5px}
@@ -93,47 +94,49 @@ textarea::placeholder{color:#777}
 .viewer-close{position:absolute;top:15px;right:18px;width:42px;height:42px;border-radius:50%;background:#111;border:1px solid #555;color:white;font-size:24px}
 .viewer-caption{font-size:12px;color:#ddd;text-align:center}
 .viewer-source{color:#aaa;font-size:12px;text-decoration:underline}
-.hidden{display:none!important}
-#chat::-webkit-scrollbar,.history::-webkit-scrollbar{width:5px}
-#chat::-webkit-scrollbar-thumb,.history::-webkit-scrollbar-thumb{background:#333;border-radius:9px}
 
-/* VEX CODE BUILDER */
-#codeWorkspace{position:absolute;z-index:4;top:58px;bottom:0;left:0;right:0;background:#000;display:none;flex-direction:column;overflow:hidden}
-#codeWorkspace.active{display:flex}
-.code-head{height:54px;flex-shrink:0;border-bottom:1px solid #252525;display:flex;align-items:center;justify-content:space-between;padding:0 16px;gap:10px}
-.code-head-title{font-weight:bold;font-size:14px;letter-spacing:1px}
-.code-head-actions{display:flex;gap:7px;flex-wrap:wrap}
-.cb-btn{background:#080808;color:#fff;border:1px solid #383838;border-radius:8px;padding:9px 12px;font-size:12px}
-.cb-btn:hover{border-color:#fff}
-.cb-primary{background:#fff;color:#000;border-color:#fff;font-weight:bold}
-.code-prompt-area{padding:13px 16px;border-bottom:1px solid #222;flex-shrink:0}
-.code-prompt-row{display:flex;gap:9px}
-#codePrompt{flex:1;min-width:0;background:#090909;border:1px solid #333;border-radius:10px;color:white;padding:12px;outline:none;resize:vertical;min-height:45px;max-height:100px;font-size:13px}
-#codePrompt:focus{border-color:#aaa}
-.code-hint{font-size:10px;color:#777;margin-top:8px}
-.code-work-area{display:grid;grid-template-columns:190px minmax(0,1fr) minmax(0,1fr);flex:1;min-height:0}
-.code-files{border-right:1px solid #252525;padding:13px;overflow:auto}
-.code-section-title{font-size:10px;color:#888;letter-spacing:1.5px;margin:5px 0 12px}
-.code-file{padding:10px 8px;border-radius:7px;font-size:12px;color:#ccc;cursor:pointer;overflow-wrap:anywhere}
-.code-file.active,.code-file:hover{background:#191919;color:#fff}
-.code-editor-panel,.code-preview-panel{display:flex;flex-direction:column;min-width:0;min-height:0}
-.code-editor-panel{border-right:1px solid #252525}
-.code-panel-head{height:39px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid #222;font-size:11px;color:#aaa}
-#codeEditor{width:100%;height:100%;flex:1;min-height:0;resize:none;border:0;border-radius:0;background:#050505;color:#eee;outline:none;padding:14px;font:12px/1.7 Consolas,monospace;tab-size:2;white-space:pre;overflow:auto}
-#codePreview{width:100%;height:100%;flex:1;min-height:0;border:0;background:white}
-.code-status{height:31px;flex-shrink:0;border-top:1px solid #222;padding:7px 12px;font-size:10px;color:#999;display:flex;justify-content:space-between}
-.code-knowledge{display:none;position:absolute;inset:0;background:#000;z-index:8;flex-direction:column;padding:18px;overflow:auto}
-.code-knowledge.active{display:flex}
-.knowledge-results{display:grid;gap:9px;margin-top:15px}
-.knowledge-result{border:1px solid #333;border-radius:10px;padding:12px;color:white;text-decoration:none;background:#070707}
-.knowledge-result strong{font-size:13px}
-.knowledge-result p{font-size:11px;color:#999;line-height:1.5}
-.knowledge-result small{color:#777}
-.code-info{font-size:11px;color:#888;line-height:1.6;padding:12px;border-top:1px solid #222}
+/* CODE BUILDER */
+#codeBuilder{display:none;flex:1;min-height:0;flex-direction:column;background:#000}
+#codeBuilder.active{display:flex}
+.cb-head{height:54px;flex-shrink:0;border-bottom:1px solid #242424;display:flex;align-items:center;justify-content:space-between;padding:0 15px;gap:10px}
+.cb-title{font-size:14px;font-weight:bold;letter-spacing:1px}
+.cb-actions{display:flex;gap:7px;align-items:center}
+.cb-btn{background:#090909;color:#eee;border:1px solid #383838;border-radius:8px;padding:9px 12px;font-size:12px}
+.cb-btn.primary{background:#fff;color:#000;border-color:#fff;font-weight:bold}
+.cb-btn:disabled{opacity:.4}
+.cb-prompt{padding:12px 15px;border-bottom:1px solid #222;display:flex;gap:9px;align-items:center}
+.cb-prompt input{flex:1;min-width:0;background:#080808;border:1px solid #333;border-radius:10px;color:#fff;padding:12px;outline:none}
+.cb-prompt input:focus{border-color:#888}
+.cb-prompt button{background:#fff;color:#000;border:0;border-radius:9px;padding:12px 16px;font-weight:bold}
+.cb-tabs{display:none;gap:6px;padding:9px;border-bottom:1px solid #222}
+.cb-tabs button{flex:1;background:#080808;border:1px solid #333;color:#ddd;padding:10px;border-radius:8px;font-size:12px}
+.cb-tabs button.active{background:#fff;color:#000}
+.cb-workspace{display:grid;grid-template-columns:190px minmax(0,1fr) minmax(0,1fr);flex:1;min-height:0}
+.cb-files{border-right:1px solid #252525;overflow:auto;padding:12px}
+.cb-panel-title{font-size:10px;color:#888;letter-spacing:2px;margin:4px 5px 12px}
+.cb-file{display:block;width:100%;text-align:left;background:transparent;border:0;color:#bbb;padding:10px 9px;border-radius:7px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cb-file.active,.cb-file:hover{background:#191919;color:#fff}
+.cb-editor-panel,.cb-preview-panel{display:flex;flex-direction:column;min-width:0;min-height:0}
+.cb-editor-panel{border-right:1px solid #252525}
+.cb-panel-head{height:39px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid #222;font-size:11px;color:#aaa}
+.cb-editor{flex:1;min-height:0;width:100%;resize:none;border:0;border-radius:0;background:#050505;color:#e8e8e8;padding:15px;outline:none;font-family:Consolas,monospace;font-size:13px;line-height:1.65;tab-size:2;white-space:pre;overflow:auto}
+.cb-preview{flex:1;width:100%;border:0;background:#fff}
+.cb-status{height:27px;flex-shrink:0;border-top:1px solid #222;color:#888;font-size:10px;padding:6px 12px}
+.cb-help{font-size:11px;color:#777;padding:9px 14px;border-top:1px solid #222;line-height:1.5}
+.cb-console{height:90px;flex-shrink:0;overflow:auto;background:#050505;border-top:1px solid #222;padding:8px 12px;font:11px/1.6 Consolas,monospace;color:#aaa}
+.cb-console .error{color:#ff7777}
+.cb-console .ok{color:#9cdeaa}
+.cb-console .warn{color:#e5c47b}
+.cb-mobile-files{display:none}
+.cb-file-tools{display:flex;gap:6px;margin-top:12px}
+.cb-file-tools button{flex:1;background:#111;border:1px solid #333;color:#ddd;border-radius:7px;padding:8px;font-size:11px}
 @media(max-width:850px){
- .code-work-area{grid-template-columns:115px minmax(0,1fr)}
- .code-preview-panel{display:none}
- .code-files{padding:8px}
+ .cb-workspace{grid-template-columns:155px minmax(0,1fr)}
+ .cb-preview-panel{display:none}
+ .cb-workspace.show-preview{grid-template-columns:1fr}
+ .cb-workspace.show-preview .cb-files,.cb-workspace.show-preview .cb-editor-panel{display:none}
+ .cb-workspace.show-preview .cb-preview-panel{display:flex}
+ .cb-tabs{display:flex}
 }
 @media(max-width:700px){
  .sidebar{position:fixed;top:0;bottom:0;left:-270px;transition:left .2s;width:260px}
@@ -144,17 +147,29 @@ textarea::placeholder{color:#777}
  .composer-area{padding:22px 11px 12px}
  .welcome h1{font-size:29px}
  .welcome{margin-top:18vh}
- .code-head{padding:0 8px}
- .code-head-title{font-size:11px}
- .cb-btn{padding:8px;font-size:10px}
- .code-prompt-area{padding:9px}
- .code-prompt-row{flex-wrap:wrap}
- #codePrompt{width:100%;flex-basis:100%}
- .code-work-area{grid-template-columns:85px minmax(0,1fr)}
- #codeEditor{font-size:11px;padding:9px}
+ .cb-head{height:48px;padding:0 9px}
+ .cb-title{font-size:12px}
+ .cb-actions{gap:5px}
+ .cb-btn{padding:8px 9px;font-size:11px}
+ .cb-prompt{padding:9px;gap:6px}
+ .cb-prompt input{font-size:13px;padding:11px 9px}
+ .cb-prompt button{padding:11px 12px;font-size:12px}
+ .cb-tabs{padding:7px}
+ .cb-tabs button{padding:11px 5px}
+ .cb-workspace{display:block;position:relative;flex:1;min-height:0}
+ .cb-files,.cb-editor-panel,.cb-preview-panel{height:100%;width:100%;border:0}
+ .cb-editor-panel,.cb-preview-panel{display:none}
+ .cb-workspace.mobile-files .cb-files{display:block}
+ .cb-workspace.mobile-editor .cb-editor-panel{display:flex}
+ .cb-workspace.mobile-preview .cb-preview-panel{display:flex}
+ .cb-files{padding:12px}
+ .cb-editor{font-size:13px;padding:12px}
+ .cb-console{height:75px}
+ .cb-help{font-size:10px}
 }
 </style>
 </head>
+
 <body>
 <div class="app">
 <aside class="sidebar" id="sidebar">
@@ -163,7 +178,8 @@ textarea::placeholder{color:#777}
   <button class="icon-btn" onclick="toggleSidebar()">×</button>
  </div>
  <button class="new-chat" onclick="newChat()">＋ &nbsp; New chat</button>
- <button class="code-menu" onclick="openCodeBuilder()">⌘ &nbsp; Code Builder</button>
+ <button class="menu-button" id="chatMenu" onclick="showChat()">◉ &nbsp; Chat</button>
+ <button class="menu-button" id="builderMenu" onclick="openCodeBuilder()">⌘ &nbsp; Code Builder</button>
  <div class="history-title">YOUR CHATS</div>
  <div class="history" id="history"></div>
  <div class="profile">
@@ -171,12 +187,14 @@ textarea::placeholder{color:#777}
   <div class="profile-info">Owner &amp; Creator: Avee Sharma<br>Independent AI project<br>Public web knowledge</div>
  </div>
 </aside>
+
 <main class="main">
  <div class="topbar">
   <button class="icon-btn" onclick="toggleSidebar()">☰</button>
   <div class="mobile-brand">VEX AI</div>
-  <div class="model-label">VEX AI <span>Knowledge Assistant</span></div>
+  <div class="model-label" id="topModel">VEX AI <span>Knowledge Assistant</span></div>
  </div>
+
  <section id="chat">
   <div class="welcome" id="welcome">
    <h1>What can I help with?</h1>
@@ -189,7 +207,8 @@ textarea::placeholder{color:#777}
    </div>
   </div>
  </section>
- <div class="composer-area">
+
+ <div class="composer-area" id="composerArea">
   <div class="composer">
    <textarea id="question" rows="1" placeholder="Message VEX AI..."></textarea>
    <button class="send" id="send">↑</button>
@@ -197,54 +216,62 @@ textarea::placeholder{color:#777}
   <div class="bottom-note">VEX AI · Built by Avee Sharma</div>
  </div>
 
- <!-- CODE WORKSPACE -->
- <section id="codeWorkspace">
-  <div class="code-head">
-   <div class="code-head-title">⌘ VEX CODE BUILDER</div>
-   <div class="code-head-actions">
-    <button class="cb-btn" onclick="openCodeKnowledge()">Knowledge</button>
-    <button class="cb-btn" onclick="runCode()">▶ Run</button>
-    <button class="cb-btn" onclick="saveCodeProject()">Save</button>
-    <button class="cb-btn cb-primary" onclick="downloadCode()">Download</button>
-    <button class="cb-btn" onclick="closeCodeBuilder()">✕</button>
+ <!-- CODE BUILDER -->
+ <section id="codeBuilder">
+  <div class="cb-head">
+   <div class="cb-title">⌘ VEX CODE BUILDER</div>
+   <div class="cb-actions">
+    <button class="cb-btn" onclick="saveProject()">Save</button>
+    <button class="cb-btn" onclick="downloadProject()">Download</button>
+    <button class="cb-btn primary" onclick="runProject()">▶ Run</button>
    </div>
   </div>
-  <div class="code-prompt-area">
-   <div class="code-prompt-row">
-    <textarea id="codePrompt" placeholder="Describe the app you want to build... Example: Make a modern calculator app with dark theme"></textarea>
-    <button class="cb-btn cb-primary" onclick="buildCode()">Build project</button>
-   </div>
-   <div class="code-hint">Describe your idea. VEX uses built-in project templates and coding rules. No external AI model is connected.</div>
+
+  <div class="cb-prompt">
+   <input id="buildPrompt" placeholder="Describe the app you want to build...">
+   <button onclick="generateProject()">Build</button>
   </div>
-  <div class="code-work-area">
-   <div class="code-files">
-    <div class="code-section-title">PROJECT FILES</div>
-    <div id="codeFileList"></div>
-    <div class="code-info">VEX Builder v1<br>Browser-based workspace<br>HTML / CSS / JS preview</div>
+
+  <div class="cb-tabs">
+   <button id="tabFiles" onclick="setBuilderTab('files')">Files</button>
+   <button id="tabEditor" class="active" onclick="setBuilderTab('editor')">Editor</button>
+   <button id="tabPreview" onclick="setBuilderTab('preview')">Preview</button>
+  </div>
+
+  <div class="cb-workspace mobile-editor" id="cbWorkspace">
+   <div class="cb-files">
+    <div class="cb-panel-title">PROJECT FILES</div>
+    <div id="fileList"></div>
+    <div class="cb-file-tools">
+     <button onclick="addProjectFile()">＋ File</button>
+     <button onclick="renameProjectFile()">Rename</button>
+    </div>
+    <div class="cb-help">Files are stored in this browser on this device.</div>
    </div>
-   <div class="code-editor-panel">
-    <div class="code-panel-head"><span id="codeFileName">index.html</span><span>EDITOR</span></div>
-    <textarea id="codeEditor" spellcheck="false" wrap="off"></textarea>
+
+   <div class="cb-editor-panel">
+    <div class="cb-panel-head">
+     <span id="activeFileName">index.html</span>
+     <span>EDITOR</span>
+    </div>
+    <textarea id="codeEditor" class="cb-editor" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"></textarea>
+    <div class="cb-status" id="editorStatus">Ready · HTML / CSS / JavaScript</div>
    </div>
-   <div class="code-preview-panel">
-    <div class="code-panel-head"><span>LIVE PREVIEW</span><span id="previewStatus">Not running</span></div>
-    <iframe id="codePreview" title="VEX app preview" sandbox="allow-scripts allow-forms"></iframe>
+
+   <div class="cb-preview-panel">
+    <div class="cb-panel-head">
+     <span>LIVE PREVIEW</span>
+     <button class="cb-btn" onclick="runProject()">Refresh</button>
+    </div>
+    <iframe id="codePreview" class="cb-preview" sandbox="allow-scripts allow-forms allow-modals"></iframe>
    </div>
   </div>
-  <div class="code-status"><span id="codeStatus">Ready · Describe your project to begin</span><span>VEX AI</span></div>
-  <div class="code-knowledge" id="codeKnowledge">
-   <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-    <strong>VEX CODING KNOWLEDGE</strong>
-    <button class="cb-btn" onclick="closeCodeKnowledge()">Close ✕</button>
-   </div>
-   <p style="font-size:12px;color:#888;line-height:1.6">Search programming documentation, tutorials and examples from the existing VEX web search system.</p>
-   <div class="code-prompt-row">
-    <input id="knowledgeQuery" placeholder="Search: JavaScript functions, Python loops, Kotlin..." style="flex:1;min-width:0;background:#080808;border:1px solid #333;border-radius:9px;padding:12px;color:white">
-    <button class="cb-btn cb-primary" onclick="searchCodingKnowledge()">Search</button>
-   </div>
-   <div id="knowledgeStatus" style="font-size:11px;color:#888;margin-top:12px"></div>
-   <div class="knowledge-results" id="knowledgeResults"></div>
+
+  <div class="cb-console" id="codeConsole">
+   <div class="ok">VEX Code Builder ready.</div>
+   <div>Describe a simple web app above, or edit the project files.</div>
   </div>
+  <div class="cb-help">VEX Code Builder · Template-based project generation · HTML, CSS and JavaScript preview</div>
  </section>
 </main>
 </div>
@@ -273,15 +300,12 @@ function loadHistory(){try{conversations=JSON.parse(localStorage.getItem('vex_ch
 function renderHistory(){
  historyBox.textContent='';
  conversations.forEach(c=>{
-  const el=document.createElement('div');
-  el.className='history-item';
-  el.textContent=c.title||'New chat';
-  el.onclick=()=>openChat(c.id);
-  historyBox.appendChild(el);
+  const el=document.createElement('div');el.className='history-item';el.textContent=c.title||'New chat';el.onclick=()=>openChat(c.id);historyBox.appendChild(el);
  });
 }
-function newChat(){activeId=null;chat.innerHTML=WELCOME;input.value='';document.getElementById('sidebar').classList.remove('open');input.focus()}
+function newChat(){showChat();activeId=null;chat.innerHTML=WELCOME;input.value='';document.getElementById('sidebar').classList.remove('open');input.focus()}
 function openChat(id){
+ showChat();
  const c=conversations.find(x=>x.id===id);if(!c)return;
  activeId=id;chat.innerHTML='';
  (c.messages||[]).forEach(m=>{if(m.type==='user')addUser(m.text,false);else if(m.type==='bot')renderBot(m.data,false)});
@@ -301,7 +325,6 @@ function addUser(text,save=true){
 }
 function validURL(s){try{return ['https:','http:'].includes(new URL(s,API).protocol)}catch(e){return false}}
 function absoluteURL(s){try{return new URL(s,API).href}catch(e){return ''}}
-function safeText(x){return String(x||'')}
 function addLabel(parent,s){const el=document.createElement('div');el.className='label';el.textContent=s;parent.appendChild(el)}
 function addSource(parent,item){
  if(!validURL(item.url))return;
@@ -317,54 +340,37 @@ function parseResponse(raw,status){
  return d;
 }
 async function fetchJSON(path,timeout=16000){
- const target=API+path;
- const urls=[PROXY+target,target];
- let errors=[];
+ const target=API+path,urls=[PROXY+target,target],errors=[];
  for(const url of urls){
   try{
-   const controller=new AbortController();
-   const timer=setTimeout(()=>controller.abort(),timeout);
-   try{
-    const r=await fetch(url,{signal:controller.signal,cache:'no-store',mode:'cors'});
-    const raw=await r.text();return parseResponse(raw,r.status);
-   }finally{clearTimeout(timer)}
+   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeout);
+   try{const r=await fetch(url,{signal:controller.signal,cache:'no-store',mode:'cors'});const raw=await r.text();return parseResponse(raw,r.status)}
+   finally{clearTimeout(timer)}
   }catch(e){errors.push(e.message||'Network error')}
  }
  throw new Error(errors.join(' / '));
 }
 async function fetchRetry(path){
- let err;
- for(let i=0;i<2;i++){try{return await fetchJSON(path)}catch(e){err=e;await new Promise(r=>setTimeout(r,600))}}
- throw err;
+ let err;for(let i=0;i<2;i++){try{return await fetchJSON(path)}catch(e){err=e;await new Promise(r=>setTimeout(r,600))}}throw err;
 }
-
 function getWords(q){
  return q.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu,' ').split(/\s+/).filter(w=>w.length>2&&!['what','when','where','which','who','with','from','that','this','have','does','about','into','your','the','and','for','are','was','will','how','why','tell','explain','please'].includes(w));
 }
 function extractRelevant(text,q,max=3500){
  if(!text)return '';
- const words=getWords(q);
- const chunks=String(text).replace(/\r/g,'').split(/\n+|(?<=[.!?])\s+/).map(s=>s.trim()).filter(s=>s.length>45);
+ const words=getWords(q),chunks=String(text).replace(/\r/g,'').split(/\n+|(?<=[.!?])\s+/).map(s=>s.trim()).filter(s=>s.length>45);
  const ranked=chunks.map((s,i)=>({s,i,score:words.reduce((n,w)=>n+(s.toLowerCase().includes(w)?2:0),0)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score||a.i-b.i);
  let out=[],size=0,seen=new Set();
- for(const x of ranked){
-  const k=x.s.toLowerCase().slice(0,100);if(seen.has(k))continue;seen.add(k);
-  if(size+x.s.length>max)continue;
-  out.push(x.s);size+=x.s.length;if(out.length>=7)break;
- }
+ for(const x of ranked){const k=x.s.toLowerCase().slice(0,100);if(seen.has(k))continue;seen.add(k);if(size+x.s.length>max)continue;out.push(x.s);size+=x.s.length;if(out.length>=7)break}
  return out.join('\n\n');
 }
 async function getContext(item){
- try{
-  const d=await fetchJSON('/api/context?url='+encodeURIComponent(item.url),12000);
-  return {title:d.title||item.title,text:[d.summary,d.content,Array.isArray(d.passages)?d.passages.join('\n'):''].filter(Boolean).join('\n'),structured:d.structured||{}};
- }catch(e){return {title:item.title,text:item.description||'',structured:{}}}
+ try{const d=await fetchJSON('/api/context?url='+encodeURIComponent(item.url),12000);return {title:d.title||item.title,text:[d.summary,d.content,Array.isArray(d.passages)?d.passages.join('\n'):''].filter(Boolean).join('\n'),structured:d.structured||{}}}
+ catch(e){return {title:item.title,text:item.description||'',structured:{}}}
 }
 async function getInfocard(q){try{return await fetchJSON('/api/infocard?q='+encodeURIComponent(q),10000)}catch(e){return null}}
-
 function answerFromSources(query,parts,card){
- let output=[];
- const instant=card?.instantAnswer?.answer;
+ let output=[];const instant=card?.instantAnswer?.answer;
  if(typeof instant==='string'&&instant.trim())output.push(instant.trim());
  const facts=Array.isArray(card?.facts)?card.facts.slice(0,5):[];
  if(facts.length)output.push('IMPORTANT FACTS\n'+facts.map(f=>'• '+f.label+': '+f.value).join('\n'));
@@ -374,13 +380,9 @@ function answerFromSources(query,parts,card){
  if(!output.length)return 'I found some pages, but the indexed text did not contain enough information for a reliable explanation. Please open the sources below.';
  return output.join('\n\n')+'\n\nThis explanation is compiled from indexed web sources. Please check the source links for additional context.';
 }
-function makeFollowups(q){
- const t=q.trim();
- if(!t)return [];
- return ['How does '+t+' work?','What are the advantages and disadvantages of '+t+'?','What are the latest developments about '+t+'?'];
-}
+function makeFollowups(q){const t=q.trim();return t?['How does '+t+' work?','What are the advantages and disadvantages of '+t+'?','What are the latest developments about '+t+'?']:[]}
 
-// IMAGE SEARCH
+/* IMAGE SEARCH */
 function imageCandidates(item){
  const urls=[item.image,item.thumbUrl,item.url,item.imageUrl,item.thumbnail,item.thumbnailUrl,item.src,item.original,item.fullUrl];
  return [...new Set(urls.filter(validURL).map(absoluteURL))];
@@ -390,34 +392,28 @@ function createImageCard(item){
  const card=document.createElement('div');card.className='image-card';
  const btn=document.createElement('button');btn.type='button';
  const frame=document.createElement('div');frame.className='image-frame';
- const img=document.createElement('img');
- const candidates=imageCandidates(item);
- let index=0;
+ const img=document.createElement('img'),candidates=imageCandidates(item);
  const fallback=document.createElement('div');fallback.className='image-fallback';fallback.textContent='Image unavailable';fallback.style.display='none';
- frame.append(img,fallback);img.loading='lazy';img.referrerPolicy='no-referrer';
+ frame.append(img,fallback);img.loading='lazy';img.referrerPolicy='no-referrer';let index=0;
  function tryNext(){
-  if(index<candidates.length){const url=candidates[index++];img.style.display='block';img.src=url}
+  if(index<candidates.length){img.style.display='block';img.src=candidates[index++]}
   else if(index===candidates.length){index++;if(candidates[0]){img.src=imageProxy(candidates[0]);img.style.display='block'}else{img.style.display='none';fallback.style.display='block'}}
   else{img.style.display='none';fallback.style.display='block'}
  }
- img.onerror=tryNext;img.onclick=()=>{};
+ img.onerror=tryNext;
  btn.onclick=()=>{if(img.naturalWidth>0)openViewer('image',img.src,item.title,item.sourceUrl);else if(candidates.length)openViewer('image',candidates[0],item.title,item.sourceUrl)};
- const caption=document.createElement('div');caption.className='image-caption';caption.textContent=item.title||'Image';
- btn.append(frame,caption);card.appendChild(btn);
+ const caption=document.createElement('div');caption.className='image-caption';caption.textContent=item.title||'Image';btn.append(frame,caption);card.appendChild(btn);
  if(item.license){const lic=document.createElement('div');lic.className='image-caption';lic.textContent='Licence: '+item.license;card.appendChild(lic)}
  if(item.sourceUrl){const a=document.createElement('a');a.className='image-source';a.href=item.sourceUrl;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Image source ↗';card.appendChild(a)}
  if(candidates.length)tryNext();else{img.style.display='none';fallback.style.display='block'}
  return card;
 }
 async function searchImages(q){
- try{
-  const d=await fetchRetry('/api/images?q='+encodeURIComponent(q)+'&page=1');
-  const rows=Array.isArray(d.images)?d.images:[];
-  return rows.slice(0,12).map(x=>({title:x.title||'Image',image:x.thumbUrl||x.url||x.imageUrl||x.thumbnail||'',thumbUrl:x.thumbUrl||'',url:x.url||'',imageUrl:x.imageUrl||'',thumbnail:x.thumbnail||'',license:x.license||'',source:x.source||'Image source',sourceUrl:x.sourceUrl||x.pageUrl||x.sourcePage||''}));
- }catch(e){console.warn('Image search:',e);return []}
+ try{const d=await fetchRetry('/api/images?q='+encodeURIComponent(q)+'&page=1');const rows=Array.isArray(d.images)?d.images:[];return rows.slice(0,12).map(x=>({title:x.title||'Image',image:x.thumbUrl||x.url||x.imageUrl||x.thumbnail||'',thumbUrl:x.thumbUrl||'',url:x.url||'',imageUrl:x.imageUrl||'',thumbnail:x.thumbnail||'',license:x.license||'',source:x.source||'Image source',sourceUrl:x.sourceUrl||x.pageUrl||x.sourcePage||''}))}
+ catch(e){console.warn('Image search:',e);return []}
 }
 
-// VIDEO SEARCH
+/* VIDEO SEARCH */
 function videoInfo(url){
  try{
   const u=new URL(url),host=u.hostname.toLowerCase(),path=u.pathname;
@@ -428,22 +424,17 @@ function videoInfo(url){
   if(host.includes('vimeo.com')){const id=path.split('/').filter(Boolean).pop();if(/^\d+$/.test(id||''))return {kind:'vimeo',id,embed:'https://player.vimeo.com/video/'+id+'?autoplay=1',thumbs:[]}}
   if(host.includes('dailymotion.com')||host==='dai.ly'){
    const id=path.match(/\/(?:video|embed)\/([a-zA-Z0-9]+)/)?.[1]||path.match(/^\/([a-zA-Z0-9]+)/)?.[1];
-   if(id)return {kind:'dailymotion',id,embed:'https://www.dailymotion.com/embed/video/'+id+'?autoplay=1',thumbs:['https://www.dailymotion.com/thumbnail/video/'+id]};
+   if(id)return {kind:'dailymotion',id,embed:'https://www.dailymotion.com/embed/video/'+id+'?autoplay=1',thumbs:['https://www.dailymotion.com/thumbnail/video/'+id]}
   }
   if(/\.(mp4|webm|ogg)(\?|$)/i.test(url))return {kind:'file',id:url,embed:url,thumbs:[]};
   if(/\.m3u8(\?|$)/i.test(url))return {kind:'hls',id:url,embed:url,thumbs:[]};
-  return {kind:'page',id:url,embed:url,thumbs:[]};
+  return {kind:'page',id:url,embed:url,thumbs:[]}
  }catch(e){return null}
 }
 function metadataThumb(obj){
  if(!obj||typeof obj!=='object')return '';
  const keys=['thumbnailUrl','thumbnail','image','poster','og:image','imageUrl','thumbUrl'];
- for(const k of keys){
-  const v=obj[k];
-  if(typeof v==='string'&&validURL(v))return v;
-  if(Array.isArray(v)&&v.length){const x=typeof v[0]==='string'?v[0]:v[0]?.url;if(validURL(x))return x}
-  if(v&&typeof v==='object'&&validURL(v.url))return v.url;
- }
+ for(const k of keys){const v=obj[k];if(typeof v==='string'&&validURL(v))return v;if(Array.isArray(v)&&v.length){const x=typeof v[0]==='string'?v[0]:v[0]?.url;if(validURL(x))return x}if(v&&typeof v==='object'&&validURL(v.url))return v.url}
  for(const [k,v] of Object.entries(obj)){if(typeof v==='object'&&v){const found=metadataThumb(v);if(found)return found}}
  return '';
 }
@@ -453,8 +444,8 @@ async function searchVideos(q){
  const groups=await Promise.all(terms.map(async term=>{try{const d=await fetchRetry('/api/search?q='+encodeURIComponent(term)+'&page=1&exact=0');return d.results||[]}catch(e){return []}}));
  const seen=new Set(),rows=[];
  for(const x of groups.flat()){
-  if(!validURL(x.url)||seen.has(x.url))continue;
-  seen.add(x.url);const info=videoInfo(x.url);const text=(x.title+' '+x.description+' '+x.url).toLowerCase();
+  if(!validURL(x.url)||seen.has(x.url))continue;seen.add(x.url);
+  const info=videoInfo(x.url),text=(x.title+' '+x.description+' '+x.url).toLowerCase();
   if(info&&(info.kind!=='page'||/video|watch|youtube|vimeo|dailymotion|stream|trailer/i.test(text)))rows.push({...x,info});
   if(rows.length>=12)break;
  }
@@ -465,7 +456,7 @@ function openViewer(kind,url,title,source,embed,mediaType){
  const viewer=document.getElementById('mediaViewer'),inner=document.getElementById('viewerInner');inner.textContent='';
  if(kind==='image'){const img=document.createElement('img');img.src=url;img.alt=title||'Image';inner.appendChild(img)}
  else if(mediaType==='file'){const v=document.createElement('video');v.src=url;v.controls=true;v.autoplay=true;v.playsInline=true;inner.appendChild(v)}
- else if(mediaType==='hls'){const msg=document.createElement('div');msg.style.color='#ddd';msg.textContent='This HLS stream may not be supported by this browser. Try opening the original source.';inner.appendChild(msg)}
+ else if(mediaType==='hls'){const msg=document.createElement('div');msg.style.color='#ddd';msg.textContent='This HLS stream may not be supported by this browser.';inner.appendChild(msg)}
  else{const frame=document.createElement('iframe');frame.src=embed||url;frame.title=title||'Video';frame.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';frame.allowFullscreen=true;frame.referrerPolicy='strict-origin-when-cross-origin';inner.appendChild(frame)}
  const caption=document.createElement('div');caption.className='viewer-caption';caption.textContent=title||'';inner.appendChild(caption);
  if(source){const a=document.createElement('a');a.className='viewer-source';a.href=source;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Open original website';inner.appendChild(a)}
@@ -477,7 +468,6 @@ function isImageOnly(q){return /\b(images?|pictures?|photos?)\b/i.test(q)&&/\b(o
 function isVideo(q){return /\b(video|videos|watch|clip|documentary|trailer)\b/i.test(q)}
 function isVideoOnly(q){return isVideo(q)&&/\b(only|just|show|give|send|find|play)\b/i.test(q)&&!/\b(images?|pictures?|photos?|explain)\b/i.test(q)}
 function mediaQuery(q){return q.replace(/\b(show|give|send|find|display|me|some|only|just|images?|pictures?|photos?|videos?|clips?|documentary|trailer|of|about)\b/gi,' ').replace(/\s+/g,' ').trim()||q}
-
 async function runSearch(q,progress){
  progress.textContent='Searching the web...';
  const [sd,card]=await Promise.all([fetchRetry('/api/search?q='+encodeURIComponent(q)+'&page=1&exact=0'),getInfocard(q)]);
@@ -492,8 +482,10 @@ async function runSearch(q,progress){
  return {answer,results:results.slice(0,8).map(x=>({title:x.title,url:x.url,description:x.description||x.displayUrl||'',source:x.source||'WEB SOURCE'})),images,followups:makeFollowups(q)};
 }
 async function runImageSearch(q){return {mode:'images',images:await searchImages(mediaQuery(q))}}
-async function runVideoSearch(q,progress){progress.textContent='Finding video pages and thumbnails...';const videos=await searchVideos(mediaQuery(q));return {mode:'videos',videos,note:videos.length?'Select a thumbnail to open the video inside VEX. Some websites may block embedded playback.':'No matching video pages found. Try a shorter search.'}}
-
+async function runVideoSearch(q,progress){
+ progress.textContent='Finding video pages and thumbnails...';const videos=await searchVideos(mediaQuery(q));
+ return {mode:'videos',videos,note:videos.length?'Select a thumbnail to open the video inside VEX. Some websites may block embedded playback.':'No matching video pages found. Try a shorter search.'};
+}
 function renderImageGrid(parent,items){const grid=document.createElement('div');grid.className='images';items.forEach(item=>grid.appendChild(createImageCard(item)));parent.appendChild(grid)}
 function renderVideoGrid(parent,items){
  const grid=document.createElement('div');grid.className='videos';
@@ -501,14 +493,12 @@ function renderVideoGrid(parent,items){
   const card=document.createElement('div');card.className='video-card';const btn=document.createElement('button');btn.type='button';btn.onclick=()=>openViewer('video',v.url,v.title,v.url,v.embedUrl,v.kind);
   const thumb=document.createElement('div');thumb.className='video-thumb';const img=document.createElement('img');img.loading='lazy';img.referrerPolicy='no-referrer';img.alt=v.title;
   const candidates=[v.thumbnail,...(v.thumbs||[])].filter(Boolean);let i=0;
-  function nextThumb(){if(i<candidates.length){img.src=candidates[i++]}else{img.remove();const t=document.createElement('div');t.className='image-fallback';t.textContent='Video thumbnail unavailable';thumb.appendChild(t)}}
-  img.onerror=nextThumb;
-  if(candidates.length){thumb.appendChild(img);nextThumb()}else{const t=document.createElement('div');t.className='image-fallback';t.textContent='Video';thumb.appendChild(t)}
+  function nextThumb(){if(i<candidates.length)img.src=candidates[i++];else{img.remove();const t=document.createElement('div');t.className='image-fallback';t.textContent='Video thumbnail unavailable';thumb.appendChild(t)}}
+  img.onerror=nextThumb;if(candidates.length){thumb.appendChild(img);nextThumb()}else{const t=document.createElement('div');t.className='image-fallback';t.textContent='Video';thumb.appendChild(t)}
   const play=document.createElement('div');play.className='play-overlay';play.textContent='▶';thumb.appendChild(play);
   const title=document.createElement('strong');title.textContent=v.title;btn.append(thumb,title);card.appendChild(btn);
   const a=document.createElement('a');a.className='video-source';a.href=v.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Open original website ↗';card.appendChild(a);grid.appendChild(card);
- });
- parent.appendChild(grid);
+ });parent.appendChild(grid);
 }
 function renderBot(data,save=true){
  const reply=document.createElement('div');reply.className='message bot';
@@ -532,305 +522,205 @@ async function sendMessage(){
   else if(isVideoOnly(q)){data=await runVideoSearch(q,progress)}
   else{data=await runSearch(q,progress);if(isVideo(q)){progress.textContent='Finding related videos...';data.videos=await searchVideos(mediaQuery(q))}}
   progress.remove();renderBot(data);
- }catch(e){progress.classList.remove('progress');progress.textContent='VEX search error: '+(e.message||'Connection failed')+'. Please try again.';const b=document.createElement('button');b.className='icon-btn';b.textContent='↻ Retry';b.onclick=()=>{progress.remove();input.value=q;sendMessage()};progress.appendChild(b)}
- finally{searching=false;sendButton.disabled=false;input.focus()}
+ }catch(e){
+  progress.classList.remove('progress');progress.textContent='VEX search error: '+(e.message||'Connection failed')+'. Please try again.';
+  const b=document.createElement('button');b.className='icon-btn';b.textContent='↻ Retry';b.onclick=()=>{progress.remove();input.value=q;sendMessage()};progress.appendChild(b);
+ }finally{searching=false;sendButton.disabled=false;input.focus()}
 }
 function quickAsk(q){input.value=q;sendMessage()}
 sendButton.addEventListener('click',sendMessage);
 input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});
 input.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,130)+'px'});
 
-// =====================================================
-// VEX CODE ENGINE V1
-// Template-based generation: no external AI model/API.
-// =====================================================
+/* CODE BUILDER ENGINE */
+const BUILDER_KEY='vex_code_project_v1';
+let project={
+ 'index.html':`<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My VEX App</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <h1>Welcome to My App</h1>
+  <p>Your project starts here.</p>
+  <button id="helloBtn">Click me</button>
+  <p id="message"></p>
+</div>
+<script src="script.js"><\/script>
+</body>
+</html>`,
+ 'style.css':`*{box-sizing:border-box}
+body{margin:0;background:#080808;color:white;font-family:Arial,sans-serif;min-height:100vh;display:grid;place-items:center}
+.app{text-align:center;padding:30px;width:min(90%,500px);background:#151515;border:1px solid #333;border-radius:20px}
+h1{font-size:32px}
+p{color:#aaa}
+button{padding:12px 20px;background:white;color:black;border:0;border-radius:10px;font-weight:bold;cursor:pointer}`,
+ 'script.js':`document.getElementById('helloBtn').addEventListener('click',()=>{
+ document.getElementById('message').textContent='Hello from your VEX app!';
+});`
+};
+let activeFile='index.html';
+let builderTab='editor';
 
-let codeProject={name:'VEX Project',files:{'index.html':'<!-- Describe your project and click Build project -->'},activeFile:'index.html'};
-
-const codeEditor=document.getElementById('codeEditor');
-const codePrompt=document.getElementById('codePrompt');
-const codeStatus=document.getElementById('codeStatus');
-
-function setCodeStatus(message){codeStatus.textContent=message}
-function openCodeBuilder(){
- document.getElementById('codeWorkspace').classList.add('active');
- document.getElementById('chat').style.display='none';
- document.querySelector('.composer-area').style.display='none';
+function showChat(){
+ document.getElementById('chat').classList.remove('hidden');
+ document.getElementById('composerArea').classList.remove('hidden');
+ document.getElementById('codeBuilder').classList.remove('active');
+ document.getElementById('chatMenu').classList.add('active');
+ document.getElementById('builderMenu').classList.remove('active');
+ document.getElementById('topModel').innerHTML='VEX AI <span>Knowledge Assistant</span>';
  document.getElementById('sidebar').classList.remove('open');
- loadCodeProject();
 }
-function closeCodeBuilder(){
- document.getElementById('codeWorkspace').classList.remove('active');
- document.getElementById('chat').style.display='';
- document.querySelector('.composer-area').style.display='';
+function openCodeBuilder(){
+ document.getElementById('chat').classList.add('hidden');
+ document.getElementById('composerArea').classList.add('hidden');
+ document.getElementById('codeBuilder').classList.add('active');
+ document.getElementById('chatMenu').classList.remove('active');
+ document.getElementById('builderMenu').classList.add('active');
+ document.getElementById('topModel').innerHTML='VEX AI <span>Code Builder</span>';
+ document.getElementById('sidebar').classList.remove('open');
+ loadProject();renderFiles();loadEditor();setBuilderTab('editor');
 }
-function openCodeKnowledge(){
- document.getElementById('codeKnowledge').classList.add('active');
- document.getElementById('knowledgeQuery').focus();
+function logCode(message,type=''){
+ const box=document.getElementById('codeConsole'),line=document.createElement('div');
+ if(type)line.className=type;line.textContent=message;box.appendChild(line);box.scrollTop=box.scrollHeight;
 }
-function closeCodeKnowledge(){document.getElementById('codeKnowledge').classList.remove('active')}
-
-function renderCodeFiles(){
- const box=document.getElementById('codeFileList');box.textContent='';
- Object.keys(codeProject.files).forEach(name=>{
-  const item=document.createElement('div');
-  item.className='code-file'+(name===codeProject.activeFile?' active':'');
-  item.textContent='📄 '+name;
-  item.onclick=()=>selectCodeFile(name);
-  box.appendChild(item);
+function clearCodeLog(){document.getElementById('codeConsole').textContent=''}
+function renderFiles(){
+ const box=document.getElementById('fileList');box.textContent='';
+ Object.keys(project).forEach(name=>{
+  const b=document.createElement('button');b.className='cb-file'+(name===activeFile?' active':'');b.textContent='📄 '+name;
+  b.onclick=()=>{saveEditorToFile();activeFile=name;renderFiles();loadEditor();if(window.innerWidth<=850)setBuilderTab('editor')};
+  box.appendChild(b);
  });
 }
-function selectCodeFile(name){
- if(!Object.prototype.hasOwnProperty.call(codeProject.files,name))return;
- codeProject.activeFile=name;
- codeEditor.value=codeProject.files[name];
- document.getElementById('codeFileName').textContent=name;
- renderCodeFiles();
+function saveEditorToFile(){
+ const editor=document.getElementById('codeEditor');if(editor&&project[activeFile]!==undefined)project[activeFile]=editor.value;
 }
-codeEditor.addEventListener('input',()=>{
- codeProject.files[codeProject.activeFile]=codeEditor.value;
- setCodeStatus('Unsaved changes');
-});
-codeEditor.addEventListener('keydown',e=>{
- if(e.key==='Tab'){
-  e.preventDefault();
-  const start=codeEditor.selectionStart,end=codeEditor.selectionEnd;
-  codeEditor.setRangeText('  ',start,end,'end');
-  codeProject.files[codeProject.activeFile]=codeEditor.value;
- }
-});
-
-function escapeHTMLText(value){
- return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function loadEditor(){
+ document.getElementById('activeFileName').textContent=activeFile;
+ document.getElementById('codeEditor').value=project[activeFile]||'';
+ document.getElementById('editorStatus').textContent='Ready · '+activeFile;
 }
-function makeAppShell(title,body,css,js){
- return '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n<title>'+escapeHTMLText(title)+'</title>\n<style>\n'+css+'\n</style>\n</head>\n<body>\n'+body+'\n<script>\n'+js+'\n<\/script>\n</body>\n</html>';
+function setBuilderTab(tab){
+ builderTab=tab;
+ const ws=document.getElementById('cbWorkspace');
+ ws.classList.remove('mobile-files','mobile-editor','mobile-preview','show-preview');
+ if(window.innerWidth<=850){
+  ws.classList.add(tab==='files'?'mobile-files':tab==='preview'?'mobile-preview':'mobile-editor');
+ }else if(tab==='preview'){ws.classList.add('show-preview')}
+ ['files','editor','preview'].forEach(t=>document.getElementById('tab'+t[0].toUpperCase()+t.slice(1)).classList.toggle('active',t===tab));
+ if(tab==='preview')runProject();
 }
-
-const baseCSS=`
-*{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:#080808;color:#fff;font-family:Arial,system-ui,sans-serif}
-button,input{font:inherit}
-button{cursor:pointer}
-.container{width:min(900px,92%);margin:50px auto}
-.card{background:#121212;border:1px solid #292929;border-radius:16px;padding:22px}
-h1{font-size:clamp(28px,5vw,44px);margin:0 0 12px}
-p{color:#aaa;line-height:1.6}
-.btn{background:white;color:black;border:0;border-radius:9px;padding:12px 17px;font-weight:bold}
-.btn:hover{opacity:.85}
-input{background:#080808;color:white;border:1px solid #444;border-radius:9px;padding:12px;outline:none}
-`;
-
-function calculatorTemplate(){
- const css=baseCSS+`
- .calc{max-width:380px;margin:7vh auto;padding:22px}
- .display{width:100%;height:75px;text-align:right;font-size:30px;margin:10px 0 15px;background:#050505}
- .keys{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
- .keys button{height:60px;border:1px solid #333;border-radius:12px;background:#1b1b1b;color:white;font-size:19px}
- .keys button:hover{background:#333}
- .keys .equal{background:white;color:black}
- .keys .clear{color:#ff7777}
- `;
- const body=`<main class="card calc"><h1>Calculator</h1><p>Simple calculator built with VEX AI</p><input id="display" class="display" value="0" readonly><div class="keys">
- <button class="clear" data-v="C">C</button><button data-v="(">(</button><button data-v=")">)</button><button data-v="/">÷</button>
- <button data-v="7">7</button><button data-v="8">8</button><button data-v="9">9</button><button data-v="*">×</button>
- <button data-v="4">4</button><button data-v="5">5</button><button data-v="6">6</button><button data-v="-">−</button>
- <button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="+">+</button>
- <button data-v="0">0</button><button data-v=".">.</button><button data-v="DEL">⌫</button><button class="equal" data-v="=">=</button>
- </div></main>`;
- const js=`
- const display=document.getElementById('display');let expression='';
- document.querySelectorAll('[data-v]').forEach(button=>button.addEventListener('click',()=>{
-  const v=button.dataset.v;
-  if(v==='C'){expression='';display.value='0';return}
-  if(v==='DEL'){expression=expression.slice(0,-1);display.value=expression||'0';return}
-  if(v==='='){
-   try{
-    if(!/^[0-9+*/().% -]+$/.test(expression))throw Error();
-    const result=Function('"use strict";return ('+expression+')')();
-    if(!Number.isFinite(result))throw Error();
-    expression=String(result);display.value=expression;
-   }catch(e){display.value='Error';expression=''}
-   return;
-  }
-  expression+=v;display.value=expression;
- }));
- `;
- return makeAppShell('VEX Calculator',body,css,js);
+function loadProject(){
+ try{const saved=localStorage.getItem(BUILDER_KEY);if(saved){const data=JSON.parse(saved);if(data&&data.files&&typeof data.files==='object')project=data.files;if(data.activeFile&&project[data.activeFile])activeFile=data.activeFile}}
+ catch(e){logCode('Could not load saved project.','warn')}
 }
-function todoTemplate(){
- const css=baseCSS+`
- .todo{max-width:620px;margin:7vh auto}
- .entry{display:flex;gap:8px;margin:20px 0}
- .entry input{flex:1;min-width:0}
- ul{list-style:none;padding:0}
- li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px;margin:8px 0;background:#1b1b1b;border:1px solid #333;border-radius:10px}
- li span{overflow-wrap:anywhere}
- li.done span{text-decoration:line-through;color:#777}
- .remove{background:none;border:0;color:#ff7777;font-size:18px}
- `;
- const body=`<main class="card todo"><h1>My To-Do List</h1><p>Keep your tasks organized.</p><div class="entry"><input id="taskInput" placeholder="Write a task..."><button class="btn" id="addTask">Add</button></div><ul id="tasks"></ul><p id="count">0 tasks</p></main>`;
- const js=`
- const input=document.getElementById('taskInput'),list=document.getElementById('tasks'),count=document.getElementById('count');
- function updateCount(){count.textContent=list.children.length+' tasks'}
- function addTask(){
-  const value=input.value.trim();if(!value)return;
-  const li=document.createElement('li'),span=document.createElement('span'),remove=document.createElement('button');
-  span.textContent=value;remove.textContent='×';remove.className='remove';remove.setAttribute('aria-label','Delete task');
-  span.onclick=()=>{li.classList.toggle('done')};
-  remove.onclick=()=>{li.remove();updateCount()};
-  li.append(span,remove);list.appendChild(li);input.value='';input.focus();updateCount();
- }
- document.getElementById('addTask').onclick=addTask;
- input.addEventListener('keydown',e=>{if(e.key==='Enter')addTask()});
- `;
- return makeAppShell('VEX To-Do App',body,css,js);
+function saveProject(){
+ saveEditorToFile();
+ try{localStorage.setItem(BUILDER_KEY,JSON.stringify({files:project,activeFile}));logCode('Project saved in this browser.','ok');document.getElementById('editorStatus').textContent='Saved locally'}
+ catch(e){logCode('Save failed: browser storage may be full.','error')}
 }
-function portfolioTemplate(){
- const css=baseCSS+`
- .hero{min-height:80vh;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
- .hero h1{font-size:clamp(42px,8vw,78px);max-width:750px}
- .accent{color:#aaa}
- .links{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
- .links a{color:white;border:1px solid #555;padding:11px 15px;border-radius:9px;text-decoration:none}
- section{padding:50px 0;border-top:1px solid #292929}
- `;
- const body=`<main class="container"><nav style="padding:15px 0;font-weight:bold;letter-spacing:2px">MY PORTFOLIO</nav><div class="hero"><p>HELLO, I'M</p><h1>Your Name.<br><span class="accent">Creative Developer.</span></h1><p>I build useful digital experiences and turn ideas into reality.</p><div class="links"><a href="#about">About me</a><a href="#projects">My projects</a><a href="mailto:hello@example.com">Contact</a></div></div><section id="about"><h1>About me</h1><p>Write a short introduction about yourself, your skills and your interests here.</p></section><section id="projects"><h1>Projects</h1><div class="card"><h2>Project One</h2><p>Describe your first project here.</p></div></section></main>`;
- return makeAppShell('My Portfolio',body,css,'');
+function addProjectFile(){
+ const name=prompt('New file name (example: app.js):');if(!name)return;
+ if(!/^[a-zA-Z0-9_.-]+$/.test(name)||name.includes('..')){alert('Please use a simple file name.');return}
+ if(project[name]!==undefined){alert('File already exists.');return}
+ saveEditorToFile();project[name]='';activeFile=name;renderFiles();loadEditor();saveProject();
 }
-function landingTemplate(){
- const css=baseCSS+`
- .hero{text-align:center;padding:12vh 15px 10vh}
- .hero h1{max-width:750px;margin:0 auto 18px}
- .hero p{max-width:600px;margin:0 auto 25px}
- .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:25px}
- .feature{padding:20px;background:#141414;border:1px solid #333;border-radius:14px}
- `;
- const body=`<main class="container"><div class="hero"><p>WELCOME TO OUR WEBSITE</p><h1>Build Something Amazing.</h1><p>A clean, modern landing page for your next big idea. Customize this content for your project.</p><button class="btn" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">Explore more</button></div><section id="features"><h1>What We Offer</h1><div class="features"><div class="feature"><h2>Fast</h2><p>Designed to be simple and efficient.</p></div><div class="feature"><h2>Modern</h2><p>A clean layout with responsive design.</p></div><div class="feature"><h2>Flexible</h2><p>Customize the page for your needs.</p></div></div></section></main>`;
- return makeAppShell('VEX Landing Page',body,css,'');
+function renameProjectFile(){
+ saveEditorToFile();const name=prompt('New file name:',activeFile);if(!name||name===activeFile)return;
+ if(!/^[a-zA-Z0-9_.-]+$/.test(name)||project[name]!==undefined){alert('Invalid or already used file name.');return}
+ project[name]=project[activeFile];delete project[activeFile];activeFile=name;renderFiles();loadEditor();saveProject();
 }
-function quizTemplate(){
- const css=baseCSS+`
- .quiz{max-width:650px;margin:8vh auto}
- .option{display:block;width:100%;text-align:left;margin:9px 0;padding:13px;background:#171717;border:1px solid #444;color:white;border-radius:10px}
- .option:hover{border-color:white}
- `;
- const body=`<main class="card quiz"><h1>Quick Quiz</h1><p id="question">What does HTML stand for?</p><div id="options"></div><p id="result"></p><button class="btn" id="next">Next question</button></main>`;
- const js=`
- const questions=[
- {q:'What does HTML stand for?',a:['Hyper Text Markup Language','High Text Machine Language','Home Tool Markup Language'],correct:0},
- {q:'Which language styles a web page?',a:['Python','CSS','SQL'],correct:1},
- {q:'Which language adds interactivity to a web page?',a:['JavaScript','HTML','XML'],correct:0}
- ];
- let index=0,score=0,answered=false;
- const q=document.getElementById('question'),options=document.getElementById('options'),result=document.getElementById('result');
- function show(){
-  answered=false;result.textContent='';const item=questions[index];q.textContent=(index+1)+'. '+item.q;options.textContent='';
-  item.a.forEach((answer,i)=>{const b=document.createElement('button');b.className='option';b.textContent=answer;b.onclick=()=>{if(answered)return;answered=true;if(i===item.correct){score++;result.textContent='Correct!'}else result.textContent='Not quite. Correct answer: '+item.a[item.correct];};options.appendChild(b)});
- }
- document.getElementById('next').onclick=()=>{if(!answered){result.textContent='Choose an answer first.';return}index++;if(index>=questions.length){q.textContent='Quiz completed! Your score: '+score+'/'+questions.length;options.textContent='';result.textContent='You can refresh the page to try again.';document.getElementById('next').style.display='none'}else show()};
- show();
- `;
- return makeAppShell('VEX Quiz',body,css,js);
+function projectHTML(){
+ const html=project['index.html']||'';
+ const css=project['style.css']||'';
+ const js=project['script.js']||'';
+ return html
+  .replace(/<link[^>]+href=["']style\.css["'][^>]*>/i,'<style>'+css+'</style>')
+  .replace(/<script[^>]+src=["']script\.js["'][^>]*><\/script>/i,'<script>'+js.replace(/<\/script/gi,'<\\/script')+'<\/script>');
 }
-function genericTemplate(prompt){
- const description=escapeHTMLText(prompt||'Your new project');
- const css=baseCSS+`
- .hero{max-width:720px;margin:10vh auto;text-align:center}
- .hero h1{font-size:clamp(30px,6vw,52px)}
- .panel{margin-top:25px;text-align:left}
- `;
- const body=`<main class="container hero"><p>VEX AI GENERATED STARTER PROJECT</p><h1>${description}</h1><p>This is your project starting point. Edit the code in the VEX editor to customize the app.</p><div class="card panel"><h2>Project workspace</h2><p>Start adding your own features, pages and interactions.</p><button class="btn" id="hello">Test interaction</button><p id="message"></p></div></main>`;
- const js=`document.getElementById('hello').onclick=()=>{document.getElementById('message').textContent='Your app is running successfully.'};`;
- return makeAppShell('VEX Starter Project',body,css,js);
-}
-function buildCode(){
- const prompt=codePrompt.value.trim();
- if(!prompt){setCodeStatus('First describe the app you want to build.');codePrompt.focus();return}
- const q=prompt.toLowerCase();
- let html;
- let projectName='VEX Project';
- if(/\b(calculator|calculate|math app)\b/.test(q)){html=calculatorTemplate();projectName='Calculator App'}
- else if(/\b(todo|to-do|task manager|task list)\b/.test(q)){html=todoTemplate();projectName='To-Do App'}
- else if(/\b(portfolio|personal website|resume website)\b/.test(q)){html=portfolioTemplate();projectName='Portfolio Website'}
- else if(/\b(landing page|business website|website homepage)\b/.test(q)){html=landingTemplate();projectName='Landing Page'}
- else if(/\b(quiz|mcq|question game)\b/.test(q)){html=quizTemplate();projectName='Quiz App'}
- else{html=genericTemplate(prompt);projectName='Starter Project'}
- codeProject={name:projectName,files:{'index.html':html},activeFile:'index.html'};
- selectCodeFile('index.html');
- runCode();
- setCodeStatus(projectName+' created using a built-in template. Customize the code to add features.');
-}
-function runCode(){
- const code=codeProject.files[codeProject.activeFile]||'';
- if(!code.trim()){setCodeStatus('No code to run.');return}
- if(codeProject.activeFile!=='index.html'){
-  setCodeStatus('This first version runs index.html only. Select index.html to preview.');
-  return;
- }
+function runProject(){
+ saveEditorToFile();
  const preview=document.getElementById('codePreview');
- preview.srcdoc=code;
- document.getElementById('previewStatus').textContent='Running';
- setCodeStatus('Preview refreshed. Check the preview panel.');
-}
-function saveCodeProject(){
+ const html=projectHTML();
  try{
-  localStorage.setItem('vex_code_project',JSON.stringify(codeProject));
-  setCodeStatus('Project saved in this browser.');
- }catch(e){setCodeStatus('Could not save project. Browser storage may be full.')}
+  preview.srcdoc=html;
+  document.getElementById('editorStatus').textContent='Preview updated';
+  logCode('Preview refreshed.','ok');
+ }catch(e){logCode('Preview error: '+e.message,'error')}
 }
-function loadCodeProject(){
- try{
-  const saved=localStorage.getItem('vex_code_project');
-  if(saved){
-   const parsed=JSON.parse(saved);
-   if(parsed&&parsed.files&&typeof parsed.files==='object')codeProject=parsed;
-  }
- }catch(e){}
- if(!codeProject.files||!Object.keys(codeProject.files).length)codeProject={name:'VEX Project',files:{'index.html':'<!-- Your project code goes here -->'},activeFile:'index.html'};
- if(!codeProject.files[codeProject.activeFile])codeProject.activeFile=Object.keys(codeProject.files)[0];
- selectCodeFile(codeProject.activeFile);
-}
-function downloadCode(){
- const code=codeProject.files['index.html'];
- if(!code){setCodeStatus('No index.html file found.');return}
- const blob=new Blob([code],{type:'text/html;charset=utf-8'});
+function downloadProject(){
+ saveEditorToFile();
+ const html=projectHTML();
+ const blob=new Blob([html],{type:'text/html;charset=utf-8'});
  const url=URL.createObjectURL(blob);
- const a=document.createElement('a');a.href=url;a.download=(codeProject.name||'vex-project').toLowerCase().replace(/[^a-z0-9]+/g,'-')+'.html';
- document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
- setCodeStatus('HTML file download started.');
+ const a=document.createElement('a');a.href=url;a.download='vex-project.html';a.click();
+ setTimeout(()=>URL.revokeObjectURL(url),1500);
+ logCode('Downloaded combined HTML project.','ok');
 }
-
-// Search programming knowledge using the existing VEX search service.
-async function searchCodingKnowledge(){
- const query=document.getElementById('knowledgeQuery').value.trim();
- const status=document.getElementById('knowledgeStatus');
- const resultsBox=document.getElementById('knowledgeResults');
- if(!query){status.textContent='Enter a programming topic first.';return}
- status.textContent='Searching programming documentation...';
- resultsBox.textContent='';
- try{
-  const searchQuery=query+' programming documentation tutorial code examples';
-  const data=await fetchRetry('/api/search?q='+encodeURIComponent(searchQuery)+'&page=1&exact=0');
-  const rows=Array.isArray(data.results)?data.results:[];
-  if(!rows.length){status.textContent='No coding results found. Try another search.';return}
-  rows.slice(0,10).forEach(row=>{
-   if(!validURL(row.url))return;
-   const a=document.createElement('a');a.className='knowledge-result';a.href=absoluteURL(row.url);a.target='_blank';a.rel='noopener noreferrer';
-   const title=document.createElement('strong');title.textContent=row.title||'Programming resource';
-   const desc=document.createElement('p');desc.textContent=row.description||'Open this page to read the documentation or code example.';
-   const url=document.createElement('small');url.textContent=row.displayUrl||row.url;
-   a.append(title,desc,url);resultsBox.appendChild(a);
-  });
-  status.textContent='Found '+resultsBox.children.length+' programming resources. Open a result to read it.';
- }catch(e){
-  status.textContent='Coding search failed: '+(e.message||'Connection error')+'. Try again later.';
+function makeAppTemplate(promptText){
+ const q=promptText.toLowerCase();
+ const title=promptText.trim().replace(/[<>]/g,'').slice(0,55)||'My App';
+ let html,css,js;
+ if(/\b(calculator|calculate|math)\b/.test(q)){
+  html=`<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><link rel="stylesheet" href="style.css"></head>
+<body><main class="app"><h1>${title}</h1><input id="display" readonly value="0"><div class="keys">${['7','8','9','/','4','5','6','*','1','2','3','-','C','0','=','+'].map(x=>'<button>'+x+'</button>').join('')}</div></main><script src="script.js"><\/script></body></html>`;
+  css=`*{box-sizing:border-box}body{margin:0;background:#080808;color:white;min-height:100vh;display:grid;place-items:center;font-family:Arial}.app{width:min(92%,360px);background:#171717;padding:22px;border-radius:20px;border:1px solid #333}h1{text-align:center;font-size:22px}#display{width:100%;padding:18px;background:#000;color:white;border:1px solid #444;border-radius:10px;text-align:right;font-size:25px;margin:12px 0}.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.keys button{padding:17px 5px;background:#292929;color:white;border:0;border-radius:10px;font-size:18px}.keys button:active{background:white;color:black}`;
+  js=`const display=document.getElementById('display');let expression='';document.querySelectorAll('.keys button').forEach(b=>b.onclick=()=>{const v=b.textContent;if(v==='C'){expression='';display.value='0';return}if(v==='='){try{if(!/^[0-9+*/.() -]+$/.test(expression))throw Error();const result=Function('"use strict";return ('+expression+')')();expression=String(result);display.value=expression}catch(e){display.value='Error';expression=''}return}expression+=v;display.value=expression});`;
+ }else if(/\b(todo|task|tasks|checklist)\b/.test(q)){
+  html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><link rel="stylesheet" href="style.css"></head><body><main class="app"><h1>${title}</h1><form id="form"><input id="task" placeholder="Add a task..." required><button>Add</button></form><ul id="list"></ul></main><script src="script.js"><\/script></body></html>`;
+  css=`*{box-sizing:border-box}body{margin:0;background:#080808;color:white;font-family:Arial;min-height:100vh;padding:30px 12px}.app{max-width:550px;margin:50px auto;background:#151515;padding:25px;border:1px solid #333;border-radius:18px}h1{text-align:center}form{display:flex;gap:8px}input{min-width:0;flex:1;padding:13px;background:#080808;color:white;border:1px solid #444;border-radius:9px}button{padding:12px 17px;background:white;color:black;border:0;border-radius:9px}li{padding:12px;border-bottom:1px solid #333;display:flex;justify-content:space-between;gap:10px}li button{padding:6px 10px}`;
+  js=`document.getElementById('form').onsubmit=e=>{e.preventDefault();const input=document.getElementById('task');const li=document.createElement('li');const span=document.createElement('span');span.textContent=input.value;const del=document.createElement('button');del.textContent='Delete';del.onclick=()=>li.remove();li.append(span,del);document.getElementById('list').append(li);input.value=''};`;
+ }else if(/\b(portfolio|personal website|resume|cv)\b/.test(q)){
+  html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><link rel="stylesheet" href="style.css"></head><body><nav>MY PORTFOLIO</nav><main><section class="hero"><p>HELLO, I'M</p><h1>Your Name</h1><h2>Developer & Creator</h2><p>I build useful digital experiences.</p><a href="#contact">Contact me</a></section><section><h2>About Me</h2><p>Write a little about yourself and your work here.</p></section><section id="contact"><h2>Contact</h2><p>hello@example.com</p></section></main><script src="script.js"><\/script></body></html>`;
+  css=`*{box-sizing:border-box}body{margin:0;background:#080808;color:white;font-family:Arial}nav{padding:22px 7%;border-bottom:1px solid #333;letter-spacing:3px}main{max-width:850px;margin:auto;padding:25px}.hero{padding:90px 10px}.hero h1{font-size:clamp(42px,9vw,75px);margin:10px 0}.hero h2{color:#aaa}.hero a{display:inline-block;padding:13px 20px;background:white;color:black;text-decoration:none;border-radius:8px;margin-top:15px}section:not(.hero){padding:35px 10px;border-top:1px solid #333}`;
+  js=`document.title=${JSON.stringify(title)};`;
+ }else if(/\b(notes|note|notepad)\b/.test(q)){
+  html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><link rel="stylesheet" href="style.css"></head><body><main class="app"><h1>${title}</h1><textarea id="notes" placeholder="Write your notes..."></textarea><p id="status">Your notes save automatically on this device.</p></main><script src="script.js"><\/script></body></html>`;
+  css=`*{box-sizing:border-box}body{margin:0;background:#080808;color:white;font-family:Arial;padding:20px}.app{max-width:750px;margin:35px auto}h1{font-size:30px}textarea{width:100%;height:60vh;resize:vertical;background:#111;color:white;border:1px solid #333;border-radius:12px;padding:17px;font-size:16px;line-height:1.6}p{color:#888;font-size:12px}`;
+  js=`const box=document.getElementById('notes');box.value=localStorage.getItem('vex_notes')||'';box.oninput=()=>{localStorage.setItem('vex_notes',box.value);document.getElementById('status').textContent='Saved on this device'};`;
+ }else{
+  html=`<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><link rel="stylesheet" href="style.css"></head>
+<body><main class="app"><div class="top">VEX PROJECT</div><h1>${title}</h1><p>Your new project is ready to customize.</p><button id="action">Get started</button><div id="result"></div></main><script src="script.js"><\/script></body></html>`;
+  css=`*{box-sizing:border-box}body{margin:0;background:#050505;color:#fff;font-family:Arial;min-height:100vh;display:grid;place-items:center;padding:20px}.app{width:min(100%,650px);padding:clamp(22px,6vw,45px);background:#111;border:1px solid #333;border-radius:20px;text-align:center}.top{font-size:11px;letter-spacing:4px;color:#888}h1{font-size:clamp(30px,7vw,48px);margin:25px 0 12px}p{color:#aaa;line-height:1.7}button{margin-top:18px;padding:13px 22px;border:0;border-radius:10px;background:white;color:black;font-weight:bold}#result{margin-top:20px;color:#ddd}`;
+  js=`document.getElementById('action').onclick=()=>{document.getElementById('result').textContent='Your app is working. Now customize the files in VEX Code Builder.'};`;
  }
+ return {'index.html':html,'style.css':css,'script.js':js};
 }
-document.getElementById('knowledgeQuery').addEventListener('keydown',e=>{if(e.key==='Enter')searchCodingKnowledge()});
-codePrompt.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();buildCode()}});
-
+function generateProject(){
+ const promptText=document.getElementById('buildPrompt').value.trim();
+ if(!promptText){alert('First describe the app you want to build.');return}
+ saveEditorToFile();clearCodeLog();
+ logCode('Understanding your app idea...');
+ logCode('Selecting a built-in project template...');
+ project=makeAppTemplate(promptText);
+ activeFile='index.html';renderFiles();loadEditor();saveProject();runProject();
+ logCode('Starter project created.','ok');
+ logCode('Open Files to edit HTML, CSS and JavaScript.','ok');
+ logCode('This builder uses built-in templates, not an autonomous coding AI.','warn');
+ if(window.innerWidth<=850)setBuilderTab('preview');
+}
+document.getElementById('codeEditor').addEventListener('input',()=>{
+ saveEditorToFile();document.getElementById('editorStatus').textContent='Unsaved changes';
+});
+document.getElementById('codeEditor').addEventListener('keydown',e=>{
+ if(e.key==='Tab'){e.preventDefault();const el=e.target,start=el.selectionStart,end=el.selectionEnd;el.setRangeText('  ',start,end,'end');saveEditorToFile()}
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();saveProject()}
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='enter'){e.preventDefault();runProject()}
+});
+document.getElementById('buildPrompt').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();generateProject()}});
+window.addEventListener('resize',()=>{
+ if(document.getElementById('codeBuilder').classList.contains('active'))setBuilderTab(builderTab);
+});
 loadHistory();
+loadProject();
 </script>
 </body>
 </html>
