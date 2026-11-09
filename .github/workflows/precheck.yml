@@ -1,0 +1,125 @@
+
+name: VEX AI - Pre-Build Verification
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify Native Ads Extension
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+
+      - name: Validate project configuration
+        run: |
+          python - <<'PY'
+          import tomllib
+
+          with open("pyproject.toml", "rb") as f:
+              app = tomllib.load(f)
+
+          with open("vex_native_ads/pyproject.toml", "rb") as f:
+              ext = tomllib.load(f)
+
+          deps = app["project"]["dependencies"]
+          assert any(d.startswith("vex-native-ads @") for d in deps), \
+              "Local VEX Native Ads dependency is missing"
+
+          assert ext["project"]["name"] == "vex-native-ads"
+
+          print("Both TOML files are valid.")
+          print("Local extension dependency found.")
+          PY
+
+      - name: Check required files
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          files = [
+              "vex_ui.py",
+              "vex_native_ads/src/vex_native_ads/__init__.py",
+              "vex_native_ads/src/vex_native_ads/vex_native_ads.py",
+              "vex_native_ads/src/flutter/vex_native_ads/pubspec.yaml",
+              "vex_native_ads/src/flutter/vex_native_ads/flet-extension.toml",
+              "vex_native_ads/src/flutter/vex_native_ads/lib/vex_native_ads.dart",
+              "vex_native_ads/src/flutter/vex_native_ads/lib/src/extension.dart",
+              "vex_native_ads/src/flutter/vex_native_ads/lib/src/vex_native_ad_control.dart",
+          ]
+
+          missing = [f for f in files if not Path(f).is_file()]
+
+          if missing:
+              raise SystemExit("Missing files:\n" + "\n".join(missing))
+
+          print("All required files exist.")
+          PY
+
+      - name: Check Python syntax
+        run: |
+          python -m compileall -q vex_native_ads/src
+
+      - name: Build extension wheel
+        run: |
+          python -m pip install --upgrade pip build
+          python -m pip wheel --no-deps ./vex_native_ads -w dist
+
+      - name: Verify Flutter files inside wheel
+        run: |
+          python - <<'PY'
+          import glob
+          import zipfile
+
+          wheels = glob.glob("dist/vex_native_ads-*.whl") + \
+                   glob.glob("dist/vex_native_ads-*.whl")
+
+          if not wheels:
+              wheels = glob.glob("dist/*.whl")
+
+          if not wheels:
+              raise SystemExit("Extension wheel was not created.")
+
+          with zipfile.ZipFile(wheels[0]) as z:
+              names = z.namelist()
+
+          required = [
+              "flutter/vex_native_ads/pubspec.yaml",
+              "flutter/vex_native_ads/flet-extension.toml",
+              "flutter/vex_native_ads/lib/vex_native_ads.dart",
+              "flutter/vex_native_ads/lib/src/extension.dart",
+              "flutter/vex_native_ads/lib/src/vex_native_ad_control.dart",
+          ]
+
+          for item in required:
+              if not any(n.endswith(item) for n in names):
+                  raise SystemExit("Missing from wheel: " + item)
+              print("OK:", item)
+
+          print("Flutter extension packaging verified.")
+          PY
+
+      - name: Install and test Python control
+        run: |
+          python -m pip install --no-deps dist/*.whl
+          python -m pip install "flet==1.1.0"
+
+          python - <<'PY'
+          from vex_native_ads import VexNativeAd
+
+          print("VexNativeAd imported successfully.")
+          print(VexNativeAd)
+          PY
+
+      - name: Verification complete
+        run: echo "VEX Native Ads pre-build checks passed. No APK was built."
