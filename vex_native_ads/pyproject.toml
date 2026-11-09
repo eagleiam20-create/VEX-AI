@@ -7,16 +7,21 @@ name = "vex-native-ads"
 version = "0.1.0"
 description = "Native AdMob extension for VEX AI"
 requires-python = ">=3.10"
-dependencies = ["flet>=1.1.0"]
+dependencies = [
+    "flet>=1.1.0"
+]
 
 [tool.setuptools]
-packages = ["vex_native_ads"]
-package-dir = { "vex_native_ads" = "." }
+package-dir = {"" = "src"}
 include-package-data = true
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [tool.setuptools.package-data]
-vex_native_ads = [
-    "*.dart",
-    "*.yaml",
-    "*.toml"
+"flutter.vex_native_ads" = [
+    "lib/**/*.dart",
+    "lib/*.dart",
+    "pubspec.yaml",
+    "flet-extension.toml"
 ]
