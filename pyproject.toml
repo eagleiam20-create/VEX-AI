@@ -4,6 +4,7 @@ name = "vex-ai"
 version = "1.0.0"
 description = "VEX AI - Independent AI Assistant"
 requires-python = ">=3.10"
+
 dependencies = [
     "flet==1.1.0",
     "flet-webview",
@@ -26,3 +27,6 @@ description = "Independent AI Assistant"
 
 [tool.flet.app]
 module = "vex_ui"
+
+[tool.flet.android.meta_data]
+"com.google.android.gms.ads.APPLICATION_ID" = "ca-app-pub-9779772194429691~7446823637"
