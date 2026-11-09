@@ -1,14 +1,18 @@
-import "package:flet/flet.dart";
-import "package:flutter/widgets.dart";
 
-import "vex_native_ad_control.dart";
+import 'package:flet/flet.dart';
+import 'package:flutter/widgets.dart';
+
+import 'vex_native_ad_control.dart';
 
 class Extension extends FletExtension {
   @override
-  Widget? createWidget(Control control) {
+  Widget? createWidget(Key? key, Control control) {
     if (control.type == "VexNativeAd") {
-      return VexNativeAdControl(control: control);
+      return VexNativeAdControl(
+        control: control,
+      );
     }
+
     return null;
   }
 }
