@@ -6,19 +6,13 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'vex_ui.py'
-      - 'vex_search.py'
-      - 'pyproject.toml'
-      - 'requirements.txt'
-      - '.github/workflows/build-apk.yml'
 
 permissions:
   contents: read
 
 jobs:
   build-apk:
-    name: Build Android APK
+    name: Build VEX AI APK
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
@@ -37,30 +31,26 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Install Flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
 
-      - name: Install Flet
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install "flet==1.1.0" flet-cli
-
-      - name: Install dependencies
-        run: |
           pip install -r requirements.txt
-          pip install flet-webview
 
-      - name: Verify AdMob dependency removal
+      - name: Check AdMob dependencies
         run: |
-          if grep -RniE 'google_mobile_ads|vex_native_ads' pyproject.toml requirements.txt; then
-            echo "ERROR: AdMob dependency still exists!"
+          if grep -niE 'google_mobile_ads|vex_native_ads' pyproject.toml requirements.txt; then
+            echo "AdMob dependency detected!"
             exit 1
           fi
-          echo "No AdMob dependency found in project manifests."
+          echo "AdMob dependencies not found."
 
-      - name: Build VEX AI APK
+      - name: Build APK
         run: |
           flet build apk \
             --yes \
