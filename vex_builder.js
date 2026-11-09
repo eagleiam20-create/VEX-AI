@@ -1,703 +1,422 @@
+(() => {
+  'use strict';
 
-/* =====================================================
-   VEX AI CODE BUILDER V2
-   Browser-only builder | No external AI API or model
-   Works with the existing VEX index.html
-===================================================== */
+  if (window.__VEX_BUILDER_LOADED__) return;
+  window.__VEX_BUILDER_LOADED__ = true;
 
-(function () {
-  "use strict";
+  const style = document.createElement('style');
+  style.textContent = `
+  #vexBuilderLaunch{margin-left:auto;background:#fff;color:#000;border:0;border-radius:18px;padding:9px 14px;font-weight:700;font-size:12px}
+  #vexBuilderOverlay{position:fixed;inset:0;z-index:1000;background:#000;color:#fff;display:none;font-family:inherit}
+  #vexBuilderOverlay.open{display:flex;flex-direction:column}
+  #vexBuilderHead{height:58px;flex-shrink:0;border-bottom:1px solid #292929;display:flex;align-items:center;gap:12px;padding:0 18px}
+  #vexBuilderHead strong{letter-spacing:1.5px}
+  #vexBuilderHead button,#vexBuilderActions button{background:#080808;color:#fff;border:1px solid #383838;border-radius:10px;padding:9px 12px;cursor:pointer}
+  #vexBuilderBody{display:grid;grid-template-columns:minmax(260px,340px) 1fr;min-height:0;flex:1}
+  #vexBuilderSide{border-right:1px solid #292929;padding:18px;overflow:auto}
+  #vexBuilderSide label{display:block;color:#aaa;font-size:12px;margin:12px 0 7px}
+  #vexBuilderPrompt{width:100%;min-height:130px;resize:vertical;background:#080808;color:#fff;border:1px solid #383838;border-radius:12px;padding:12px;outline:none}
+  #vexBuilderGenerate{width:100%;margin-top:12px;padding:12px;background:#fff;color:#000;border:0;border-radius:12px;font-weight:800;cursor:pointer}
+  #vexBuilderStatus{color:#aaa;font-size:12px;line-height:1.6;margin-top:12px;white-space:pre-wrap}
+  #vexBuilderPreview{min-width:0;display:flex;flex-direction:column;padding:14px;gap:10px}
+  #vexBuilderActions{display:flex;gap:8px;flex-wrap:wrap}
+  #vexBuilderFrame{width:100%;flex:1;min-height:250px;background:#fff;border:1px solid #333;border-radius:12px}
+  #vexBuilderCode{width:100%;height:190px;resize:vertical;background:#080808;color:#ddd;border:1px solid #333;border-radius:10px;padding:10px;font:12px/1.5 monospace}
+  @media(max-width:760px){
+    #vexBuilderBody{grid-template-columns:1fr;grid-template-rows:auto 1fr}
+    #vexBuilderSide{border-right:0;border-bottom:1px solid #292929;max-height:42vh}
+    #vexBuilderPreview{min-height:0}
+    #vexBuilderFrame{min-height:230px}
+  }`;
+  document.head.appendChild(style);
 
-  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-  let building = false;
-
-  // ---------- CODING KNOWLEDGE SEARCH ----------
-
-  async function researchCoding(prompt) {
-    const queries = [
-      prompt + " web development implementation",
-      prompt + " JavaScript HTML CSS documentation",
-      "MDN Web Docs JavaScript HTML CSS"
-    ];
-
-    const sources = [];
-    const seen = new Set();
-
-    for (const query of queries) {
-      try {
-        const data = await searchWeb(query);
-        const results = extractResults(data);
-
-        for (const item of results.slice(0, 5)) {
-          if (!item.url || seen.has(item.url)) continue;
-          seen.add(item.url);
-
-          let context = null;
-
-          if (item.url.startsWith("http")) {
-            context = await getPageContext(item.url);
-          }
-
-          sources.push({
-            title: item.title || "Coding resource",
-            url: item.url,
-            description: item.description || "",
-            context: context?.summary || context?.content?.slice(0, 1200) || ""
-          });
-
-          if (sources.length >= 8) break;
-        }
-      } catch (error) {
-        console.warn("Coding research:", error);
-      }
-
-      if (sources.length >= 8) break;
-    }
-
-    return sources;
-  }
-
-  // ---------- PROJECT GENERATORS ----------
-
-  function makeQuizApp() {
-    return {
-      name: "Quiz App",
-      html: `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Quiz App</title>
-</head>
-<body>
-<main class="quiz">
-  <header>
-    <h1>Knowledge Quiz</h1>
-    <p>Test your knowledge.</p>
-  </header>
-  <div id="progress">Question 1 of 5</div>
-  <h2 id="question"></h2>
-  <div id="answers"></div>
-  <p id="feedback"></p>
-  <button id="next" hidden>Next question</button>
-  <div id="result" hidden></div>
-  <button id="restart" hidden>Restart quiz</button>
-</main>
-</body>
-</html>`,
-      css: `
-*{box-sizing:border-box}
-body{margin:0;background:#101827;color:white;font-family:Arial;min-height:100vh;display:grid;place-items:center;padding:15px}
-.quiz{width:min(550px,100%);background:#1d293b;padding:28px;border-radius:18px;box-shadow:0 15px 50px #0006}
-header p{color:#aab7c9}
-#progress{color:#aab7c9;margin:25px 0 12px}
-#answers{display:grid;gap:10px;margin:20px 0}
-.answer{background:#34445d;text-align:left;width:100%;border:1px solid #53647d}
-.answer:hover{background:#465c7b}
-.answer:disabled{opacity:.8}
-button{border:0;border-radius:9px;padding:13px;color:white;background:#3978e8;cursor:pointer}
-#feedback{min-height:25px}
-#result{font-size:22px;margin:20px 0}
-`,
-      js: `
-const questions=[
- {q:"Which language structures a web page?",a:["HTML","Python","SQL","C"],correct:0},
- {q:"Which language styles web pages?",a:["Java","CSS","PHP","C++"],correct:1},
- {q:"Which language adds browser interactivity?",a:["JavaScript","HTML","CSS","XML"],correct:0},
- {q:"Which HTML tag creates a link?",a:["<link>","<a>","<href>","<url>"],correct:1},
- {q:"Which method selects an element by ID?",a:["getElementById","queryAll","findID","selectID"],correct:0}
-];
-let index=0,score=0,answered=false;
-const $=id=>document.getElementById(id);
-function render(){
- answered=false;
- $("progress").textContent="Question "+(index+1)+" of "+questions.length;
- $("question").textContent=questions[index].q;
- $("feedback").textContent="";
- $("next").hidden=true;
- $("answers").innerHTML="";
- questions[index].a.forEach((answer,i)=>{
-   const b=document.createElement("button");
-   b.className="answer";
-   b.textContent=answer;
-   b.onclick=()=>choose(i,b);
-   $("answers").appendChild(b);
- });
-}
-function choose(i,button){
- if(answered)return;
- answered=true;
- const correct=questions[index].correct;
- if(i===correct){score++;$("feedback").textContent="Correct!";}
- else{$("feedback").textContent="Incorrect. Correct answer: "+questions[index].a[correct];}
- document.querySelectorAll(".answer").forEach((b,j)=>{
-   b.disabled=true;
-   if(j===correct)b.style.borderColor="#50d890";
- });
- $("next").hidden=false;
-}
-$("next").onclick=()=>{
- index++;
- if(index>=questions.length){
-   $("question").textContent="Quiz completed!";
-   $("answers").innerHTML="";
-   $("progress").textContent="Finished";
-   $("feedback").textContent="";
-   $("next").hidden=true;
-   $("result").hidden=false;
-   $("result").textContent="Your score: "+score+" / "+questions.length;
-   $("restart").hidden=false;
- }else render();
-};
-$("restart").onclick=()=>{
- index=0;score=0;
- $("result").hidden=true;
- $("restart").hidden=true;
- render();
-};
-render();
-`
-    };
-  }
-
-  function makeExpenseApp() {
-    return {
-      name: "Expense Tracker",
-      html: `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Expense Tracker</title>
-</head>
-<body>
-<main class="container">
- <h1>Expense Tracker</h1>
- <section class="summary">
-  <span>Total expenses</span>
-  <strong id="total">₹0</strong>
- </section>
- <form id="expenseForm">
-  <input id="expenseName" placeholder="Expense name" required>
-  <input id="expenseAmount" type="number" min="0.01" step="0.01" placeholder="Amount (₹)" required>
-  <button type="submit">Add expense</button>
- </form>
- <h2>History</h2>
- <div id="expenseList"></div>
- <button id="clearAll" class="secondary">Clear all</button>
-</main>
-</body>
-</html>`,
-      css: `
-*{box-sizing:border-box}
-body{margin:0;background:#f2f4f8;font-family:Arial;color:#202938;padding:18px}
-.container{max-width:650px;margin:30px auto;background:white;padding:25px;border-radius:17px;box-shadow:0 8px 35px #0001}
-.summary{background:#172d4b;color:white;padding:20px;border-radius:12px;display:flex;justify-content:space-between;align-items:center}
-.summary strong{font-size:25px}
-form{display:grid;gap:10px;margin:20px 0}
-input{padding:13px;border:1px solid #ccd3df;border-radius:8px;width:100%}
-button{padding:12px;border:0;border-radius:8px;background:#2469dc;color:white;cursor:pointer}
-.secondary{background:#555;margin-top:15px}
-.expense{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid #eee;padding:13px 0}
-.expense button{background:#b52c39;padding:8px}
-`,
-      js: `
-const $=id=>document.getElementById(id);
-let expenses=[];
-try{expenses=JSON.parse(localStorage.getItem("vex_expenses")||"[]");if(!Array.isArray(expenses))expenses=[];}catch(e){expenses=[]}
-function save(){localStorage.setItem("vex_expenses",JSON.stringify(expenses));render()}
-function render(){
- const total=expenses.reduce((sum,x)=>sum+x.amount,0);
- $("total").textContent="₹"+total.toFixed(2);
- $("expenseList").innerHTML="";
- if(!expenses.length){$("expenseList").textContent="No expenses added yet.";return}
- expenses.forEach((item,index)=>{
-  const row=document.createElement("div");
-  row.className="expense";
-  const label=document.createElement("span");
-  label.textContent=item.name+" — ₹"+item.amount.toFixed(2);
-  const remove=document.createElement("button");
-  remove.textContent="Delete";
-  remove.onclick=()=>{expenses.splice(index,1);save()};
-  row.append(label,remove);
-  $("expenseList").appendChild(row);
- });
-}
-$("expenseForm").addEventListener("submit",e=>{
- e.preventDefault();
- const name=$("expenseName").value.trim();
- const amount=Number($("expenseAmount").value);
- if(!name||!Number.isFinite(amount)||amount<=0)return;
- expenses.push({name,amount});
- $("expenseName").value="";
- $("expenseAmount").value="";
- save();
-});
-$("clearAll").onclick=()=>{
- if(!confirm("Delete all expenses?"))return;
- expenses=[];save();
-};
-render();
-`
-    };
-  }
-
-  function makeLandingPage(prompt) {
-    const title = prompt
-      .replace(/^(please\s+)?(build|create|make)\s+/i, "")
-      .slice(0, 65) || "My Website";
-
-    return {
-      name: "Landing Page",
-      html: `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${escapeHTML(title)}</title>
-</head>
-<body>
-<nav><strong>${escapeHTML(title)}</strong><a href="#features">Features</a><a href="#about">About</a><a href="#contact">Contact</a></nav>
-<section class="hero">
- <p class="tag">WELCOME</p>
- <h1>${escapeHTML(title)}</h1>
- <p>A clean, responsive website designed to introduce your idea.</p>
- <a class="cta" href="#features">Explore</a>
-</section>
-<section id="features">
- <h2>Features</h2>
- <div class="grid">
-  <article><h3>Simple</h3><p>Easy-to-understand experience.</p></article>
-  <article><h3>Responsive</h3><p>Designed for mobile and desktop.</p></article>
-  <article><h3>Modern</h3><p>A clean and accessible layout.</p></article>
- </div>
-</section>
-<section id="about"><h2>About</h2><p>Replace this text with information about your project.</p></section>
-<section id="contact"><h2>Contact</h2><p>Add your contact details here.</p></section>
-<footer>Made with VEX AI</footer>
-</body>
-</html>`,
-      css: `
-*{box-sizing:border-box;scroll-behavior:smooth}
-body{margin:0;font-family:Arial,sans-serif;color:#20232a}
-nav{display:flex;gap:25px;align-items:center;padding:20px 7%;border-bottom:1px solid #eee;flex-wrap:wrap}
-nav strong{margin-right:auto}
-nav a{color:#444;text-decoration:none}
-.hero{padding:100px 8%;background:#101827;color:white;min-height:430px}
-.hero h1{font-size:clamp(38px,8vw,76px);max-width:850px;margin:12px 0}
-.hero p{color:#c0cad8;line-height:1.7}
-.tag{letter-spacing:3px}
-.cta{display:inline-block;margin-top:20px;background:white;color:#111;padding:13px 22px;border-radius:8px;text-decoration:none}
-section:not(.hero){padding:55px 8%}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}
-article{border:1px solid #ddd;border-radius:12px;padding:20px}
-footer{background:#101827;color:white;text-align:center;padding:25px}
-@media(max-width:600px){.hero{padding:65px 7%}}
-`,
-      js: `
-document.querySelectorAll('nav a').forEach(a=>{
- a.addEventListener('click',()=>{
-  const target=document.querySelector(a.getAttribute('href'));
-  if(target)target.scrollIntoView({behavior:'smooth'});
- });
-});
-`
-    };
-  }
-
-  function buildProject(prompt) {
-    const q = prompt.toLowerCase();
-
-    if (q.includes("calculator") || q.includes("calculate")) {
-      return calculatorTemplate();
-    }
-
-    if (q.includes("quiz") || q.includes("question game")) {
-      return makeQuizApp();
-    }
-
-    if (q.includes("expense") || q.includes("budget tracker") || q.includes("spending tracker")) {
-      return makeExpenseApp();
-    }
-
-    if (q.includes("todo") || q.includes("to-do") || q.includes("task list")) {
-      return todoTemplate();
-    }
-
-    if (q.includes("note") || q.includes("notepad")) {
-      return notesTemplate();
-    }
-
-    if (q.includes("portfolio") || q.includes("personal website")) {
-      return portfolioTemplate();
-    }
-
-    if (q.includes("landing page") || q.includes("business website") ||
-        q.includes("website") || q.includes("web page")) {
-      return makeLandingPage(prompt);
-    }
-
-    return genericTemplate(prompt);
-  }
-
-  // ---------- PROJECT QUALITY CHECKS ----------
-
-  function checkProject(project) {
-    const checks = [];
-
-    checks.push({
-      name: "HTML document structure",
-      ok: /<html[\s>]/i.test(project.html) &&
-          /<\/html>/i.test(project.html) &&
-          /<body[\s>]/i.test(project.html)
-    });
-
-    checks.push({
-      name: "Viewport configuration",
-      ok: /name=["']viewport["']/i.test(project.html)
-    });
-
-    checks.push({
-      name: "CSS is present",
-      ok: project.css.trim().length > 20
-    });
-
-    checks.push({
-      name: "JavaScript syntax",
-      ok: (() => {
-        try {
-          new Function(project.js);
-          return true;
-        } catch (e) {
-          return false;
-        }
-      })()
-    });
-
-    checks.push({
-      name: "JavaScript is present",
-      ok: project.js.trim().length > 0
-    });
-
-    return checks;
-  }
-
-  function checkHTML() {
-    const html = projectHTML();
-
-    return {
-      ok: /<html[\s>]/i.test(html) &&
-          /<body[\s>]/i.test(html) &&
-          /<\/body>/i.test(html),
-      size: html.length
-    };
-  }
-
-  // ---------- PROJECT ZIP DOWNLOAD ----------
-
-  function crc32(bytes) {
-    let crc = -1;
-
-    for (let i = 0; i < bytes.length; i++) {
-      crc ^= bytes[i];
-
-      for (let j = 0; j < 8; j++) {
-        crc = (crc >>> 1) ^ (crc & 1 ? 0xEDB88320 : 0);
-      }
-    }
-
-    return (crc ^ -1) >>> 0;
-  }
-
-  function zipFiles(files) {
-    const encoder = new TextEncoder();
-    const local = [];
-    const central = [];
-    let offset = 0;
-
-    function u16(n) {
-      return [n & 255, (n >>> 8) & 255];
-    }
-
-    function u32(n) {
-      return [
-        n & 255,
-        (n >>> 8) & 255,
-        (n >>> 16) & 255,
-        (n >>> 24) & 255
-      ];
-    }
-
-    for (const file of files) {
-      const name = encoder.encode(file.name);
-      const data = encoder.encode(file.data);
-      const crc = crc32(data);
-
-      const localHeader = new Uint8Array([
-        ...u32(0x04034b50),
-        ...u16(20),
-        ...u16(0),
-        ...u16(0),
-        ...u16(0),
-        ...u16(0),
-        ...u32(crc),
-        ...u32(data.length),
-        ...u32(data.length),
-        ...u16(name.length),
-        ...u16(0),
-        ...name
-      ]);
-
-      local.push(localHeader, data);
-
-      const centralHeader = new Uint8Array([
-        ...u32(0x02014b50),
-        ...u16(20),
-        ...u16(20),
-        ...u16(0),
-        ...u16(0),
-        ...u16(0),
-        ...u16(0),
-        ...u32(crc),
-        ...u32(data.length),
-        ...u32(data.length),
-        ...u16(name.length),
-        ...u16(0),
-        ...u16(0),
-        ...u16(0),
-        ...u16(0),
-        ...u32(0),
-        ...u32(offset),
-        ...name
-      ]);
-
-      central.push(centralHeader);
-      offset += localHeader.length + data.length;
-    }
-
-    const centralSize = central.reduce((sum, x) => sum + x.length, 0);
-
-    const end = new Uint8Array([
-      ...u32(0x06054b50),
-      ...u16(0),
-      ...u16(0),
-      ...u16(files.length),
-      ...u16(files.length),
-      ...u32(centralSize),
-      ...u32(offset),
-      ...u16(0)
-    ]);
-
-    return new Blob([...local, ...central, end], {
-      type: "application/zip"
-    });
-  }
-
-  function downloadZIP() {
-    const files = [
-      {
-        name: "index.html",
-        data: projectHTML()
-      },
-      {
-        name: "style.css",
-        data: codeFiles["style.css"]
-      },
-      {
-        name: "script.js",
-        data: codeFiles["script.js"]
-      },
-      {
-        name: "README.txt",
-        data:
-          projectName + "\n\n" +
-          "Created using VEX AI Code Builder.\n" +
-          "Open index.html in a modern browser to run this project.\n" +
-          "This browser project does not include a hosted backend."
-      }
-    ];
-
-    const blob = zipFiles(files);
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-
-    a.href = url;
-    a.download = (projectName || "VEX_Project")
-      .replace(/[^a-z0-9_-]/gi, "_") + ".zip";
-
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-
-    setTimeout(() => URL.revokeObjectURL(url), 3000);
-  }
-
-  // ---------- IMPROVED ARTIFACT ----------
-
-  function improvedArtifactHTML() {
-    return `<div class="app-artifact">
-      <div class="artifact-header">
-        <div class="artifact-title">▣ ${escapeHTML(projectName)}</div>
-        <div class="artifact-actions">
-          <button class="artifact-btn primary" onclick="runProject()">▶ Run</button>
-          <button class="artifact-btn" onclick="openBuildFullscreen()">⛶ Full screen</button>
-          <button class="artifact-btn" onclick="toggleCodeFiles()">View Code</button>
-          <button class="artifact-btn" onclick="downloadProject()">↓ HTML</button>
-          <button class="artifact-btn" onclick="VEXBuilder.downloadZIP()">↓ Project ZIP</button>
+  const overlay = document.createElement('section');
+  overlay.id = 'vexBuilderOverlay';
+  overlay.innerHTML = `
+    <header id="vexBuilderHead">
+      <strong>VEX AI · CODE BUILDER</strong>
+      <span style="color:#888;font-size:11px">Browser-based project builder</span>
+      <span style="flex:1"></span>
+      <button id="vexBuilderClose">Close ×</button>
+    </header>
+    <div id="vexBuilderBody">
+      <aside id="vexBuilderSide">
+        <div style="font-size:19px;font-weight:800">Create a project</div>
+        <p style="color:#999;font-size:12px;line-height:1.6">
+          Describe the website or small app. VEX creates a browser preview from its built-in project templates.
+        </p>
+        <label for="vexBuilderPrompt">Your project idea</label>
+        <textarea id="vexBuilderPrompt" placeholder="Example: Build a quiz app with 5 questions and a score screen."></textarea>
+        <button id="vexBuilderGenerate">Generate project</button>
+        <div id="vexBuilderStatus">Ready. Supported templates: calculator, quiz, expense tracker, todo, notes, portfolio and landing page.</div>
+      </aside>
+      <main id="vexBuilderPreview">
+        <div id="vexBuilderActions">
+          <button id="vexBuilderRun">Run preview</button>
+          <button id="vexBuilderCheck">Check code</button>
+          <button id="vexBuilderCopy">Copy HTML</button>
+          <button id="vexBuilderDownload">Download HTML</button>
+          <button id="vexBuilderZip">Download ZIP</button>
         </div>
-      </div>
-      <iframe class="preview-frame" id="projectPreview"
-        sandbox="allow-scripts allow-forms allow-modals"></iframe>
-      <div class="code-files" id="codeFiles">
-        <div class="code-file-tabs">
-          <button class="code-file-tab active" onclick="showCodeFile('index.html',this)">index.html</button>
-          <button class="code-file-tab" onclick="showCodeFile('style.css',this)">style.css</button>
-          <button class="code-file-tab" onclick="showCodeFile('script.js',this)">script.js</button>
-        </div>
-        <pre class="code-source" id="codeSource"></pre>
-      </div>
+        <iframe id="vexBuilderFrame" title="VEX project preview" sandbox="allow-scripts allow-forms"></iframe>
+        <textarea id="vexBuilderCode" spellcheck="false" aria-label="Generated HTML code" placeholder="Generated project code appears here"></textarea>
+      </main>
     </div>`;
+  document.body.appendChild(overlay);
+
+  const $ = id => document.getElementById(id);
+  let currentHTML = '';
+
+  function escapeText(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
   }
 
-  function renderImprovedArtifact(target) {
-    target.insertAdjacentHTML("beforeend", improvedArtifactHTML());
-    runProject();
-    showCodeFile("index.html", document.querySelector(".code-file-tab"));
-    scrollCode();
+  function shell(title, body, script = '') {
+    return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${escapeText(title)}</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:24px;background:#f4f5f7;color:#171717;font:15px system-ui,Arial}
+main{max-width:850px;margin:25px auto;background:white;padding:25px;border-radius:18px;box-shadow:0 8px 30px #0001}
+h1{margin-top:0}
+button{border:0;background:#111;color:white;border-radius:9px;padding:10px 14px;cursor:pointer}
+input,textarea,select{padding:11px;border:1px solid #ccc;border-radius:9px;font:inherit;max-width:100%}
+.row{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}
+.muted{color:#666}
+.item{padding:12px;border:1px solid #ddd;border-radius:10px;margin:8px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.card{padding:18px;background:#f1f2f4;border-radius:12px}
+@media(max-width:600px){body{padding:8px}main{margin:8px auto;padding:17px}}
+</style>
+</head>
+<body>
+<main>${body}</main>
+<script>${script}<\/script>
+</body>
+</html>`;
   }
 
-  // ---------- RESEARCH DISPLAY ----------
-
-  function researchHTML(sources) {
-    if (!sources.length) {
-      return "<p>No coding references could be retrieved. The project was created using the built-in builder.</p>";
-    }
-
-    return `
-      <details style="margin:12px 0;color:#aaa">
-        <summary style="cursor:pointer">Coding references researched (${sources.length})</summary>
-        ${sources.map(source => `
-          <a class="search-card" href="${escapeHTML(source.url)}"
-             target="_blank" rel="noopener">
-            <strong>${escapeHTML(source.title)}</strong>
-            <p>${escapeHTML(source.description || "Open coding reference")}</p>
-          </a>
-        `).join("")}
-      </details>`;
+  function buildCalculator() {
+    return shell('VEX Calculator', `
+      <h1>Calculator</h1>
+      <input id="display" value="0" readonly style="width:100%;font-size:28px;text-align:right;margin-bottom:12px">
+      <div class="grid">
+        ${['7','8','9','÷','4','5','6','×','1','2','3','−','0','.','=','+','C'].map(x =>
+          `<button data-key="${x}" style="padding:18px;font-size:18px">${x}</button>`
+        ).join('')}
+      </div>
+      <p class="muted">Basic calculator · Runs in your browser</p>
+    `, `
+      let v='';
+      document.querySelectorAll('[data-key]').forEach(b=>b.onclick=()=>{
+        let k=b.dataset.key;
+        if(k==='C')v='';
+        else if(k==='='){
+          try{
+            let e=v.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-');
+            if(!/^[0-9+*/.() -]+$/.test(e))throw 0;
+            v=String(Function('return ('+e+')')());
+          }catch(e){v='Error'}
+        }else v+=k;
+        document.getElementById('display').value=v||'0';
+      });
+    `);
   }
 
-  // ---------- MAIN BUILDER ----------
-
-  async function sendCodeMessageV2() {
-    if (building || codeBusy) return;
-
-    const input = $("codeInput");
-    const prompt = input.value.trim();
-
-    if (!prompt) return;
-
-    input.value = "";
-    addCodeMessage("user", prompt);
-
-    const body = addCodeMessage("assistant", "");
-    building = true;
-    codeBusy = true;
-
-    body.innerHTML =
-      "<p>VEX is researching and preparing your project.</p>" +
-      progressHTML();
-
-    try {
-      updateProgress(0);
-
-      const sources = await researchCoding(prompt);
-
-      updateProgress(1);
-      await sleep(250);
-
-      const project = buildProject(prompt);
-
-      if (!project || !project.html) {
-        throw new Error("Project generation failed.");
+  function buildTodo() {
+    return shell('VEX Todo', `
+      <h1>My Tasks</h1>
+      <div class="row">
+        <input id="task" placeholder="Add a task" style="flex:1">
+        <button id="add">Add task</button>
+      </div>
+      <div id="list"></div>
+    `, `
+      const input=document.getElementById('task');
+      const list=document.getElementById('list');
+      function add(){
+        let t=input.value.trim();
+        if(!t)return;
+        let d=document.createElement('div');
+        d.className='item';
+        let c=document.createElement('input');
+        c.type='checkbox';
+        let s=document.createElement('span');
+        s.textContent=' '+t;
+        let x=document.createElement('button');
+        x.textContent='Delete';
+        x.style.float='right';
+        x.onclick=()=>d.remove();
+        c.onchange=()=>s.style.textDecoration=c.checked?'line-through':'none';
+        d.append(c,s,x);
+        list.append(d);
+        input.value='';
       }
-
-      updateProgress(2);
-
-      setProject(project);
-
-      const checks = checkProject(project);
-      const passed = checks.filter(x => x.ok).length;
-
-      updateProgress(3);
-      await sleep(300);
-
-      const htmlCheck = checkHTML();
-
-      body.innerHTML =
-        "<p><strong>Project generated.</strong></p>" +
-        "<p>VEX searched coding resources, selected a supported project structure and generated these files:</p>" +
-        "<p>• index.html<br>• style.css<br>• script.js</p>" +
-        "<p><strong>Initial checks: " + passed + "/" + checks.length +
-        " passed.</strong></p>" +
-        "<div class='progress-box'>" +
-        checks.map(check =>
-          `<div class="progress-line ${check.ok ? "done" : ""}">
-            <span class="progress-dot">${check.ok ? "✓" : "!"}</span>
-            ${escapeHTML(check.name)}
-            <span style="margin-left:auto">${check.ok ? "Passed" : "Needs attention"}</span>
-          </div>`
-        ).join("") +
-        "</div>" +
-        (htmlCheck.ok
-          ? "<p>Preview document structure check passed.</p>"
-          : "<p>Preview document structure needs attention.</p>") +
-        researchHTML(sources) +
-        "<p><strong>Preview:</strong> Run the app and try its features. These initial checks are not a guarantee that every feature works.</p>";
-
-      renderImprovedArtifact(body);
-
-    } catch (error) {
-      console.error("VEX Builder:", error);
-
-      body.innerHTML =
-        "<p><strong>Project creation failed.</strong></p>" +
-        "<p>" + escapeHTML(error.message || "Unknown error") + "</p>" +
-        "<p>Please try again with a more specific app description.</p>";
-    } finally {
-      building = false;
-      codeBusy = false;
-    }
+      document.getElementById('add').onclick=add;
+      input.addEventListener('keydown',e=>{if(e.key==='Enter')add()});
+    `);
   }
 
-  // ---------- SAFE GLOBAL EXPORT ----------
+  function buildNotes() {
+    return shell('VEX Notes', `
+      <h1>Quick Notes</h1>
+      <textarea id="note" placeholder="Write your notes..." style="width:100%;min-height:240px"></textarea>
+      <p class="muted">Notes are saved in this browser on this device.</p>
+      <button id="save">Save notes</button>
+      <span id="msg" class="muted"></span>
+    `, `
+      let n=document.getElementById('note');
+      n.value=localStorage.getItem('vex_notes')||'';
+      document.getElementById('save').onclick=()=>{
+        localStorage.setItem('vex_notes',n.value);
+        document.getElementById('msg').textContent=' Saved';
+      };
+    `);
+  }
 
-  window.VEXBuilder = {
-    downloadZIP,
-    researchCoding,
-    checkProject,
-    buildProject
-  };
+  function buildQuiz(prompt) {
+    let match=prompt.match(/(\d+)\s*questions?/i);
+    let count=Math.max(3,Math.min(20,Number(match?.[1]||5)));
+    let questions=Array.from({length:count},(_,i)=>({
+      q:`Sample question ${i+1}: Which option is correct?`,
+      a:['Option A','Option B','Option C','Option D'],
+      correct:0
+    }));
+    return shell('VEX Quiz', `
+      <h1>Quiz App</h1>
+      <p class="muted">${count} sample questions. Edit the question data in the code to customize.</p>
+      <div id="quiz"></div>
+      <button id="next">Start quiz</button>
+      <p id="score"></p>
+    `, `
+      const qs=${JSON.stringify(questions)};
+      let i=0,score=0;
+      function show(){
+        let q=qs[i];
+        document.getElementById('quiz').innerHTML=
+          '<h3>'+q.q+'</h3>'+
+          q.a.map((a,j)=>'<div class="item"><label><input type="radio" name="ans" value="'+j+'"> '+a+'</label></div>').join('');
+        document.getElementById('next').textContent=i===qs.length-1?'Finish':'Next';
+      }
+      document.getElementById('next').onclick=()=>{
+        if(document.querySelector('input[name=ans]:checked')){
+          let s=document.querySelector('input[name=ans]:checked');
+          if(Number(s.value)===qs[i].correct)score++;
+          i++;
+        }else if(i!==0){
+          document.getElementById('score').textContent='Choose an answer first.';
+          return;
+        }
+        if(i>=qs.length){
+          document.getElementById('quiz').innerHTML='<h2>Quiz complete</h2>';
+          document.getElementById('next').style.display='none';
+          document.getElementById('score').textContent='Score: '+score+' / '+qs.length;
+        }else show();
+      };
+      show();
+    `);
+  }
 
-  // Replace old template-only builder function.
-  window.sendCodeMessage = sendCodeMessageV2;
+  function buildExpense() {
+    return shell('Expense Tracker', `
+      <h1>Expense Tracker</h1>
+      <div class="row">
+        <input id="desc" placeholder="Expense name">
+        <input id="amount" type="number" min="0" step="0.01" placeholder="Amount">
+        <button id="add">Add</button>
+      </div>
+      <h2>Total: ₹<span id="total">0.00</span></h2>
+      <div id="items"></div>
+    `, `
+      let rows=[];
+      function render(){
+        document.getElementById('items').innerHTML=rows.map((r,i)=>
+          '<div class="item">'+r.name+' — ₹'+r.amount+
+          ' <button data-i="'+i+'" style="float:right">Delete</button></div>'
+        ).join('');
+        document.getElementById('total').textContent=
+          rows.reduce((s,r)=>s+r.amount,0).toFixed(2);
+        document.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{
+          rows.splice(Number(b.dataset.i),1);
+          render();
+        });
+      }
+      document.getElementById('add').onclick=()=>{
+        let name=document.getElementById('desc').value.trim();
+        let amount=Number(document.getElementById('amount').value);
+        if(!name||!Number.isFinite(amount)||amount<=0)return;
+        rows.push({name,amount});
+        document.getElementById('desc').value='';
+        document.getElementById('amount').value='';
+        render();
+      };
+    `);
+  }
 
-  // Keep the existing HTML download function available.
-  window.downloadProject = function () {
-    const content = projectHTML();
-    const blob = new Blob([content], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+  function buildPortfolio() {
+    return shell('Portfolio', `
+      <nav class="row"><strong>MY PORTFOLIO</strong><span class="muted">Home · About · Projects · Contact</span></nav>
+      <section style="padding:45px 0">
+        <p class="muted">HELLO, I'M</p>
+        <h1 style="font-size:42px">Your Name</h1>
+        <h2>Web Developer &amp; Creative Thinker</h2>
+        <p class="muted">I build clean, useful digital experiences.</p>
+        <button onclick="document.getElementById('contact').scrollIntoView()">Contact me</button>
+      </section>
+      <h2>About</h2><p>Write a short introduction about yourself here.</p>
+      <h2>Projects</h2>
+      <div class="grid">
+        <div class="card">Project One</div>
+        <div class="card">Project Two</div>
+        <div class="card">Project Three</div>
+      </div>
+      <h2 id="contact">Contact</h2><p>Email: hello@example.com</p>
+    `);
+  }
 
-    a.href = url;
-    a.download = (projectName || "VEX_Project")
-      .replace(/[^a-z0-9_-]/gi, "_") + ".html";
+  function buildLanding() {
+    return shell('Landing Page', `
+      <nav class="row"><strong>YOUR BRAND</strong><span class="muted">Features · About · Contact</span></nav>
+      <section style="text-align:center;padding:55px 5px">
+        <h1 style="font-size:42px">Build something amazing</h1>
+        <p class="muted">A simple responsive landing page for your idea.</p>
+        <button onclick="document.getElementById('features').scrollIntoView()">Explore features</button>
+      </section>
+      <h2 id="features">Features</h2>
+      <div class="grid">
+        <div class="card"><h3>Simple</h3><p>Easy to use.</p></div>
+        <div class="card"><h3>Fast</h3><p>Lightweight design.</p></div>
+        <div class="card"><h3>Responsive</h3><p>Works on mobile and desktop.</p></div>
+      </div>
+    `);
+  }
 
-    document.body.appendChild(a);
+  function buildGeneric(prompt) {
+    return shell('VEX Project', `
+      <h1>Project starter</h1>
+      <p class="muted">Requested idea:</p>
+      <div class="item">${escapeText(prompt)}</div>
+      <h2>Project structure</h2>
+      <div class="grid">
+        <div class="card">Home screen</div>
+        <div class="card">Main feature</div>
+        <div class="card">Settings</div>
+      </div>
+      <p>This is a starter layout. The requested custom functionality still needs to be implemented.</p>
+    `);
+  }
+
+  function generate() {
+    let p=$('vexBuilderPrompt').value.trim();
+    if(!p){
+      $('vexBuilderStatus').textContent='Please describe your project first.';
+      return;
+    }
+    let q=p.toLowerCase();
+
+    if(/calculator|calculate|math app/.test(q)) currentHTML=buildCalculator();
+    else if(/quiz|question app|mcq/.test(q)) currentHTML=buildQuiz(p);
+    else if(/expense|budget tracker|spending tracker/.test(q)) currentHTML=buildExpense();
+    else if(/todo|to-do|task list/.test(q)) currentHTML=buildTodo();
+    else if(/notes app|note taking/.test(q)) currentHTML=buildNotes();
+    else if(/portfolio|personal website/.test(q)) currentHTML=buildPortfolio();
+    else if(/landing page|business website|company website/.test(q)) currentHTML=buildLanding();
+    else currentHTML=buildGeneric(p);
+
+    $('vexBuilderCode').value=currentHTML;
+    run();
+    $('vexBuilderStatus').textContent=
+      'Project generated from a built-in template. Preview it, inspect the code, and test its buttons. This is not an AI model-generated arbitrary application.';
+  }
+
+  function run() {
+    if(!currentHTML) currentHTML=$('vexBuilderCode').value;
+    $('vexBuilderFrame').srcdoc=currentHTML;
+  }
+
+  function check() {
+    let s=$('vexBuilderCode').value||currentHTML;
+    let issues=[];
+    if(!s.trim())issues.push('No code generated.');
+    if(!/<html[\s>]/i.test(s))issues.push('HTML root element not found.');
+    if(!/<\/html>/i.test(s))issues.push('Closing HTML tag not found.');
+    if(!/<meta[^>]+viewport/i.test(s))issues.push('Mobile viewport meta tag missing.');
+    if(!/<style[\s>]/i.test(s))issues.push('No CSS style block found.');
+    if(!/<script[\s>]/i.test(s))issues.push('No JavaScript block found.');
+
+    $('vexBuilderStatus').textContent=issues.length
+      ? 'Static checks found:\n• '+issues.join('\n• ')
+      : 'Basic static checks passed. These checks do not prove that every feature works; test the preview manually.';
+  }
+
+  function download(name,blob) {
+    let a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=name;
     a.click();
-    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  }
 
-    setTimeout(() => URL.revokeObjectURL(url), 3000);
+  function zip() {
+    let html=$('vexBuilderCode').value||currentHTML;
+    if(!html){
+      $('vexBuilderStatus').textContent='Generate a project first.';
+      return;
+    }
+    if(!window.JSZip){
+      $('vexBuilderStatus').textContent='ZIP library unavailable. Use Download HTML instead.';
+      return;
+    }
+    let z=new JSZip();
+    z.file('index.html',html);
+    z.file('README.txt',
+      'VEX AI browser project\nOpen index.html in a modern browser.\nThis project has no backend unless separately added.'
+    );
+    z.generateAsync({type:'blob'})
+      .then(b=>download('vex-project.zip',b))
+      .catch(e=>$('vexBuilderStatus').textContent='ZIP error: '+e.message);
+  }
+
+  function open() {
+    overlay.classList.add('open');
+    $('vexBuilderPrompt').focus();
+  }
+
+  const launch=document.createElement('button');
+  launch.id='vexBuilderLaunch';
+  launch.textContent='Code Builder';
+  launch.onclick=open;
+
+  const top=document.querySelector('.topbar');
+  if(top)top.appendChild(launch);
+  else document.body.appendChild(launch);
+
+  $('vexBuilderClose').onclick=()=>overlay.classList.remove('open');
+  $('vexBuilderGenerate').onclick=generate;
+  $('vexBuilderRun').onclick=()=>{
+    currentHTML=$('vexBuilderCode').value;
+    run();
   };
+  $('vexBuilderCheck').onclick=check;
+  $('vexBuilderCopy').onclick=()=>{
+    navigator.clipboard.writeText($('vexBuilderCode').value)
+      .then(()=>$('vexBuilderStatus').textContent='HTML copied.')
+      .catch(()=>$('vexBuilderStatus').textContent='Copy failed; select and copy the code manually.');
+  };
+  $('vexBuilderDownload').onclick=()=>download(
+    'vex-project.html',
+    new Blob([$('vexBuilderCode').value||currentHTML],{type:'text/html'})
+  );
+  $('vexBuilderZip').onclick=zip;
 
+  const zipLib=document.createElement('script');
+  zipLib.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+  zipLib.async=true;
+  document.head.appendChild(zipLib);
 })();
