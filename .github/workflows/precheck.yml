@@ -8,6 +8,7 @@ permissions:
   contents: read
 
 jobs:
+
   verify:
     name: Verify Native Ads Extension
     runs-on: ubuntu-latest
@@ -33,13 +34,17 @@ jobs:
               ext = tomllib.load(f)
 
           deps = app["project"]["dependencies"]
-          assert any(d.startswith("vex-native-ads @") for d in deps), \
-              "Local VEX Native Ads dependency is missing"
+
+          assert any(
+              d.startswith("vex-native-ads @")
+              for d in deps
+          ), "Local VEX Native Ads dependency is missing"
 
           assert ext["project"]["name"] == "vex-native-ads"
 
-          print("Both TOML files are valid.")
-          print("Local extension dependency found.")
+          print("Main project TOML: OK")
+          print("Extension TOML: OK")
+          print("Local extension dependency: OK")
           PY
 
       - name: Check required files
@@ -49,6 +54,7 @@ jobs:
 
           files = [
               "vex_ui.py",
+              "vex_native_ads/pyproject.toml",
               "vex_native_ads/src/vex_native_ads/__init__.py",
               "vex_native_ads/src/vex_native_ads/vex_native_ads.py",
               "vex_native_ads/src/flutter/vex_native_ads/pubspec.yaml",
@@ -58,10 +64,15 @@ jobs:
               "vex_native_ads/src/flutter/vex_native_ads/lib/src/vex_native_ad_control.dart",
           ]
 
-          missing = [f for f in files if not Path(f).is_file()]
+          missing = [
+              file for file in files
+              if not Path(file).is_file()
+          ]
 
           if missing:
-              raise SystemExit("Missing files:\n" + "\n".join(missing))
+              raise SystemExit(
+                  "Missing files:\n" + "\n".join(missing)
+              )
 
           print("All required files exist.")
           PY
@@ -81,11 +92,7 @@ jobs:
           import glob
           import zipfile
 
-          wheels = glob.glob("dist/vex_native_ads-*.whl") + \
-                   glob.glob("dist/vex_native_ads-*.whl")
-
-          if not wheels:
-              wheels = glob.glob("dist/*.whl")
+          wheels = glob.glob("dist/*.whl")
 
           if not wheels:
               raise SystemExit("Extension wheel was not created.")
@@ -102,8 +109,9 @@ jobs:
           ]
 
           for item in required:
-              if not any(n.endswith(item) for n in names):
+              if not any(name.endswith(item) for name in names):
                   raise SystemExit("Missing from wheel: " + item)
+
               print("OK:", item)
 
           print("Flutter extension packaging verified.")
@@ -121,5 +129,35 @@ jobs:
           print(VexNativeAd)
           PY
 
-      - name: Verification complete
-        run: echo "VEX Native Ads pre-build checks passed. No APK was built."
+      - name: Python verification complete
+        run: echo "Python extension checks passed."
+
+  dart-check:
+    name: Check Flutter Extension
+    runs-on: ubuntu-latest
+    needs: verify
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.47.9"
+          channel: stable
+          cache: true
+
+      - name: Check Flutter version
+        run: flutter --version
+
+      - name: Get Flutter dependencies
+        working-directory: vex_native_ads/src/flutter/vex_native_ads
+        run: flutter pub get
+
+      - name: Analyze Dart code
+        working-directory: vex_native_ads/src/flutter/vex_native_ads
+        run: flutter analyze --no-pub
+
+      - name: Flutter verification complete
+        run: echo "Flutter and Dart checks passed. No APK was built."
