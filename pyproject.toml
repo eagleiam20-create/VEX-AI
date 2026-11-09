@@ -11,7 +11,7 @@ dependencies = [
     "requests",
     "beautifulsoup4",
     "ddgs",
-    "vex-native-ads @ file:./vex_native_ads"
+    "vex-native-ads @ git+https://github.com/eagleiam20-create/VEX-AI.git@main#subdirectory=vex_native_ads"
 ]
 
 [dependency-groups]
