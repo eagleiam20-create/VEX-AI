@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -148,6 +147,8 @@ main{padding:25px 15px 145px}
 
 <script>
 const API="https://puri.li";
+const NATIVE_APP=new URLSearchParams(location.search).get("vex_native")==="1";
+const nativePending=new Map();
 const COMMONS="https://commons.wikimedia.org/w/api.php";
 
 const chat=document.getElementById("chat");
@@ -172,6 +173,128 @@ function unique(a){return [...new Set(a)];}
 function overlapCount(text,terms){const t=new Set(tokens(text));return terms.filter(x=>t.has(x)).length;}
 function safeURL(url){try{const u=new URL(url);return ["http:","https:"].includes(u.protocol)?u.href:null;}catch{return null;}}
 async function getJSON(url){const r=await fetch(url,{headers:{"Accept":"application/json"}});if(!r.ok)throw new Error("Service error "+r.status);return r.json();}
+
+// Android/Flet backend connection
+window.addEventListener("vex-native-progress",e=>{
+const d=e.detail||{};
+const p=nativePending.get(String(d.id));
+if(p&&p.statusElement)p.statusElement.textContent=d.stage||"Generating image...";
+});
+
+window.addEventListener("vex-native-result",e=>{
+const d=e.detail||{};
+const p=nativePending.get(String(d.id));
+if(!p)return;
+nativePending.delete(String(d.id));
+if(d.error)p.reject(new Error(d.error));
+else p.resolve(d.data||{});
+});
+
+function requestNative(query,statusElement){
+return new Promise((resolve,reject)=>{
+const id=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():String(Date.now())+Math.random().toString(16).slice(2);
+nativePending.set(id,{resolve,reject,statusElement});
+try{
+console.log("VEX_NATIVE_SEARCH:"+JSON.stringify({id,query}));
+}catch(err){
+nativePending.delete(id);
+reject(err);
+}
+});
+}
+
+function addSection(parent,label){
+const w=document.createElement("section");
+w.innerHTML='<div class="sectionLabel">'+esc(label)+'</div>';
+parent.appendChild(w);
+return w;
+}
+
+function openViewer(url){
+document.getElementById("viewerImage").src=url;
+document.getElementById("viewer").classList.add("open");
+}
+function closeViewer(){
+document.getElementById("viewer").classList.remove("open");
+}
+
+function renderNativeImages(target,items){
+const sec=addSection(target,"IMAGES");
+const grid=document.createElement("div");
+grid.className="mediaGrid";
+
+(items||[]).slice(0,9).forEach(x=>{
+const u=safeURL(x.image||x.url);
+if(!u)return;
+
+const card=document.createElement("div");
+card.className="mediaItem";
+
+const img=document.createElement("img");
+img.src=u;
+img.alt=x.title||"VEX image";
+img.loading="lazy";
+img.onclick=()=>openViewer(u);
+img.onerror=()=>card.remove();
+
+const cap=document.createElement("p");
+cap.textContent=x.title||"Related image";
+
+card.append(img,cap);
+
+if(x.source){
+const source=safeURL(x.source);
+if(source){
+const a=document.createElement("a");
+a.href=source;
+a.target="_blank";
+a.rel="noopener noreferrer";
+a.textContent="Image source";
+a.style.cssText="display:block;padding:0 9px 10px;color:#999;font-size:11px";
+card.appendChild(a);
+}
+}
+grid.appendChild(card);
+});
+
+if(!grid.children.length){
+sec.innerHTML+='<p class="empty">No images could be displayed. Try another description.</p>';
+return;
+}
+sec.appendChild(grid);
+}
+
+function renderNativeResult(body,data){
+body.innerHTML="";
+
+if(data.answer){
+const answer=document.createElement("div");
+answer.className="answer";
+const p=document.createElement("p");
+p.textContent=data.answer;
+answer.appendChild(p);
+body.appendChild(answer);
+}
+
+const results=Array.isArray(data.results)?data.results:[];
+if(results.length){
+const sec=addSection(body,"WEB SOURCES");
+const wrap=document.createElement("div");
+wrap.className="sources";
+results.slice(0,5).forEach(r=>{
+const h=sourceHTML(r);
+if(h)wrap.insertAdjacentHTML("beforeend",h);
+});
+if(wrap.children.length)sec.appendChild(wrap);
+}
+
+const images=Array.isArray(data.images)?data.images:[];
+if(images.length)renderNativeImages(body,images);
+
+if(!data.answer&&!results.length&&!images.length){
+body.innerHTML='<p class="empty">VEX could not find a result. Please try another query.</p>';
+}
+}
 
 function topicPhrase(q){
 let s=q.toLowerCase().trim().replace(/[?!.]/g," ");
@@ -329,13 +452,6 @@ try{domain=new URL(url).hostname}catch{}
 return '<a class="source" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer"><b>'+esc(s.title||"Web source")+'</b><small>'+esc(s.description||"Relevant indexed information")+'</small><small>'+esc(domain)+'</small></a>';
 }
 
-function addSection(parent,label){
-const w=document.createElement("section");
-w.innerHTML='<div class="sectionLabel">'+esc(label)+'</div>';
-parent.appendChild(w);
-return w;
-}
-
 /* Images */
 async function searchWikimediaImages(query){
 const url=COMMONS+"?action=query&generator=search&gsrsearch="+encodeURIComponent(query)+"&gsrnamespace=6&gsrlimit=30&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=640&format=json&origin=*";
@@ -363,26 +479,32 @@ return {title,description,url,score:overlapCount(title+" "+description,terms)*4}
 }).filter(x=>safeURL(x.url)&&x.score>=2&&!BAD_TERMS.some(t=>(x.title+" "+x.description).toLowerCase().includes(t))).sort((a,b)=>b.score-a.score);
 }
 
-function openViewer(url){
-document.getElementById("viewerImage").src=url;
-document.getElementById("viewer").classList.add("open");
-}
-function closeViewer(){document.getElementById("viewer").classList.remove("open");}
-
 async function showImages(target,q){
 let items=[];
 try{items=await searchWikimediaImages(q)}catch{}
 if(!items.length){try{items=await searchPuriliImages(q)}catch{}}
 const sec=addSection(target,"IMAGES");
-if(!items.length){sec.innerHTML+='<p class="empty">No relevant images found.</p>';return;}
+if(!items.length){
+sec.innerHTML+='<p class="empty">No relevant images found.</p>';
+return;
+}
 const grid=document.createElement("div");
 grid.className="mediaGrid";
 items.slice(0,9).forEach(x=>{
-const u=safeURL(x.url);if(!u)return;
-const card=document.createElement("div");card.className="mediaItem";
-const img=document.createElement("img");img.src=u;img.alt=x.title;img.loading="lazy";img.onclick=()=>openViewer(u);
-const cap=document.createElement("p");cap.textContent=x.title;
-card.append(img,cap);grid.appendChild(card);
+const u=safeURL(x.url);
+if(!u)return;
+const card=document.createElement("div");
+card.className="mediaItem";
+const img=document.createElement("img");
+img.src=u;
+img.alt=x.title;
+img.loading="lazy";
+img.onclick=()=>openViewer(u);
+img.onerror=()=>card.remove();
+const cap=document.createElement("p");
+cap.textContent=x.title;
+card.append(img,cap);
+grid.appendChild(card);
 });
 sec.appendChild(grid);
 }
@@ -394,20 +516,43 @@ try{
 const d=await getJSON(API+"/api/search?q="+encodeURIComponent("site:youtube.com/watch "+q)+"&page=1&exact=0");
 const terms=unique(tokens(q));
 const rs=(d.results||[]).filter(r=>/youtube\.com\/watch|youtu\.be\//i.test(r.url||"")&&overlapCount((r.title||"")+" "+(r.description||""),terms)>=1);
-if(!rs.length){sec.innerHTML+='<p class="empty">No relevant videos found.</p>';return;}
-const grid=document.createElement("div");grid.className="videoGrid";
-rs.slice(0,4).forEach(r=>{
-const u=safeURL(r.url);if(!u)return;
-let id="";
-try{const x=new URL(u);id=x.hostname.includes("youtu.be")?x.pathname.slice(1):x.searchParams.get("v")||"";}catch{}
-const card=document.createElement("div");card.className="videoItem";
-if(/^[\w-]{11}$/.test(id)){
-const f=document.createElement("iframe");f.src="https://www.youtube-nocookie.com/embed/"+id;f.title=r.title||"YouTube video";f.loading="lazy";f.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";f.allowFullscreen=true;card.appendChild(f);
+if(!rs.length){
+sec.innerHTML+='<p class="empty">No relevant videos found.</p>';
+return;
 }
-const a=document.createElement("a");a.href=u;a.target="_blank";a.rel="noopener noreferrer";a.textContent=r.title||"Watch video";card.appendChild(a);grid.appendChild(card);
+const grid=document.createElement("div");
+grid.className="videoGrid";
+rs.slice(0,4).forEach(r=>{
+const u=safeURL(r.url);
+if(!u)return;
+let id="";
+try{
+const x=new URL(u);
+id=x.hostname.includes("youtu.be")?x.pathname.slice(1):x.searchParams.get("v")||"";
+}catch{}
+const card=document.createElement("div");
+card.className="videoItem";
+if(/^[\w-]{11}$/.test(id)){
+const f=document.createElement("iframe");
+f.src="https://www.youtube-nocookie.com/embed/"+id;
+f.title=r.title||"YouTube video";
+f.loading="lazy";
+f.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+f.allowFullscreen=true;
+card.appendChild(f);
+}
+const a=document.createElement("a");
+a.href=u;
+a.target="_blank";
+a.rel="noopener noreferrer";
+a.textContent=r.title||"Watch video";
+card.appendChild(a);
+grid.appendChild(card);
 });
 sec.appendChild(grid);
-}catch{sec.innerHTML+='<p class="empty">Video search is temporarily unavailable.</p>';}
+}catch{
+sec.innerHTML+='<p class="empty">Video search is temporarily unavailable.</p>';
+}
 }
 
 function isImageOnly(q){
@@ -425,40 +570,78 @@ return [
 "What should I learn next about "+t+"?"
 ];
 }
+
 function addFollowups(target,q){
 const s=addSection(target,"YOU CAN ALSO ASK");
-const w=document.createElement("div");w.className="followups";
+const w=document.createElement("div");
+w.className="followups";
 makeFollowups(q).forEach(t=>{
-const b=document.createElement("button");b.className="followup";b.textContent=t;b.onclick=()=>ask(t);w.appendChild(b);
+const b=document.createElement("button");
+b.className="followup";
+b.textContent=t;
+b.onclick=()=>ask(t);
+w.appendChild(b);
 });
 s.appendChild(w);
 }
 
 function addTools(target,q,text){
-const w=document.createElement("div");w.className="answerTools";
-const c=document.createElement("button");c.className="smallBtn";c.textContent="Copy answer";
-c.onclick=async()=>{try{await navigator.clipboard.writeText(text);c.textContent="Copied";}catch{c.textContent="Copy unavailable";}};
-const sh=document.createElement("button");sh.className="smallBtn";sh.textContent="Share question";
-sh.onclick=async()=>{
-if(navigator.share){try{await navigator.share({title:"VEX AI",text:q,url:location.href});}catch{}}
-else{try{await navigator.clipboard.writeText(q);sh.textContent="Question copied";}catch{}}
+const w=document.createElement("div");
+w.className="answerTools";
+const c=document.createElement("button");
+c.className="smallBtn";
+c.textContent="Copy answer";
+c.onclick=async()=>{
+try{await navigator.clipboard.writeText(text);c.textContent="Copied";}
+catch{c.textContent="Copy unavailable";}
 };
-w.append(c,sh);target.appendChild(w);
+const sh=document.createElement("button");
+sh.className="smallBtn";
+sh.textContent="Share question";
+sh.onclick=async()=>{
+if(navigator.share){
+try{await navigator.share({title:"VEX AI",text:q,url:location.href});}catch{}
+}else{
+try{await navigator.clipboard.writeText(q);sh.textContent="Question copied";}
+catch{}
+}
+};
+w.append(c,sh);
+target.appendChild(w);
 }
 
-/* Chat messages and history */
+/* Chat messages */
 function addUserMessage(q){
-const row=document.createElement("div");row.className="message user";
-const b=document.createElement("div");b.className="userBubble";b.textContent=q;row.appendChild(b);chat.appendChild(row);
+const row=document.createElement("div");
+row.className="message user";
+const b=document.createElement("div");
+b.className="userBubble";
+b.textContent=q;
+row.appendChild(b);
+chat.appendChild(row);
 mainArea.scrollTop=mainArea.scrollHeight;
-const h=document.createElement("div");h.className="historyItem";h.textContent=q;h.title=q;
-h.onclick=()=>{newChat();ask(q);closeSidebar();};
+
+const h=document.createElement("div");
+h.className="historyItem";
+h.textContent=q;
+h.title=q;
+h.onclick=()=>{
+newChat();
+ask(q);
+closeSidebar();
+};
 historyList.prepend(h);
 while(historyList.children.length>30)historyList.lastElementChild.remove();
 }
+
 function addAssistantMessage(){
-const r=document.createElement("div");r.className="message";
-const b=document.createElement("div");b.className="answer";r.appendChild(b);chat.appendChild(r);return b;
+const r=document.createElement("div");
+r.className="message";
+const b=document.createElement("div");
+b.className="answer";
+r.appendChild(b);
+chat.appendChild(r);
+return b;
 }
 
 /* Web search */
@@ -477,9 +660,20 @@ sendButton.disabled=true;
 addUserMessage(q);
 
 const body=addAssistantMessage();
-body.innerHTML='<div class="loading">VEX is searching and preparing an explanation...</div>';
+body.innerHTML='<div class="loading">'+(isImageOnly(q)?'Generating image...':'VEX is searching and preparing an explanation...')+'</div>';
 
 try{
+// Android app: use the connected Python backend.
+if(NATIVE_APP){
+const status=body.querySelector(".loading");
+const data=await requestNative(q,status);
+renderNativeResult(body,data);
+mainArea.scrollTop=mainArea.scrollHeight;
+sendButton.disabled=false;
+input.focus();
+return;
+}
+
 const topic=topicPhrase(q);
 const imageOnly=isImageOnly(q);
 const videoOnly=isVideoOnly(q);
@@ -503,13 +697,18 @@ return;
 
 const batches=await Promise.allSettled(unique([q,topic]).map(searchResults));
 let rawResults=[];
-batches.forEach(x=>{if(x.status==="fulfilled")rawResults.push(...x.value);});
+batches.forEach(x=>{
+if(x.status==="fulfilled")rawResults.push(...x.value);
+});
 
 const map=new Map();
 rawResults.forEach(r=>{
-const u=safeURL(r.url);if(!u)return;
+const u=safeURL(r.url);
+if(!u)return;
 const old=map.get(u);
-if(!old||String(r.description||"").length>String(old.description||"").length)map.set(u,{...r,url:u});
+if(!old||String(r.description||"").length>String(old.description||"").length){
+map.set(u,{...r,url:u});
+}
 });
 
 const selected=[...map.values()]
@@ -519,8 +718,11 @@ const selected=[...map.values()]
 .sort((a,b)=>b.score-a.score).slice(0,6);
 
 const contexts=await Promise.all(selected.slice(0,5).map(async r=>{
-try{return {...await getJSON(API+"/api/context?url="+encodeURIComponent(r.url)),_result:r};}
-catch{return {...r,summary:r.description||"",content:"",passages:[],_result:r};}
+try{
+return {...await getJSON(API+"/api/context?url="+encodeURIComponent(r.url)),_result:r};
+}catch{
+return {...r,summary:r.description||"",content:"",passages:[],_result:r};
+}
 }));
 
 const evidence=makeEvidence(contexts,terms);
@@ -539,15 +741,21 @@ addTools(body,q,body.innerText);
 
 if(selected.length){
 const ss=addSection(body,"WEB SOURCES");
-const wrap=document.createElement("div");wrap.className="sources";
-selected.slice(0,4).forEach(s=>{const h=sourceHTML(s);if(h)wrap.insertAdjacentHTML("beforeend",h);});
+const wrap=document.createElement("div");
+wrap.className="sources";
+selected.slice(0,4).forEach(s=>{
+const h=sourceHTML(s);
+if(h)wrap.insertAdjacentHTML("beforeend",h);
+});
 if(wrap.children.length)ss.appendChild(wrap);
 else ss.innerHTML+='<p class="empty">No relevant source links found.</p>';
 }
 
 await showImages(body,topic);
 
-if(/\b(video|videos|watch|youtube|clip|documentary)\b/i.test(q))await showVideos(body,topic);
+if(/\b(video|videos|watch|youtube|clip|documentary)\b/i.test(q)){
+await showVideos(body,topic);
+}
 
 addFollowups(body,q);
 
@@ -569,7 +777,7 @@ closeSidebar();
 input.focus();
 }
 
-/* Sidebar controls */
+/* Sidebar */
 function closeSidebar(){
 sidebar.classList.remove("open");
 overlay.classList.remove("open");
@@ -579,6 +787,7 @@ document.getElementById("menuButton").onclick=()=>{
 sidebar.classList.toggle("open");
 overlay.classList.toggle("open");
 };
+
 overlay.onclick=closeSidebar;
 document.getElementById("newChat").onclick=newChat;
 
@@ -594,7 +803,10 @@ ask(input.value);
 });
 
 document.addEventListener("keydown",e=>{
-if(e.key==="Escape"){closeViewer();closeSidebar();}
+if(e.key==="Escape"){
+closeViewer();
+closeSidebar();
+}
 });
 </script>
 </body>
