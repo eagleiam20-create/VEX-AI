@@ -10,8 +10,7 @@ dependencies = [
     "flet-webview",
     "requests",
     "beautifulsoup4",
-    "ddgs",
-    "vex-native-ads @ git+https://github.com/eagleiam20-create/VEX-AI.git@main#subdirectory=vex_native_ads"
+    "ddgs"
 ]
 
 [dependency-groups]
@@ -27,6 +26,3 @@ description = "Independent AI Assistant"
 
 [tool.flet.app]
 module = "vex_ui"
-
-[tool.flet.android.meta_data]
-"com.google.android.gms.ads.APPLICATION_ID" = "ca-app-pub-9779772194429691~7446823637"
