@@ -1,4 +1,3 @@
-
 import 'package:flet/flet.dart';
 import 'package:flutter/widgets.dart';
 
@@ -9,6 +8,7 @@ class Extension extends FletExtension {
   Widget? createWidget(Key? key, Control control) {
     if (control.type == "VexNativeAd") {
       return VexNativeAdControl(
+        key: key,
         control: control,
       );
     }
