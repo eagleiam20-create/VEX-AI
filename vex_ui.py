@@ -13,7 +13,6 @@ from vex_search import (
     search_images,
 )
 
-
 AD_UNIT_ID = "ca-app-pub-9779772194429691/6487151094"
 
 # Keep test mode enabled during development.
@@ -76,6 +75,7 @@ def main(page: ft.Page):
                     },
                 )
 
+            # Start processing
             await progress("Understanding your question...")
 
             await progress("Searching the web...")
@@ -124,7 +124,8 @@ def main(page: ft.Page):
                 pages,
             )
 
-            await progress("Finding related images...")
+            # Image search
+            await progress("Generating image...")
 
             images = await asyncio.to_thread(
                 search_images,
