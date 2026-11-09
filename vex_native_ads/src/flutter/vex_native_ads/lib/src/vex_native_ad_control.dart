@@ -1,3 +1,4 @@
+
 import 'package:flet/flet.dart';
 import 'package:flutter/widgets.dart';
 import 'package:material_ui/material_ui.dart';
@@ -22,6 +23,7 @@ class VexNativeAdControl extends StatefulWidget {
 class _VexNativeAdControlState
     extends State<VexNativeAdControl> {
   NativeAd? _nativeAd;
+
   bool _isLoaded = false;
   bool _hasFailed = false;
 
@@ -42,6 +44,8 @@ class _VexNativeAdControlState
         testMode ? _testAdUnitId : liveUnitId;
 
     if (adUnitId.isEmpty) {
+      debugPrint('VEX Native Ad: Ad Unit ID is empty.');
+
       if (mounted) {
         setState(() => _hasFailed = true);
       }
@@ -56,23 +60,31 @@ class _VexNativeAdControlState
       final ad = NativeAd(
         adUnitId: adUnitId,
         request: const AdRequest(),
+
         nativeTemplateStyle: NativeTemplateStyle(
           templateType: TemplateType.small,
-          mainBackgroundColor: const Color(0xFF101010),
+
+          mainBackgroundColor:
+              const Color(0xFF101010),
+
           cornerRadius: 10,
+
           primaryTextStyle: NativeTemplateTextStyle(
             textColor: const Color(0xFFF5F5F5),
             style: NativeTemplateFontStyle.bold,
             size: 14,
           ),
+
           secondaryTextStyle: NativeTemplateTextStyle(
             textColor: const Color(0xFFBDBDBD),
             size: 11,
           ),
+
           tertiaryTextStyle: NativeTemplateTextStyle(
             textColor: const Color(0xFF888888),
             size: 10,
           ),
+
           callToActionTextStyle: NativeTemplateTextStyle(
             textColor: const Color(0xFF000000),
             backgroundColor: const Color(0xFFFFFFFF),
@@ -80,29 +92,61 @@ class _VexNativeAdControlState
             size: 11,
           ),
         ),
+
         listener: NativeAdListener(
           onAdLoaded: (Ad loadedAd) {
             if (!mounted) {
               loadedAd.dispose();
               return;
             }
-            setState(() => _isLoaded = true);
+
+            debugPrint('VEX Native Ad loaded successfully.');
+
+            setState(() {
+              _isLoaded = true;
+              _hasFailed = false;
+            });
           },
-          onAdFailedToLoad: (Ad failedAd, LoadAdError error) {
+
+          onAdFailedToLoad: (
+            Ad failedAd,
+            LoadAdError error,
+          ) {
             failedAd.dispose();
+
+            if (identical(_nativeAd, failedAd)) {
+              _nativeAd = null;
+            }
+
+            debugPrint(
+              'VEX Native Ad failed: $error',
+            );
+
             if (mounted) {
-              setState(() => _hasFailed = true);
+              setState(() {
+                _isLoaded = false;
+                _hasFailed = true;
+              });
             }
           },
         ),
       );
 
       _nativeAd = ad;
-      ad.load();
-    } catch (error) {
+      await ad.load();
+
+    } catch (error, stackTrace) {
       debugPrint('VEX Native Ad error: $error');
+      debugPrint('$stackTrace');
+
+      _nativeAd?.dispose();
+      _nativeAd = null;
+
       if (mounted) {
-        setState(() => _hasFailed = true);
+        setState(() {
+          _isLoaded = false;
+          _hasFailed = true;
+        });
       }
     }
   }
@@ -110,6 +154,8 @@ class _VexNativeAdControlState
   @override
   void dispose() {
     _nativeAd?.dispose();
+    _nativeAd = null;
+
     super.dispose();
   }
 
@@ -124,7 +170,9 @@ class _VexNativeAdControlState
       content = SizedBox(
         width: double.infinity,
         height: adHeight,
-        child: AdWidget(ad: _nativeAd!),
+        child: AdWidget(
+          ad: _nativeAd!,
+        ),
       );
     } else if (_hasFailed) {
       content = const SizedBox.shrink();
