@@ -6,16 +6,16 @@ import flet as ft
 import flet_webview as fwv
 
 from vex_native_ads import VexNativeAd
+
 from vex_search import (
     search_web,
     read_page,
     make_answer,
     search_images,
+    is_image_request,
 )
 
 AD_UNIT_ID = "ca-app-pub-9779772194429691/6487151094"
-
-# Keep test mode enabled during development.
 AD_TEST_MODE = True
 
 
@@ -75,7 +75,60 @@ def main(page: ft.Page):
                     },
                 )
 
-            # Start processing
+            # IMAGE REQUEST
+            if is_image_request(query):
+
+                await progress("Generating image...")
+
+                images = await asyncio.to_thread(
+                    search_images,
+                    query,
+                    4,
+                )
+
+                normalized_images = []
+
+                for item in images:
+                    image_url = (
+                        item.get("image")
+                        or item.get("url")
+                        or ""
+                    )
+
+                    if not image_url:
+                        continue
+
+                    normalized_images.append({
+                        "title": item.get("title", "Image"),
+                        "image": image_url,
+                        "url": image_url,
+                        "source": item.get("source", ""),
+                    })
+
+                answer = (
+                    "Here are images related to your request."
+                    if normalized_images
+                    else
+                    "I couldn't find images. Please try another description."
+                )
+
+                await progress("Preparing your answer...")
+
+                await dispatch(
+                    "vex-native-result",
+                    {
+                        "id": request_id,
+                        "data": {
+                            "answer": answer,
+                            "results": [],
+                            "images": normalized_images,
+                        },
+                    },
+                )
+
+                return
+
+            # NORMAL WEB REQUEST
             await progress("Understanding your question...")
 
             await progress("Searching the web...")
@@ -93,8 +146,8 @@ def main(page: ft.Page):
                         "id": request_id,
                         "data": {
                             "answer": (
-                                "I couldn't find web results for this "
-                                "question. Please try different keywords."
+                                "I couldn't find web results. "
+                                "Please try different keywords."
                             ),
                             "results": [],
                             "images": [],
@@ -124,51 +177,22 @@ def main(page: ft.Page):
                 pages,
             )
 
-            # Image search
-            await progress("Generating image...")
-
-            images = await asyncio.to_thread(
-                search_images,
-                query,
-                4,
-            )
-
             normalized_results = []
 
             for item in results:
                 url = item.get("url") or item.get("href") or ""
 
                 if url:
-                    normalized_results.append(
-                        {
-                            "title": item.get("title") or "Web result",
-                            "url": url,
-                            "description": (
-                                item.get("snippet")
-                                or item.get("description")
-                                or ""
-                            ),
-                            "source": "WEB RESULT",
-                        }
-                    )
-
-            normalized_images = []
-
-            for item in images:
-                image_url = (
-                    item.get("image")
-                    or item.get("url")
-                    or ""
-                )
-
-                if image_url:
-                    normalized_images.append(
-                        {
-                            "title": item.get("title") or "Related image",
-                            "image": image_url,
-                            "url": image_url,
-                        }
-                    )
+                    normalized_results.append({
+                        "title": item.get("title", "Web result"),
+                        "url": url,
+                        "description": (
+                            item.get("snippet")
+                            or item.get("description")
+                            or ""
+                        ),
+                        "source": "WEB RESULT",
+                    })
 
             await progress("Preparing your answer...")
 
@@ -177,13 +201,9 @@ def main(page: ft.Page):
                 {
                     "id": request_id,
                     "data": {
-                        "answer": (
-                            answer
-                            or "I found sources, but couldn't extract "
-                            "a useful answer."
-                        ),
+                        "answer": answer,
                         "results": normalized_results,
-                        "images": normalized_images,
+                        "images": [],
                     },
                 },
             )
