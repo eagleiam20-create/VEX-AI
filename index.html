@@ -56,9 +56,11 @@ button,textarea{font:inherit}button{cursor:pointer}
 .image-card button{display:block;width:100%;padding:0;border:0;background:transparent;color:#ddd;text-align:left}
 .image-card small{display:block;padding:7px 8px;color:#888;font-size:10px;line-height:1.4}
 .videos{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.video-card{background:#050505;border:1px solid #292929;border-radius:12px;overflow:hidden}
+.video-card{background:#050505;border:1px solid #292929;border-radius:12px;overflow:hidden;transition:border-color .2s}
+.video-card:hover{border-color:#777}
 .video-card button{width:100%;height:100%;border:0;background:transparent;color:#fff;text-align:left;padding:0}
 .video-card img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#111}
+.video-thumb{width:100%;aspect-ratio:16/9;background:#101010;display:flex;align-items:center;justify-content:center;color:#fff;font-size:34px}
 .video-card strong{display:block;padding:10px;font-size:12px;line-height:1.5}
 .video-card small{display:block;padding:0 10px 10px;color:#888;font-size:10px}
 .followups{display:flex;flex-wrap:wrap;gap:8px}
@@ -72,7 +74,7 @@ button,textarea{font:inherit}button{cursor:pointer}
 .viewer-inner video{width:min(100%,900px);max-height:75vh;background:#111}
 .viewer-caption{color:#ddd;font-size:12px;text-align:center}
 .viewer-close{position:absolute;top:14px;right:18px;border:1px solid #555;background:#111;color:#fff;border-radius:50%;width:42px;height:42px;font-size:23px}
-.viewer-source{color:#aaa;font-size:12px;text-decoration:underline}
+.viewer-status{color:#999;font-size:11px;text-align:center}
 .progress{color:#aaa;font-size:13px}
 .progress:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#fff;margin-right:10px;animation:pulse 1s infinite}
 @keyframes pulse{50%{opacity:.2}}
@@ -256,12 +258,52 @@ async function getInfocard(query){try{return await fetchJSON('/api/infocard?q='+
 function isImageOnlyRequest(q){return /\b(images?|pictures?|photos?)\b/i.test(q)&&/\b(only|just|show|give|send|find|display)\b/i.test(q)&&!/\b(video|videos)\b/i.test(q)}
 function isVideoRequest(q){return /\b(video|videos|youtube|vimeo|dailymotion|watch|clip|documentary|trailer)\b/i.test(q)||/\b(वीडियो|यूट्यूब)\b/i.test(q)}
 function mediaQuery(q){
-return q.replace(/\b(show|give|send|find|display|me|some|only|just|images?|pictures?|photos?|videos?|clips?|documentary|trailer|youtube|vimeo|dailymotion|watch|play|of|about|please)\b/gi,' ')
-.replace(/\b(dikhao|dikhana|dikha|chalao|dekhna|dekhne|mujhe|koi|ek|ka|ki|ke)\b/gi,' ')
+return q.replace(/\b(show|give|send|find|display|me|some|only|just|images?|pictures?|photos?|videos?|clips?|documentary|trailer|youtube|vimeo|dailymotion|watch|play|of|about|please|from|website|site)\b/gi,' ')
+.replace(/\b(dikhao|dikhana|dikha|chalao|dekhna|dekhne|mujhe|koi|ek|ka|ki|ke|se)\b/gi,' ')
 .replace(/\s+/g,' ').trim()||q;
 }
 
-/* VIDEO URL DETECTION AND PLAYER */
+/* VIDEO PLATFORM AND WEBSITE DETECTION */
+
+const VIDEO_SITES={
+ youtube:{domain:'youtube.com',label:'YouTube'},
+ vimeo:{domain:'vimeo.com',label:'Vimeo'},
+ dailymotion:{domain:'dailymotion.com',label:'Dailymotion'},
+ bbc:{domain:'bbc.com',label:'BBC'},
+ cnn:{domain:'cnn.com',label:'CNN'},
+ ndtv:{domain:'ndtv.com',label:'NDTV'},
+ reuters:{domain:'reuters.com',label:'Reuters'},
+ guardian:{domain:'theguardian.com',label:'The Guardian'},
+ indiatoday:{domain:'indiatoday.in',label:'India Today'},
+ espn:{domain:'espn.com',label:'ESPN'},
+ aljazeera:{domain:'aljazeera.com',label:'Al Jazeera'},
+ nbc:{domain:'nbcnews.com',label:'NBC News'},
+ sky:{domain:'news.sky.com',label:'Sky News'}
+};
+
+function getRequestedVideoSite(query){
+const q=query.toLowerCase();
+if(/\byoutube\b|यूट्यूब/.test(q))return'youtube';
+if(/\bvimeo\b/.test(q))return'vimeo';
+if(/\bdailymotion\b/.test(q))return'dailymotion';
+
+for(const key of Object.keys(VIDEO_SITES)){
+if(key==='youtube'||key==='vimeo'||key==='dailymotion')continue;
+const site=VIDEO_SITES[key];
+if(q.includes(key)||q.includes(site.label.toLowerCase()))return key;
+}
+return'all';
+}
+
+function getSearchRows(data){
+if(Array.isArray(data.results))return data.results;
+if(Array.isArray(data.items))return data.items;
+if(Array.isArray(data.web?.results))return data.web.results;
+if(Array.isArray(data.organic))return data.organic;
+if(Array.isArray(data.data?.results))return data.data.results;
+return[];
+}
+
 function identifyVideo(raw){
 if(!raw)return null;
 try{
@@ -270,60 +312,76 @@ const host=u.hostname.toLowerCase().replace(/^www\./,'');
 const path=u.pathname;
 let id='';
 
-if(host==='youtu.be'){id=path.split('/').filter(Boolean)[0]||'';if(/^[\w-]{11}$/.test(id))return{type:'youtube',id,embed:'https://www.youtube-nocookie.com/embed/'+id,watch:'https://www.youtube.com/watch?v='+id}}
-if(host.endsWith('youtube.com')||host==='youtube.com'||host==='m.youtube.com'){
+if(host==='youtu.be'){
+id=path.split('/').filter(Boolean)[0]||'';
+if(/^[\w-]{11}$/.test(id))return{type:'youtube',id,embed:'https://www.youtube-nocookie.com/embed/'+id,watch:'https://www.youtube.com/watch?v='+id,thumbnail:'https://i.ytimg.com/vi/'+id+'/hqdefault.jpg'};
+}
+if(host==='youtube.com'||host.endsWith('.youtube.com')){
 id=u.searchParams.get('v')||'';
 if(!id&&path.includes('/shorts/'))id=path.split('/shorts/')[1]?.split('/')[0]||'';
 if(!id&&path.includes('/embed/'))id=path.split('/embed/')[1]?.split('/')[0]||'';
-if(/^[\w-]{11}$/.test(id))return{type:'youtube',id,embed:'https://www.youtube-nocookie.com/embed/'+id,watch:'https://www.youtube.com/watch?v='+id};
+if(/^[\w-]{11}$/.test(id))return{type:'youtube',id,embed:'https://www.youtube-nocookie.com/embed/'+id,watch:'https://www.youtube.com/watch?v='+id,thumbnail:'https://i.ytimg.com/vi/'+id+'/hqdefault.jpg'};
 }
 if(host==='vimeo.com'||host.endsWith('.vimeo.com')){
 const m=path.match(/\/(?:video\/)?(\d+)/);
-if(m)return{type:'vimeo',id:m[1],embed:'https://player.vimeo.com/video/'+m[1],watch:u.href};
+if(m)return{type:'vimeo',id:m[1],embed:'https://player.vimeo.com/video/'+m[1],watch:u.href,thumbnail:'https://vumbnail.com/'+m[1]+'.jpg'};
 }
 if(host.includes('dailymotion.com')||host==='dai.ly'){
 let m=path.match(/\/video\/([a-zA-Z0-9]+)/);
 if(host==='dai.ly')m=path.match(/\/([a-zA-Z0-9]+)/);
-if(m)return{type:'dailymotion',id:m[1],embed:'https://www.dailymotion.com/embed/video/'+m[1],watch:u.href};
+if(m)return{type:'dailymotion',id:m[1],embed:'https://www.dailymotion.com/embed/video/'+m[1],watch:u.href,thumbnail:''};
 }
-if(/\.(mp4|webm|ogg)(?:$|\?)/i.test(u.href))return{type:'direct',id:u.href,embed:u.href,watch:u.href};
-return{type:'page',id:u.href,embed:u.href,watch:u.href};
+if(/\.(mp4|webm|ogg)(?:$|\?)/i.test(u.href)){
+return{type:'direct',id:u.href,embed:u.href,watch:u.href,thumbnail:''};
+}
+return null;
 }catch(e){return null}
 }
-function openViewer(video,title){
-const viewer=document.getElementById('mediaViewer'),inner=document.getElementById('viewerInner');
-inner.textContent='';
-if(video.type==='direct'){
-const player=document.createElement('video');player.src=video.embed;player.controls=true;player.autoplay=true;player.playsInline=true;inner.appendChild(player);
-}else{
-const frame=document.createElement('iframe');
-frame.src=video.embed+(video.embed.includes('?')?'&':'?')+'autoplay=1';
-frame.title=title||'VEX video';
-frame.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen';
-frame.allowFullscreen=true;inner.appendChild(frame);
-}
-const caption=document.createElement('div');caption.className='viewer-caption';caption.textContent=title||'Video';inner.appendChild(caption);
-const link=document.createElement('a');link.className='viewer-source';link.href=video.watch;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Open original video website';inner.appendChild(link);
-viewer.classList.add('open');document.body.style.overflow='hidden';
-}
-function closeViewer(){document.getElementById('mediaViewer').classList.remove('open');document.getElementById('viewerInner').textContent='';document.body.style.overflow=''}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeViewer()});
 
-/* IMAGE SEARCH */
-async function searchImages(query){
-try{const d=await fetchJSON('/api/images?q='+encodeURIComponent(query)+'&page=1',10000);
-return(Array.isArray(d.images)?d.images:[]).slice(0,8).map(x=>({title:x.title||'Image',image:absoluteURL(x.thumbUrl||x.url),url:absoluteURL(x.url||x.thumbUrl),license:x.license||'',source:x.source||'Image source',sourceUrl:absoluteURL(x.sourceUrl||x.pageUrl||x.sourcePage||'')})).filter(x=>x.image&&x.url)}
-catch(e){return[]}
+/* Extract actual media URLs if the search service provides them.
+   Normal article URLs are never treated as playable videos. */
+function extractPlayableFromResult(item){
+const candidates=[
+item.contentUrl,
+item.content_url,
+item.videoUrl,
+item.video_url,
+item.embedUrl,
+item.embed_url,
+item.mediaUrl,
+item.media_url,
+item.video?.url,
+item.video?.contentUrl,
+item.video?.embedUrl,
+item.media?.url,
+item.media?.contentUrl
+].filter(x=>typeof x==='string'&&x.trim());
+
+const pageURL=item.url||item.link||item.href||'';
+if(pageURL)candidates.unshift(pageURL);
+
+for(const candidate of candidates){
+const v=identifyVideo(candidate);
+if(v)return v;
+}
+return null;
 }
 
-/* GENERAL WEB VIDEO SEARCH - NOT YOUTUBE ONLY */
-function getSearchRows(data){
-if(Array.isArray(data.results))return data.results;
-if(Array.isArray(data.items))return data.items;
-if(Array.isArray(data.web?.results))return data.web.results;
-if(Array.isArray(data.organic))return data.organic;
-return[];
+function matchesRequestedSite(url,siteKey,video){
+if(siteKey==='all')return true;
+const site=VIDEO_SITES[siteKey];
+if(!site)return false;
+
+if(video.type==='youtube')return siteKey==='youtube';
+if(video.type==='vimeo')return siteKey==='vimeo';
+if(video.type==='dailymotion')return siteKey==='dailymotion';
+
+try{
+const host=new URL(url).hostname.toLowerCase();
+return host===site.domain||host.endsWith('.'+site.domain);
+}catch(e){return false}
 }
+
 function videoRelevance(item,topic,video){
 const text=((item.title||'')+' '+(item.description||item.snippet||'')+' '+(item.url||'')).toLowerCase();
 const words=getWords(topic);
@@ -334,40 +392,142 @@ if(video.type!=='page')score+=4;
 if(/\b(sign in|login|subscribe to watch)\b/i.test(text))score-=2;
 return score;
 }
+
 async function searchVideos(query){
+const siteKey=getRequestedVideoSite(query);
 const topic=mediaQuery(query);
-const searches=[
-topic+' video',
-topic+' watch online video',
-topic+' tutorial video'
-];
+const searches=[];
+
+if(siteKey==='youtube'){
+searches.push('site:youtube.com/watch '+topic+' video');
+searches.push('site:youtu.be '+topic);
+}else if(siteKey==='vimeo'){
+searches.push('site:vimeo.com '+topic+' video');
+}else if(siteKey==='dailymotion'){
+searches.push('site:dailymotion.com/video '+topic+' video');
+}else if(siteKey!=='all'){
+const domain=VIDEO_SITES[siteKey].domain;
+searches.push('site:'+domain+' '+topic+' video');
+searches.push('site:'+domain+' '+topic+' watch');
+}else{
+searches.push(topic+' video');
+searches.push(topic+' watch online video');
+searches.push(topic+' tutorial video');
+}
+
 const all=[];
 for(const term of searches){
 try{
 const d=await fetchWithRetry('/api/search?q='+encodeURIComponent(term)+'&page=1&exact=0',2);
 all.push(...getSearchRows(d));
-}catch(e){console.warn('Video search query failed:',term,e.message)}
+}catch(e){console.warn('Video search failed:',term,e.message)}
 }
+
 const seen=new Set(),found=[];
-for(const x of all){
-const url=String(x.url||x.link||x.href||'');
-if(!validURL(url))continue;
-const video=identifyVideo(url);
+for(const item of all){
+const pageURL=String(item.url||item.link||item.href||'');
+if(!validURL(pageURL))continue;
+
+const video=extractPlayableFromResult(item);
 if(!video)continue;
-const key=video.type==='youtube'?'yt:'+video.id:video.type==='vimeo'?'vm:'+video.id:video.type==='dailymotion'?'dm:'+video.id:video.watch;
+
+if(!matchesRequestedSite(pageURL,siteKey,video))continue;
+
+const key=video.type+':'+video.id;
 if(seen.has(key))continue;
-const title=String(x.title||x.name||'Video result');
-const description=String(x.description||x.snippet||x.content||'');
-const score=videoRelevance({...x,url,title,description},topic,video);
+
+const title=String(item.title||item.name||'Video result');
+const description=String(item.description||item.snippet||item.content||'');
+const score=videoRelevance({...item,url:pageURL,title,description},topic,video);
+
 if(score<1)continue;
+
 seen.add(key);
-found.push({video,title,description,url:video.watch,source:new URL(url).hostname.replace(/^www\./,''),score});
+let source=video.type.toUpperCase();
+try{source=new URL(pageURL).hostname.replace(/^www\./,'')}catch(e){}
+
+found.push({video,title,description,url:video.watch,source,score});
 }
 found.sort((a,b)=>b.score-a.score);
 return found.slice(0,10);
 }
 
+/* PLAYER: NO EXTERNAL WEBSITE LINK */
+
+function openViewer(video,title){
+if(!video||!video.embed)return;
+
+const viewer=document.getElementById('mediaViewer');
+const inner=document.getElementById('viewerInner');
+inner.textContent='';
+
+if(video.type==='direct'){
+const player=document.createElement('video');
+player.src=video.embed;
+player.controls=true;
+player.autoplay=true;
+player.playsInline=true;
+player.preload='metadata';
+player.style.width='100%';
+player.style.maxHeight='75vh';
+player.onerror=()=>{
+const status=document.createElement('div');
+status.className='viewer-status';
+status.textContent='This video format or source is not supported by the in-app player.';
+inner.appendChild(status);
+};
+inner.appendChild(player);
+}else{
+const frame=document.createElement('iframe');
+frame.src=video.embed+(video.embed.includes('?')?'&':'?')+'autoplay=1';
+frame.title=title||'VEX AI video';
+frame.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen';
+frame.allowFullscreen=true;
+frame.referrerPolicy='strict-origin-when-cross-origin';
+inner.appendChild(frame);
+}
+
+const caption=document.createElement('div');
+caption.className='viewer-caption';
+caption.textContent=title||'Video';
+inner.appendChild(caption);
+
+const status=document.createElement('div');
+status.className='viewer-status';
+status.textContent='Playing inside VEX AI · If the publisher blocks embedding, playback may not be available.';
+inner.appendChild(status);
+
+viewer.classList.add('open');
+document.body.style.overflow='hidden';
+}
+
+function closeViewer(){
+const viewer=document.getElementById('mediaViewer');
+const inner=document.getElementById('viewerInner');
+viewer.classList.remove('open');
+inner.textContent='';
+document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeViewer()});
+
+/* IMAGE SEARCH */
+
+async function searchImages(query){
+try{
+const d=await fetchJSON('/api/images?q='+encodeURIComponent(query)+'&page=1',10000);
+return(Array.isArray(d.images)?d.images:[]).slice(0,8).map(x=>({
+title:x.title||'Image',
+image:absoluteURL(x.thumbUrl||x.url),
+url:absoluteURL(x.url||x.thumbUrl),
+license:x.license||'',
+source:x.source||'Image source',
+sourceUrl:absoluteURL(x.sourceUrl||x.pageUrl||x.sourcePage||'')
+})).filter(x=>x.image&&x.url);
+}catch(e){return[]}
+}
+
 /* NORMAL ANSWER BUILDER */
+
 function answerFromSources(query,parts,card){
 const instant=card?.instantAnswer?.answer;
 const facts=Array.isArray(card?.facts)?card.facts.filter(x=>x&&x.label&&x.value).slice(0,5):[];
@@ -382,128 +542,327 @@ return out.trim();
 }
 function makeFollowups(query,results){
 const title=(results||[]).map(x=>x.title||'').find(Boolean)||query;
-let topic=title.replace(/\s[-|:].*$/,'').trim();if(topic.length>68)topic=topic.slice(0,68).trim();if(!topic)topic=query;
+let topic=title.replace(/\s[-|:].*$/,'').trim();
+if(topic.length>68)topic=topic.slice(0,68).trim();
+if(!topic)topic=query;
 return[`How does ${topic} work?`,`What are the benefits and challenges of ${topic}?`,`What are the latest developments related to ${topic}?`].slice(0,3);
 }
 
 /* SEARCH MODES */
-async function runImageSearch(query){return{mode:'images',images:await searchImages(mediaQuery(query))}}
+
+async function runImageSearch(query){
+return{mode:'images',images:await searchImages(mediaQuery(query))};
+}
 async function runVideoSearch(query,progress){
-progress.textContent='Searching videos across the web...';
+progress.textContent='Finding playable videos...';
 const videos=await searchVideos(query);
-return{mode:'videos',videos,note:videos.length?'Results are collected from public web search pages. Some websites block in-app embedding; use the original website link if playback is blocked.':'No video pages were returned by the search service. Try a shorter topic or another phrase.'};
+return{
+mode:'videos',
+videos,
+note:videos.length
+?'Select a video to play it inside VEX. Only supported playable video sources are shown.'
+:'No supported in-app playable videos were found. Try YouTube, Vimeo, Dailymotion, or a different search phrase.'
+};
 }
 async function runSearch(query,progress){
 progress.textContent='Searching the web...';
-const [searchData,card]=await Promise.all([fetchWithRetry('/api/search?q='+encodeURIComponent(query)+'&page=1&exact=0',2),getInfocard(query)]);
+const [searchData,card]=await Promise.all([
+fetchWithRetry('/api/search?q='+encodeURIComponent(query)+'&page=1&exact=0',2),
+getInfocard(query)
+]);
 const results=getSearchRows(searchData);
-if(!results.length)return{answer:card?.instantAnswer?.answer||'I could not find matching pages. Try a more specific question.',results:[],images:[],followups:[]};
+if(!results.length)return{
+answer:card?.instantAnswer?.answer||'I could not find matching pages. Try a more specific question.',
+results:[],images:[],followups:[]
+};
 progress.textContent='Reading relevant pages...';
 const selected=results.slice(0,5);
 const contexts=await Promise.all(selected.map(getContext));
-const parts=contexts.map((c,i)=>({title:c.title||selected[i].title||'Web source',text:c.text||selected[i].description||'',url:selected[i].url}));
+const parts=contexts.map((c,i)=>({
+title:c.title||selected[i].title||'Web source',
+text:c.text||selected[i].description||'',
+url:selected[i].url
+}));
 progress.textContent='Preparing explanation...';
 const answer=answerFromSources(query,parts,card)||'I found relevant pages, but their indexed text did not contain enough information. Open the sources below.';
 progress.textContent='Finding related images...';
 const images=await searchImages(query);
-return{answer,results:results.slice(0,8).map(x=>({title:x.title||'Web result',url:x.url||x.link||x.href,description:x.description||x.snippet||x.displayUrl||'',source:x.source||'WEB INDEX'})),images,followups:makeFollowups(query,results)};
+return{
+answer,
+results:results.slice(0,8).map(x=>({
+title:x.title||'Web result',
+url:x.url||x.link||x.href,
+description:x.description||x.snippet||x.displayUrl||'',
+source:x.source||'WEB INDEX'
+})),
+images,
+followups:makeFollowups(query,results)
+};
 }
 
 /* RENDER */
+
 function addSource(parent,item){
 if(!validURL(item.url))return;
-const a=document.createElement('a');a.className='source';a.href=absoluteURL(item.url);a.target='_blank';a.rel='noopener noreferrer';
-const tag=document.createElement('span');tag.className='tag';tag.textContent=item.source||'WEB SOURCE';
-const title=document.createElement('strong');title.textContent=item.title||'Web result';
-const small=document.createElement('small');small.textContent=item.description||'';
-a.append(tag,title,small);parent.appendChild(a);
+const a=document.createElement('a');
+a.className='source';
+a.href=absoluteURL(item.url);
+a.target='_blank';
+a.rel='noopener noreferrer';
+const tag=document.createElement('span');
+tag.className='tag';
+tag.textContent=item.source||'WEB SOURCE';
+const title=document.createElement('strong');
+title.textContent=item.title||'Web result';
+const small=document.createElement('small');
+small.textContent=item.description||'';
+a.append(tag,title,small);
+parent.appendChild(a);
 }
+
 function renderImages(reply,images){
-if(!images?.length){const e=document.createElement('div');e.textContent='No images were found for this search.';reply.appendChild(e);return}
+if(!images?.length){
+const e=document.createElement('div');
+e.textContent='No images were found for this search.';
+reply.appendChild(e);
+return;
+}
 addLabel(reply,'IMAGES');
-const gallery=document.createElement('div');gallery.className='images';
+const gallery=document.createElement('div');
+gallery.className='images';
 images.forEach(item=>{
 if(!validURL(item.image))return;
-const card=document.createElement('div');card.className='image-card';
-const button=document.createElement('button');button.type='button';
-button.onclick=()=>{const v={type:'direct',embed:item.image,watch:item.sourceUrl||item.url};openViewer(v,item.title)};
-const img=document.createElement('img');img.src=item.image;img.alt=item.title||'Image';img.loading='lazy';img.onerror=()=>card.remove();
-const caption=document.createElement('div');caption.style.cssText='padding:7px 8px;font-size:11px';caption.textContent=item.title||'Image';
-button.append(img,caption);card.appendChild(button);
-if(item.license){const lic=document.createElement('small');lic.textContent='Licence: '+item.license+' · '+(item.source||'Source');card.appendChild(lic)}
+const card=document.createElement('div');
+card.className='image-card';
+const button=document.createElement('button');
+button.type='button';
+button.onclick=()=>{
+const viewer=document.getElementById('mediaViewer');
+const inner=document.getElementById('viewerInner');
+inner.textContent='';
+const img=document.createElement('img');
+img.src=item.image;
+img.alt=item.title||'Image';
+inner.appendChild(img);
+const caption=document.createElement('div');
+caption.className='viewer-caption';
+caption.textContent=item.title||'Image';
+inner.appendChild(caption);
+viewer.classList.add('open');
+document.body.style.overflow='hidden';
+};
+const img=document.createElement('img');
+img.src=item.image;
+img.alt=item.title||'Image';
+img.loading='lazy';
+img.onerror=()=>card.remove();
+const caption=document.createElement('div');
+caption.style.cssText='padding:7px 8px;font-size:11px';
+caption.textContent=item.title||'Image';
+button.append(img,caption);
+card.appendChild(button);
+if(item.license){
+const lic=document.createElement('small');
+lic.textContent='Licence: '+item.license+' · '+(item.source||'Source');
+card.appendChild(lic);
+}
 gallery.appendChild(card);
 });
 if(gallery.childElementCount)reply.appendChild(gallery);
 }
+
 function renderVideos(reply,videos){
-if(videos?.length){
-addLabel(reply,'VIDEOS FROM THE WEB');
-const grid=document.createElement('div');grid.className='videos';
+if(!videos?.length){
+const e=document.createElement('div');
+e.textContent='No supported playable videos were found. Try another topic or supported platform.';
+reply.appendChild(e);
+return;
+}
+
+addLabel(reply,'VIDEOS · PLAY INSIDE VEX');
+const grid=document.createElement('div');
+grid.className='videos';
+
 videos.forEach(v=>{
-const card=document.createElement('div');card.className='video-card';
-const button=document.createElement('button');button.type='button';button.onclick=()=>openViewer(v.video,v.title);
-let thumb='';
-if(v.video.type==='youtube')thumb='https://i.ytimg.com/vi/'+encodeURIComponent(v.video.id)+'/hqdefault.jpg';
-else if(v.video.type==='vimeo')thumb='https://vumbnail.com/'+encodeURIComponent(v.video.id)+'.jpg';
-if(thumb){
-const img=document.createElement('img');img.src=thumb;img.alt=v.title;img.loading='lazy';img.onerror=()=>img.style.display='none';button.appendChild(img);
-}
-const title=document.createElement('strong');title.textContent=v.title;
-const source=document.createElement('small');source.textContent=v.source||'Video website';
-button.append(title,source);card.appendChild(button);grid.appendChild(card);
-});
-reply.appendChild(grid);
+const card=document.createElement('div');
+card.className='video-card';
+const button=document.createElement('button');
+button.type='button';
+button.onclick=()=>openViewer(v.video,v.title);
+
+if(v.video.thumbnail){
+const img=document.createElement('img');
+img.src=v.video.thumbnail;
+img.alt=v.title;
+img.loading='lazy';
+img.onerror=()=>{
+const fallback=document.createElement('div');
+fallback.className='video-thumb';
+fallback.textContent='▶';
+img.replaceWith(fallback);
+};
+button.appendChild(img);
 }else{
-const e=document.createElement('div');e.textContent='No video pages were found. Try a more specific topic.';reply.appendChild(e);
+const fallback=document.createElement('div');
+fallback.className='video-thumb';
+fallback.textContent='▶';
+button.appendChild(fallback);
 }
+
+const title=document.createElement('strong');
+title.textContent=v.title;
+const source=document.createElement('small');
+source.textContent=(v.source||'VIDEO')+' · Play inside VEX';
+button.append(title,source);
+card.appendChild(button);
+grid.appendChild(card);
+});
+
+reply.appendChild(grid);
 }
+
+/* CHAT RESPONSE */
+
 function renderBot(data,save=true){
-const reply=document.createElement('div');reply.className='message bot';
-if(data.mode==='images'){renderImages(reply,data.images);chat.appendChild(reply);if(save)storeMessage({type:'bot',data});scrollDown();return}
+const reply=document.createElement('div');
+reply.className='message bot';
+
+if(data.mode==='images'){
+renderImages(reply,data.images);
+chat.appendChild(reply);
+if(save)storeMessage({type:'bot',data});
+scrollDown();
+return;
+}
+
 if(data.mode==='videos'){
 renderVideos(reply,data.videos);
-if(data.note){const note=document.createElement('div');note.style.cssText='color:#888;font-size:12px;margin-top:10px';note.textContent=data.note;reply.appendChild(note)}
-chat.appendChild(reply);if(save)storeMessage({type:'bot',data});scrollDown();return;
+if(data.note){
+const note=document.createElement('div');
+note.style.cssText='color:#888;font-size:12px;margin-top:10px';
+note.textContent=data.note;
+reply.appendChild(note);
 }
+chat.appendChild(reply);
+if(save)storeMessage({type:'bot',data});
+scrollDown();
+return;
+}
+
 addLabel(reply,'VEX AI');
-const answer=document.createElement('div');answer.className='answer';answer.textContent=data.answer||'No information found.';reply.appendChild(answer);
-if(data.results?.length){addLabel(reply,'WEB SOURCES');const grid=document.createElement('div');grid.className='sources';data.results.forEach(x=>addSource(grid,x));if(grid.childElementCount)reply.appendChild(grid)}
+const answer=document.createElement('div');
+answer.className='answer';
+answer.textContent=data.answer||'No information found.';
+reply.appendChild(answer);
+
+if(data.results?.length){
+addLabel(reply,'WEB SOURCES');
+const grid=document.createElement('div');
+grid.className='sources';
+data.results.forEach(x=>addSource(grid,x));
+if(grid.childElementCount)reply.appendChild(grid);
+}
+
 if(data.images?.length)renderImages(reply,data.images);
+
 if(data.followups?.length){
-addLabel(reply,'YOU MAY ALSO ASK');const follow=document.createElement('div');follow.className='followups';
-data.followups.forEach(q=>{const b=document.createElement('button');b.type='button';b.textContent=q;b.onclick=()=>quickAsk(q);follow.appendChild(b)});
+addLabel(reply,'YOU MAY ALSO ASK');
+const follow=document.createElement('div');
+follow.className='followups';
+data.followups.forEach(q=>{
+const b=document.createElement('button');
+b.type='button';
+b.textContent=q;
+b.onclick=()=>quickAsk(q);
+follow.appendChild(b);
+});
 reply.appendChild(follow);
 }
-const actions=document.createElement('div');actions.style.cssText='display:flex;gap:8px;margin-top:12px';
-const copy=document.createElement('button');copy.className='icon-btn';copy.style.fontSize='12px';copy.textContent='Copy answer';
+
+const actions=document.createElement('div');
+actions.style.cssText='display:flex;gap:8px;margin-top:12px';
+const copy=document.createElement('button');
+copy.className='icon-btn';
+copy.style.fontSize='12px';
+copy.textContent='Copy answer';
 copy.onclick=()=>copyText(data.answer||'').then(()=>copy.textContent='Copied').catch(()=>copy.textContent='Copy failed');
-actions.appendChild(copy);reply.appendChild(actions);
-chat.appendChild(reply);if(save)storeMessage({type:'bot',data});scrollDown();
+actions.appendChild(copy);
+reply.appendChild(actions);
+
+chat.appendChild(reply);
+if(save)storeMessage({type:'bot',data});
+scrollDown();
 }
 
 /* MAIN ROUTER */
+
 async function sendMessage(){
-const query=input.value.trim();if(!query||searching)return;
-searching=true;sendButton.disabled=true;addUser(query);input.value='';input.style.height='30px';
-const progress=document.createElement('div');progress.className='message bot progress';progress.textContent='Preparing your request...';chat.appendChild(progress);scrollDown();
+const query=input.value.trim();
+if(!query||searching)return;
+
+searching=true;
+sendButton.disabled=true;
+addUser(query);
+input.value='';
+input.style.height='30px';
+
+const progress=document.createElement('div');
+progress.className='message bot progress';
+progress.textContent='Preparing your request...';
+chat.appendChild(progress);
+scrollDown();
+
 try{
 let data;
-if(isVideoRequest(query))data=await runVideoSearch(query,progress);
-else if(isImageOnlyRequest(query)){progress.textContent='Searching images...';data=await runImageSearch(query)}
-else data=await runSearch(query,progress);
-progress.remove();renderBot(data,true);
+if(isVideoRequest(query)){
+data=await runVideoSearch(query,progress);
+}else if(isImageOnlyRequest(query)){
+progress.textContent='Searching images...';
+data=await runImageSearch(query);
+}else{
+data=await runSearch(query,progress);
+}
+
+progress.remove();
+renderBot(data,true);
+
 }catch(e){
 progress.classList.remove('progress');
 progress.textContent='VEX search connection error: '+(e.message||'Network request failed')+'. Please check your internet connection and try again.';
-const retry=document.createElement('button');retry.className='icon-btn';retry.textContent='↻ Retry';
-retry.onclick=()=>{progress.remove();input.value=query;sendMessage()};
+const retry=document.createElement('button');
+retry.className='icon-btn';
+retry.textContent='↻ Retry';
+retry.onclick=()=>{
+progress.remove();
+input.value=query;
+sendMessage();
+};
 progress.append(' ',retry);
-}finally{searching=false;sendButton.disabled=false;input.focus()}
+
+}finally{
+searching=false;
+sendButton.disabled=false;
+input.focus();
 }
-function quickAsk(text){input.value=text;sendMessage()}
+}
+
+function quickAsk(text){
+input.value=text;
+sendMessage();
+}
+
 sendButton.addEventListener('click',sendMessage);
-input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});
-input.addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,130)+'px'});
+input.addEventListener('keydown',e=>{
+if(e.key==='Enter'&&!e.shiftKey){
+e.preventDefault();
+sendMessage();
+}
+});
+input.addEventListener('input',function(){
+this.style.height='auto';
+this.style.height=Math.min(this.scrollHeight,130)+'px';
+});
+
 loadHistory();
 </script>
 </body>
