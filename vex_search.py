@@ -1,12 +1,19 @@
-# vex_search.py
-# VEX AI - Web Search + Images + Videos + Answer Extraction
+
+# ============================================================
+# VEX AI - LIVE INTERNET SEARCH ENGINE
+# Multi-website search + page reading + answer extraction
+# Images + Videos + Sources
+# ============================================================
 
 import re
+import ipaddress
+import socket
 import requests
+import concurrent.futures
+
 from bs4 import BeautifulSoup
 from ddgs import DDGS
 from urllib.parse import urlparse
-
 
 HEADERS = {
     "User-Agent": (
@@ -14,6 +21,10 @@ HEADERS = {
         "AppleWebKit/537.36 Chrome/120 Safari/537.36"
     )
 }
+
+SEARCH_LIMIT = 12
+PAGE_LIMIT = 8
+PAGE_CHAR_LIMIT = 14000
 
 STOPWORDS = {
     "what", "who", "when", "where", "why", "how", "is", "are",
@@ -27,6 +38,12 @@ STOPWORDS = {
     "kahan", "kyun", "batao", "mujhe", "kaise"
 }
 
+# ============================================================
+# BASIC HELPERS
+# ============================================================
+
+def clean_query(query):
+    return re.sub(r"\s+", " ", str(query or "")).strip()
 
 def valid_url(value):
     if not isinstance(value, str):
@@ -34,14 +51,57 @@ def valid_url(value):
 
     try:
         parsed = urlparse(value.strip())
-        return parsed.scheme in ("http", "https") and bool(parsed.netloc)
+
+        if parsed.scheme not in ("http", "https"):
+            return False
+
+        if not parsed.hostname:
+            return False
+
+        host = parsed.hostname.lower()
+
+        if host in ("localhost", "localhost.localdomain"):
+            return False
+
+        try:
+            addresses = socket.getaddrinfo(
+                host, None, type=socket.SOCK_STREAM
+            )
+
+            for address in addresses:
+                ip = ipaddress.ip_address(address[4][0])
+
+                if (
+                    ip.is_private
+                    or ip.is_loopback
+                    or ip.is_link_local
+                    or ip.is_reserved
+                    or ip.is_unspecified
+                ):
+                    return False
+
+        except socket.gaierror:
+            return False
+
+        return True
+
     except Exception:
         return False
 
+def get_keywords(query):
+    words = re.findall(
+        r"[a-zA-Z0-9\u0900-\u097F]+",
+        clean_query(query).lower()
+    )
 
-def clean_query(query):
-    return re.sub(r"\s+", " ", str(query or "")).strip()
+    return {
+        word for word in words
+        if len(word) > 2 and word not in STOPWORDS
+    }
 
+# ============================================================
+# REQUEST TYPE DETECTION
+# ============================================================
 
 def is_image_request(query):
     q = clean_query(query).lower()
@@ -63,7 +123,6 @@ def is_image_request(query):
 
     return any(word in q for word in keywords)
 
-
 def is_video_request(query):
     q = clean_query(query).lower()
 
@@ -78,19 +137,25 @@ def is_video_request(query):
 
     return any(word in q for word in keywords)
 
+# ============================================================
+# LIVE WEB SEARCH
+# Searches the wider web, not just Wikipedia.
+# ============================================================
 
-def search_web(query, limit=5):
+def search_web(query, limit=SEARCH_LIMIT):
     query = clean_query(query)
     results = []
+    seen = set()
 
     if not query:
         return results
 
     try:
-        with DDGS(timeout=20) as ddgs:
+        with DDGS(timeout=30) as ddgs:
             raw_results = ddgs.text(
                 query,
-                max_results=limit
+                max_results=limit,
+                safesearch="moderate"
             )
 
             for item in raw_results:
@@ -99,12 +164,28 @@ def search_web(query, limit=5):
                 if not valid_url(url):
                     continue
 
+                if url in seen:
+                    continue
+
+                seen.add(url)
+
+                domain = urlparse(url).netloc.lower()
+                domain = domain.removeprefix("www.")
+
                 results.append({
                     "title": item.get("title") or "Web result",
                     "url": url,
-                    "snippet": item.get("body") or item.get("description") or "",
-                    "description": item.get("body") or item.get("description") or "",
-                    "source": urlparse(url).netloc.replace("www.", "")
+                    "snippet": (
+                        item.get("body")
+                        or item.get("description")
+                        or ""
+                    ),
+                    "description": (
+                        item.get("body")
+                        or item.get("description")
+                        or ""
+                    ),
+                    "source": domain
                 })
 
     except Exception as error:
@@ -112,6 +193,9 @@ def search_web(query, limit=5):
 
     return results
 
+# ============================================================
+# READ WEBSITE CONTENT
+# ============================================================
 
 def read_page(url):
     if not valid_url(url):
@@ -121,34 +205,99 @@ def read_page(url):
         response = requests.get(
             url,
             headers=HEADERS,
-            timeout=12
+            timeout=15,
+            allow_redirects=True,
+            stream=True
         )
 
         response.raise_for_status()
 
-        content_type = response.headers.get("Content-Type", "").lower()
-
-        if content_type and "html" not in content_type:
+        # Check redirect destination too.
+        if not valid_url(response.url):
+            response.close()
             return ""
 
-        soup = BeautifulSoup(response.text, "html.parser")
+        content_type = response.headers.get(
+            "Content-Type", ""
+        ).lower()
+
+        if "html" not in content_type:
+            response.close()
+            return ""
+
+        content_length = response.headers.get("Content-Length")
+
+        if content_length and int(content_length) > 3_000_000:
+            response.close()
+            return ""
+
+        content = response.raw.read(3_000_000 + 1)
+        response.close()
+
+        if len(content) > 3_000_000:
+            return ""
+
+        soup = BeautifulSoup(content, "html.parser")
 
         for tag in soup([
             "script", "style", "nav",
             "footer", "header", "noscript",
-            "form", "iframe", "svg"
+            "form", "iframe", "svg",
+            "button", "aside"
         ]):
             tag.decompose()
 
-        text = soup.get_text(" ", strip=True)
+        # Prefer main article content where available.
+        main = (
+            soup.find("article")
+            or soup.find("main")
+            or soup.body
+            or soup
+        )
+
+        text = main.get_text(" ", strip=True)
         text = re.sub(r"\s+", " ", text)
 
-        return text[:10000]
+        return text[:PAGE_CHAR_LIMIT]
 
     except Exception as error:
         print("Page read error:", repr(error))
         return ""
 
+# ============================================================
+# READ MULTIPLE WEBSITES AT THE SAME TIME
+# ============================================================
+
+def read_multiple_pages(results):
+    selected = results[:PAGE_LIMIT]
+
+    pages = [""] * len(selected)
+
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=5
+    ) as executor:
+
+        futures = {
+            executor.submit(
+                read_page,
+                item.get("url", "")
+            ): index
+            for index, item in enumerate(selected)
+        }
+
+        for future in concurrent.futures.as_completed(futures):
+            index = futures[future]
+
+            try:
+                pages[index] = future.result()
+            except Exception:
+                pages[index] = ""
+
+    return pages
+
+# ============================================================
+# IMAGE SEARCH
+# ============================================================
 
 def search_images(query, limit=8):
     query = clean_query(query)
@@ -159,7 +308,7 @@ def search_images(query, limit=8):
         return images
 
     try:
-        with DDGS(timeout=20) as ddgs:
+        with DDGS(timeout=25) as ddgs:
             raw_images = ddgs.images(
                 query,
                 max_results=limit,
@@ -196,9 +345,17 @@ def search_images(query, limit=8):
                 images.append({
                     "title": item.get("title") or "Related image",
                     "image": image_url,
-                    "thumbnail": thumbnail if valid_url(thumbnail) else image_url,
+                    "thumbnail": (
+                        thumbnail
+                        if valid_url(thumbnail)
+                        else image_url
+                    ),
                     "url": image_url,
-                    "page_url": source_url if valid_url(source_url) else "",
+                    "page_url": (
+                        source_url
+                        if valid_url(source_url)
+                        else ""
+                    ),
                     "source": item.get("source") or ""
                 })
 
@@ -207,6 +364,9 @@ def search_images(query, limit=8):
 
     return images
 
+# ============================================================
+# VIDEO SEARCH
+# ============================================================
 
 def search_videos(query, limit=8):
     query = clean_query(query)
@@ -225,8 +385,6 @@ def search_videos(query, limit=8):
             )
 
             for item in raw_videos:
-                # DDGS backends may expose the page URL under
-                # different keys. Select the first valid URL.
                 candidates = [
                     item.get("url"),
                     item.get("href"),
@@ -235,7 +393,10 @@ def search_videos(query, limit=8):
                 ]
 
                 video_url = next(
-                    (value for value in candidates if valid_url(value)),
+                    (
+                        value for value in candidates
+                        if valid_url(value)
+                    ),
                     ""
                 )
 
@@ -245,7 +406,6 @@ def search_videos(query, limit=8):
                 seen.add(video_url)
 
                 images = item.get("images") or {}
-
                 thumbnail = ""
 
                 if isinstance(images, dict):
@@ -265,6 +425,7 @@ def search_videos(query, limit=8):
                             or first.get("image")
                             or ""
                         )
+
                     elif isinstance(first, str):
                         thumbnail = first
 
@@ -281,8 +442,16 @@ def search_videos(query, limit=8):
                     "title": item.get("title") or "Video result",
                     "url": video_url,
                     "description": item.get("description") or "",
-                    "thumbnail": thumbnail if valid_url(thumbnail) else "",
-                    "embed_url": embed_url if valid_url(embed_url) else "",
+                    "thumbnail": (
+                        thumbnail
+                        if valid_url(thumbnail)
+                        else ""
+                    ),
+                    "embed_url": (
+                        embed_url
+                        if valid_url(embed_url)
+                        else ""
+                    ),
                     "duration": item.get("duration") or "",
                     "publisher": item.get("publisher") or ""
                 })
@@ -292,31 +461,23 @@ def search_videos(query, limit=8):
 
     return videos
 
-
-def get_keywords(query):
-    words = re.findall(
-        r"[a-zA-Z0-9\u0900-\u097F]+",
-        clean_query(query).lower()
-    )
-
-    return {
-        word for word in words
-        if len(word) > 2 and word not in STOPWORDS
-    }
-
+# ============================================================
+# ANSWER EXTRACTION FROM MULTIPLE SOURCES
+# This is extractive synthesis, not an LLM.
+# ============================================================
 
 def make_answer(query, results, pages):
     if not results:
         return (
-            "I couldn't find web results for this question. "
-            "Try changing the wording or using different keywords."
+            "VEX couldn't retrieve web results right now. "
+            "Please try again with different keywords."
         )
 
     source_text = []
 
-    # Keep page/result indexes aligned.
     for index, result in enumerate(results):
         page = pages[index] if index < len(pages) else ""
+
         content = page or result.get("snippet", "")
 
         if content:
@@ -330,9 +491,12 @@ def make_answer(query, results, pages):
         ]
 
         if snippets:
-            return "\n\n".join(snippets[:3])
+            return "\n\n".join(snippets[:5])
 
-        return "I found web pages, but couldn't read their content."
+        return (
+            "I found some websites, but their content "
+            "could not be retrieved."
+        )
 
     query_words = get_keywords(query)
     candidates = []
@@ -366,13 +530,11 @@ def make_answer(query, results, pages):
 
             score = len(matches)
 
-            # Prefer sentences with more query-topic coverage.
             if query_words:
                 score += (
                     len(matches) / len(query_words)
                 ) * 5
 
-            # Avoid extremely long navigation-like text.
             if len(sentence) > 900:
                 score -= 2
 
@@ -393,14 +555,17 @@ def make_answer(query, results, pages):
         if sentence not in selected:
             selected.append(sentence)
 
-        if len(selected) >= 7:
+        if len(selected) >= 8:
             break
 
     if not selected:
-        return source_text[0][:1800]
+        return source_text[0][:2500]
 
     return "\n\n".join(selected)
 
+# ============================================================
+# MAIN VEX RESPONSE FUNCTION
+# ============================================================
 
 def ask_vex(query):
     query = clean_query(query)
@@ -409,10 +574,13 @@ def ask_vex(query):
         return {
             "answer": "Please enter a question.",
             "sources": [],
+            "results": [],
             "images": [],
-            "videos": []
+            "videos": [],
+            "followups": []
         }
 
+    # IMAGE ONLY MODE
     if is_image_request(query):
         images = search_images(query, 8)
 
@@ -420,13 +588,16 @@ def ask_vex(query):
             "answer": (
                 "Here are images related to your request."
                 if images else
-                "I couldn't find images for this request. Try another keyword."
+                "I couldn't find images for this request."
             ),
             "sources": [],
+            "results": [],
             "images": images,
-            "videos": []
+            "videos": [],
+            "followups": []
         }
 
+    # VIDEO ONLY MODE
     if is_video_request(query):
         videos = search_videos(query, 8)
 
@@ -434,25 +605,66 @@ def ask_vex(query):
             "answer": (
                 "Here are videos related to your request."
                 if videos else
-                "I couldn't find videos for this request. Try another keyword."
+                "I couldn't find videos for this request."
             ),
             "sources": [],
+            "results": [],
             "images": [],
-            "videos": videos
+            "videos": videos,
+            "followups": []
         }
 
-    results = search_web(query, 5)
+    # GENERAL INTERNET SEARCH
+    results = search_web(query, SEARCH_LIMIT)
 
-    pages = [
-        read_page(item.get("url", ""))
-        for item in results
-    ]
+    if not results:
+        return {
+            "answer": (
+                "VEX couldn't connect to the web search service. "
+                "Please try again in a moment."
+            ),
+            "sources": [],
+            "results": [],
+            "images": [],
+            "videos": [],
+            "followups": []
+        }
 
-    answer = make_answer(query, results, pages)
+    # Read several different websites in parallel.
+    pages = read_multiple_pages(results)
+
+    # Extract relevant information from those pages.
+    answer = make_answer(
+        query,
+        results[:PAGE_LIMIT],
+        pages
+    )
 
     return {
         "answer": answer,
         "sources": results,
+        "results": results,
         "images": [],
-        "videos": []
+        "videos": [],
+        "followups": []
     }
+
+# ============================================================
+# QUICK TEST
+# Run this file directly to test web access.
+# ============================================================
+
+if __name__ == "__main__":
+    question = input("Ask VEX: ")
+
+    response = ask_vex(question)
+
+    print("\n========== VEX AI ==========\n")
+    print(response["answer"])
+
+    print("\n========== SOURCES ==========\n")
+
+    for source in response["sources"]:
+        print(source["title"])
+        print(source["url"])
+        print()
