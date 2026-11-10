@@ -1,5 +1,8 @@
-# vex_ui.py
-# VEX AI - Android WebView + Native Search Bridge
+
+# ============================================================
+# VEX AI - ANDROID WEBVIEW + LIVE INTERNET SEARCH
+# Multi-website search | Images | Videos | Source links
+# ============================================================
 
 import asyncio
 import json
@@ -18,15 +21,21 @@ from vex_search import (
 
 APP_URL = "https://eagleiam20-create.github.io/VEX-AI/"
 
+SEARCH_LIMIT = 12
+PAGE_LIMIT = 8
+
 
 def normalize_results(results):
     output = []
+    seen = set()
 
     for item in results or []:
         url = item.get("url") or item.get("href") or ""
 
-        if not url:
+        if not url or url in seen:
             continue
+
+        seen.add(url)
 
         output.append({
             "title": item.get("title") or "Web result",
@@ -44,6 +53,7 @@ def normalize_results(results):
 
 def normalize_images(images):
     output = []
+    seen = set()
 
     for item in images or []:
         image_url = (
@@ -53,15 +63,21 @@ def normalize_images(images):
             or ""
         )
 
-        if not image_url:
+        if not image_url or image_url in seen:
             continue
+
+        seen.add(image_url)
 
         output.append({
             "title": item.get("title") or "Related image",
             "image": image_url,
             "thumbnail": item.get("thumbnail") or image_url,
             "url": image_url,
-            "page_url": item.get("page_url") or item.get("source") or ""
+            "page_url": (
+                item.get("page_url")
+                or item.get("source")
+                or ""
+            )
         })
 
     return output
@@ -69,6 +85,7 @@ def normalize_images(images):
 
 def normalize_videos(videos):
     output = []
+    seen = set()
 
     for item in videos or []:
         url = (
@@ -78,8 +95,10 @@ def normalize_videos(videos):
             or ""
         )
 
-        if not url:
+        if not url or url in seen:
             continue
+
+        seen.add(url)
 
         output.append({
             "title": item.get("title") or "Video result",
@@ -94,7 +113,21 @@ def normalize_videos(videos):
     return output
 
 
+def is_video_query(query):
+    words = (
+        "video", "videos", "watch",
+        "trailer", "documentary",
+        "tutorial video", "video dikhao",
+        "video bhejo"
+    )
+
+    q = query.lower()
+
+    return any(word in q for word in words)
+
+
 def main(page: ft.Page):
+
     page.title = "VEX AI"
     page.padding = 0
     page.spacing = 0
@@ -104,7 +137,12 @@ def main(page: ft.Page):
 
     webview = None
 
+    # --------------------------------------------------------
+    # SEND JAVASCRIPT EVENTS TO WEBVIEW
+    # --------------------------------------------------------
+
     async def send_event(event_name, payload):
+
         if webview is None:
             return
 
@@ -124,6 +162,7 @@ def main(page: ft.Page):
         await webview.run_javascript(js)
 
     async def send_progress(request_id, stage):
+
         await send_event(
             "vex-native-progress",
             {
@@ -133,19 +172,94 @@ def main(page: ft.Page):
         )
 
     async def send_result(payload):
+
         await send_event(
             "vex-native-result",
             payload
         )
 
+    # --------------------------------------------------------
+    # SEARCH AND READ MULTIPLE WEBSITES
+    # --------------------------------------------------------
+
+    async def web_research(request_id, query):
+
+        await send_progress(
+            request_id,
+            "Searching the internet..."
+        )
+
+        results = await asyncio.to_thread(
+            search_web,
+            query,
+            SEARCH_LIMIT
+        )
+
+        if not results:
+            return {
+                "answer": (
+                    "VEX couldn't retrieve web results right now. "
+                    "Please try again with different keywords."
+                ),
+                "results": [],
+                "images": [],
+                "videos": [],
+                "followups": []
+            }
+
+        await send_progress(
+            request_id,
+            "Found websites. Reading their content..."
+        )
+
+        selected_results = results[:PAGE_LIMIT]
+
+        # Read multiple pages simultaneously.
+        pages = await asyncio.gather(*[
+            asyncio.to_thread(
+                read_page,
+                item.get("url", "")
+            )
+            for item in selected_results
+        ])
+
+        await send_progress(
+            request_id,
+            "Preparing your explanation..."
+        )
+
+        answer = await asyncio.to_thread(
+            make_answer,
+            query,
+            selected_results,
+            pages
+        )
+
+        return {
+            "answer": answer,
+            "results": normalize_results(results),
+            "images": [],
+            "videos": [],
+            "followups": []
+        }
+
+    # --------------------------------------------------------
+    # PROCESS USER REQUEST
+    # --------------------------------------------------------
+
     async def process_request(request_id, query, mode):
+
+        mode = mode.lower().strip()
+
         if mode not in ("chat", "search", "images", "videos"):
             mode = "chat"
 
+        # IMAGE SEARCH
         if mode == "images":
+
             await send_progress(
                 request_id,
-                "Searching for images..."
+                "Searching images across the web..."
             )
 
             images = await asyncio.to_thread(
@@ -158,7 +272,11 @@ def main(page: ft.Page):
                 "id": request_id,
                 "data": {
                     "mode": "images",
-                    "answer": "",
+                    "answer": (
+                        "Here are images related to your request."
+                        if images else
+                        "No images found. Try another search."
+                    ),
                     "results": [],
                     "images": normalize_images(images),
                     "videos": [],
@@ -168,10 +286,12 @@ def main(page: ft.Page):
 
             return
 
+        # VIDEO SEARCH
         if mode == "videos":
+
             await send_progress(
                 request_id,
-                "Searching for videos..."
+                "Searching videos across the web..."
             )
 
             videos = await asyncio.to_thread(
@@ -184,7 +304,11 @@ def main(page: ft.Page):
                 "id": request_id,
                 "data": {
                     "mode": "videos",
-                    "answer": "",
+                    "answer": (
+                        "Here are videos related to your request."
+                        if videos else
+                        "No videos found. Try another search."
+                    ),
                     "results": [],
                     "images": [],
                     "videos": normalize_videos(videos),
@@ -194,61 +318,13 @@ def main(page: ft.Page):
 
             return
 
-        await send_progress(
+        # GENERAL WEB SEARCH + EXPLANATION
+        data = await web_research(
             request_id,
-            "Searching the web..."
+            query
         )
 
-        results = await asyncio.to_thread(
-            search_web,
-            query,
-            6
-        )
-
-        if not results:
-            await send_result({
-                "id": request_id,
-                "data": {
-                    "mode": "chat",
-                    "answer": (
-                        "VEX couldn't find web results for this question. "
-                        "Please try different keywords."
-                    ),
-                    "results": [],
-                    "images": [],
-                    "videos": [],
-                    "followups": []
-                }
-            })
-
-            return
-
-        await send_progress(
-            request_id,
-            "Reading relevant web pages..."
-        )
-
-        # Keep each page at the same index as its search result.
-        pages = await asyncio.gather(*[
-            asyncio.to_thread(
-                read_page,
-                item.get("url", "")
-            )
-            for item in results
-        ])
-
-        await send_progress(
-            request_id,
-            "Preparing an explanation..."
-        )
-
-        answer = await asyncio.to_thread(
-            make_answer,
-            query,
-            results,
-            pages
-        )
-
+        # Related images for normal chat.
         await send_progress(
             request_id,
             "Finding related images..."
@@ -260,12 +336,11 @@ def main(page: ft.Page):
             6
         )
 
-        videos = []
+        data["images"] = normalize_images(images)
 
-        if any(word in query.lower() for word in (
-            "video", "videos", "watch",
-            "trailer", "documentary", "tutorial"
-        )):
+        # Related videos when relevant.
+        if is_video_query(query):
+
             await send_progress(
                 request_id,
                 "Finding related videos..."
@@ -277,24 +352,26 @@ def main(page: ft.Page):
                 6
             )
 
+            data["videos"] = normalize_videos(videos)
+
+        data["mode"] = "chat"
+
         await send_progress(
             request_id,
-            "Preparing your answer..."
+            "Your answer is ready..."
         )
 
         await send_result({
             "id": request_id,
-            "data": {
-                "mode": "chat",
-                "answer": answer,
-                "results": normalize_results(results),
-                "images": normalize_images(images),
-                "videos": normalize_videos(videos),
-                "followups": []
-            }
+            "data": data
         })
 
+    # --------------------------------------------------------
+    # RECEIVE REQUESTS FROM HTML JAVASCRIPT
+    # --------------------------------------------------------
+
     async def handle_console_message(e):
+
         message = e.message or ""
         prefix = "VEX_NATIVE_SEARCH:"
 
@@ -304,6 +381,7 @@ def main(page: ft.Page):
         request_id = ""
 
         try:
+
             request = json.loads(
                 message[len(prefix):]
             )
@@ -321,7 +399,9 @@ def main(page: ft.Page):
             ).lower().strip()
 
             if not request_id:
-                raise ValueError("Missing request ID.")
+                raise ValueError(
+                    "Missing request ID."
+                )
 
             if not query or len(query) > 500:
                 raise ValueError(
@@ -340,19 +420,30 @@ def main(page: ft.Page):
             )
 
         except Exception as error:
-            print("VEX request error:", repr(error))
+
+            print(
+                "VEX request error:",
+                repr(error)
+            )
 
             if request_id:
+
                 try:
                     await send_result({
                         "id": request_id,
                         "error": str(error)
                     })
+
                 except Exception as send_error:
+
                     print(
                         "Could not send error to WebView:",
                         repr(send_error)
                     )
+
+    # --------------------------------------------------------
+    # ANDROID WEBVIEW
+    # --------------------------------------------------------
 
     webview = fwv.WebView(
         url=APP_URL,
