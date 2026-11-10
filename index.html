@@ -3,823 +3,479 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#000000">
-<meta name="description" content="VEX AI - Independent knowledge assistant">
 <title>VEX AI</title>
 
 <style>
-:root {
-  color-scheme: dark;
-  --bg:#000;
-  --panel:#080808;
-  --panel2:#111;
-  --border:#292929;
-  --text:#f5f5f5;
-  --muted:#888;
-}
 *{box-sizing:border-box}
-html,body{
-  width:100%;height:100%;margin:0;
-  background:#000;color:var(--text);
-  font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif
+body{
+ margin:0;background:#000;color:#eee;
+ font-family:Arial,Helvetica,sans-serif;
+ height:100dvh;overflow:hidden
 }
-body{overflow:hidden}
 button,textarea{font:inherit}
 button{cursor:pointer}
-button:disabled{opacity:.4;cursor:not-allowed}
-a{color:inherit}
-.app{display:flex;width:100%;height:100dvh;background:#000}
-.sidebar{
-  position:relative;z-index:20;display:flex;flex:0 0 270px;
-  flex-direction:column;width:270px;padding:16px 12px;
-  background:#030303;border-right:1px solid #191919
-}
-.sidebar-head{display:flex;align-items:center;justify-content:space-between;padding:3px 5px 22px}
-.brand{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:850;letter-spacing:2px}
-.brand-mark,.welcome-logo{
-  display:grid;place-items:center;border:1px solid #555;border-radius:11px;
-  font-weight:850
-}
-.brand-mark{width:31px;height:31px}
-.icon-button{
-  display:grid;width:36px;height:36px;place-items:center;
-  color:#ddd;background:#080808;border:1px solid #292929;border-radius:10px
-}
-.icon-button:hover,.side-tool:hover,.top-action:hover{background:#191919;border-color:#666}
-.new-chat-button{
-  width:100%;padding:12px;text-align:left;color:white;
-  background:#080808;border:1px solid #343434;border-radius:12px
-}
-.side-tools{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
-.side-tool{
-  padding:10px 8px;color:#ccc;font-size:12px;
-  background:#050505;border:1px solid #242424;border-radius:10px
-}
-.side-tool.active{color:white;background:#171717;border-color:#777}
-.section-label{
-  margin:25px 8px 9px;color:#777;font-size:10px;font-weight:700;
-  letter-spacing:1.7px;text-transform:uppercase
-}
-.history-list{display:flex;min-height:0;flex:1;flex-direction:column;gap:3px;overflow:auto}
-.history-item{
-  width:100%;overflow:hidden;padding:10px;color:#bdbdbd;font-size:12px;
-  text-align:left;text-overflow:ellipsis;white-space:nowrap;
-  background:transparent;border:0;border-radius:9px
-}
-.history-item:hover,.history-item.selected{color:white;background:#151515}
-.sidebar-footer{padding:14px 7px 4px;color:#777;font-size:11px;line-height:1.7;border-top:1px solid #191919}
-.sidebar-footer strong{color:#ddd}
-.main{display:flex;position:relative;min-width:0;min-height:0;flex:1;flex-direction:column;background:#000}
+.app{height:100%;display:flex;flex-direction:column}
 .topbar{
-  display:flex;height:60px;min-height:60px;align-items:center;
-  justify-content:space-between;gap:12px;padding:0 20px;
-  background:#000;border-bottom:1px solid #191919
+ height:58px;flex-shrink:0;border-bottom:1px solid #202020;
+ display:flex;align-items:center;justify-content:space-between;
+ padding:0 18px;background:#000
 }
-.topbar-left,.topbar-right{display:flex;align-items:center;gap:10px}
-.mobile-menu{display:none}
-.top-title{font-size:14px;font-weight:700}
-.top-subtitle{margin-left:8px;color:#777;font-size:11px;font-weight:400}
-.top-action{
-  padding:8px 11px;color:#ccc;font-size:11px;
-  background:#080808;border:1px solid #292929;border-radius:9px
+.brand{font-size:19px;font-weight:700;letter-spacing:1px}
+.brand span{color:#777;font-size:11px;margin-left:7px}
+.top-actions{display:flex;gap:8px}
+.icon-btn{
+ background:#111;border:1px solid #292929;color:#ddd;
+ border-radius:9px;padding:8px 12px
 }
-.chat-scroll{min-height:0;flex:1;overflow:auto;padding:24px 18px 30px;scroll-behavior:smooth}
-.chat-inner{width:100%;max-width:850px;margin:0 auto}
-.welcome{
-  display:flex;min-height:56vh;flex-direction:column;
-  align-items:center;justify-content:center;padding:25px 12px;text-align:center
+.workspace{flex:1;min-height:0;display:flex}
+.chat-area{
+ flex:1;min-width:0;display:flex;flex-direction:column;
+ align-items:center;position:relative
 }
-.welcome-logo{width:62px;height:62px;margin-bottom:23px;font-size:25px;border-radius:20px}
-.welcome h1{margin:0 0 10px;font-size:clamp(30px,5vw,43px);font-weight:700;letter-spacing:-1.7px}
-.welcome p{max-width:470px;margin:0;color:#858585;font-size:13px;line-height:1.7}
-.suggestions{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin-top:27px}
-.suggestion{
-  padding:10px 13px;color:#ccc;font-size:11px;
-  background:#050505;border:1px solid #292929;border-radius:22px
+.messages{
+ width:100%;max-width:850px;flex:1;overflow-y:auto;
+ padding:30px 22px 25px
 }
-.suggestion:hover{color:#000;background:#fff}
-.messages{display:flex;flex-direction:column;gap:25px;padding-bottom:20px}
-.message{display:flex;width:100%;align-items:flex-start;gap:12px}
-.avatar{
-  display:grid;width:31px;height:31px;flex:0 0 31px;place-items:center;
-  color:#eee;font-size:10px;font-weight:800;border:1px solid #3a3a3a;border-radius:10px
+.welcome{margin:13vh auto 30px;text-align:center}
+.welcome h1{font-size:30px;font-weight:500;margin-bottom:10px}
+.welcome p{color:#777;font-size:14px}
+.message{margin:0 0 27px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}
+.user-message{
+ margin-left:auto;max-width:85%;width:fit-content;
+ background:#171717;border:1px solid #292929;
+ padding:12px 16px;border-radius:18px;color:#eee
 }
-.message.user .avatar{background:#151515}
-.message.assistant .avatar{background:#050505}
-.message-body{min-width:0;flex:1;padding-top:2px}
-.message-role{margin-bottom:7px;color:#888;font-size:11px;font-weight:650}
-.message-text{color:#eee;font-size:14px;line-height:1.8;overflow-wrap:anywhere;white-space:pre-wrap}
-.message.user .message-text{color:white}
-.message-text a{color:white;text-decoration:underline}
-.message-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
-.message-action{
-  padding:6px 9px;color:#aaa;font-size:10px;
-  background:transparent;border:1px solid #292929;border-radius:8px
+.assistant-message{max-width:100%;color:#ddd}
+.assistant-label{font-size:12px;color:#777;margin-bottom:8px}
+.message-content{font-size:15px}
+.message-content p{margin:8px 0}
+.message-content pre{
+ background:#101010;border:1px solid #292929;
+ padding:14px;border-radius:10px;overflow:auto
 }
-.content-label{
-  margin:17px 0 9px;color:#858585;font-size:10px;font-weight:750;
-  letter-spacing:1.5px;text-transform:uppercase
-}
-.source-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:9px}
-.source-card{
-  display:block;min-width:0;padding:12px;color:#eee;text-decoration:none;
-  background:#050505;border:1px solid #292929;border-radius:11px
-}
-.source-card:hover{background:#101010;border-color:#777}
-.source-site{display:block;margin-bottom:6px;color:#777;font-size:9px;letter-spacing:1px;text-transform:uppercase}
-.source-title{display:block;font-size:12px;font-weight:700;line-height:1.5}
-.source-description{display:block;margin-top:6px;color:#999;font-size:11px;line-height:1.55}
-.image-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:10px}
-.image-card,.video-card{min-width:0;overflow:hidden;background:#070707;border:1px solid #292929;border-radius:11px}
-.image-open,.video-open{
-  display:block;width:100%;padding:0;color:#eee;text-align:left;
-  background:transparent;border:0
-}
-.image-open img{display:block;width:100%;height:140px;object-fit:cover;background:#111}
-.image-caption{display:block;padding:8px;color:#bbb;font-size:10px;line-height:1.45}
-.video-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:11px}
-.video-thumb{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#111}
-.video-title{display:block;padding:10px 11px 7px;font-size:12px;font-weight:700;line-height:1.5}
-.video-source{display:block;padding:0 11px 11px;color:#999;font-size:10px;text-decoration:underline}
-.empty-state{padding:12px;color:#888;font-size:12px;background:#080808;border:1px solid #252525;border-radius:10px}
-.media-viewer{
-  position:fixed;z-index:100;inset:0;display:none;align-items:center;
-  justify-content:center;padding:24px;background:rgba(0,0,0,.97)
-}
-.media-viewer.open{display:flex}
-.viewer-close{
-  position:absolute;top:15px;right:17px;width:42px;height:42px;
-  color:white;font-size:24px;background:#111;border:1px solid #555;border-radius:50%
-}
-.viewer-content{
-  display:flex;width:100%;max-width:1100px;max-height:100%;
-  flex-direction:column;align-items:center;gap:12px
-}
-.viewer-content img{display:block;max-width:100%;max-height:78vh;object-fit:contain}
-.viewer-content iframe{width:min(88vw,960px);aspect-ratio:16/9;border:0;background:#111}
-.viewer-content video{width:min(88vw,960px);max-height:75vh;background:#111}
-.viewer-caption{color:#ddd;font-size:12px;text-align:center}
-.viewer-link{color:#aaa;font-size:11px}
-.followups{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}
-.followup-button{
-  max-width:100%;padding:8px 11px;color:#ccc;font-size:10px;text-align:left;
-  background:#050505;border:1px solid #303030;border-radius:18px
-}
-.followup-button:hover{color:white;border-color:#888}
-.loading-row{display:flex;align-items:center;gap:10px;color:#999;font-size:12px}
-.loading-dot{width:7px;height:7px;background:white;border-radius:50%;animation:pulse 1s infinite alternate}
-@keyframes pulse{from{opacity:.25}to{opacity:1}}
-.status-line{min-height:16px;margin-top:7px;color:#777;font-size:10px;text-align:center}
+.message-content code{font-family:Consolas,monospace}
 .composer-wrap{
-  flex:0 0 auto;padding:17px 18px max(13px,env(safe-area-inset-bottom));
-  background:linear-gradient(transparent,#000 24%)
+ width:100%;max-width:850px;padding:12px 18px 20px
 }
 .composer{
-  display:flex;max-width:850px;align-items:flex-end;gap:10px;margin:0 auto;
-  padding:10px 11px 9px;background:#080808;border:1px solid #383838;border-radius:19px
+ border:1px solid #343434;background:#101010;
+ border-radius:18px;padding:12px 13px
 }
-.composer:focus-within{border-color:#777}
 #prompt{
-  display:block;width:100%;min-width:0;min-height:34px;max-height:145px;
-  flex:1;resize:none;padding:7px 5px;color:white;font-size:14px;line-height:1.5;
-  background:transparent;border:0;outline:0
+ width:100%;resize:none;min-height:48px;max-height:160px;
+ background:transparent;border:0;outline:0;color:#fff;
+ font-size:15px;line-height:1.5
 }
 #prompt::placeholder{color:#777}
-.send-button{
-  display:grid;width:38px;height:38px;flex:0 0 38px;place-items:center;
-  color:#000;font-size:20px;font-weight:800;background:white;border:0;border-radius:12px
+.composer-bottom{display:flex;align-items:center;justify-content:space-between}
+.hint{font-size:11px;color:#666}
+.send-btn{
+ border:0;background:#eee;color:#000;border-radius:10px;
+ width:38px;height:36px;font-size:19px;font-weight:bold
 }
-.composer-tools{display:flex;max-width:850px;flex-wrap:wrap;gap:7px;margin:9px auto 0}
-.composer-tool{
-  padding:7px 10px;color:#999;font-size:10px;
-  background:#050505;border:1px solid #242424;border-radius:9px
+.send-btn:disabled{opacity:.35}
+.artifact{
+ width:50%;min-width:350px;max-width:780px;
+ border-left:1px solid #292929;background:#080808;
+ display:none;flex-direction:column
 }
-.composer-tool:hover,.composer-tool.active{color:white;border-color:#777}
-.bottom-note{margin-top:8px;color:#555;font-size:9px;text-align:center}
-.chat-scroll::-webkit-scrollbar,.history-list::-webkit-scrollbar{width:5px}
-.chat-scroll::-webkit-scrollbar-thumb,.history-list::-webkit-scrollbar-thumb{background:#292929;border-radius:8px}
-
+.artifact.open{display:flex}
+.artifact-head{
+ height:54px;display:flex;align-items:center;
+ justify-content:space-between;padding:0 14px;
+ border-bottom:1px solid #252525
+}
+.artifact-title{font-size:14px;font-weight:600}
+.artifact-controls{display:flex;gap:6px;align-items:center}
+.small-btn{
+ background:#151515;border:1px solid #333;color:#ddd;
+ border-radius:8px;padding:7px 10px;font-size:12px
+}
+.small-btn.primary{background:#eee;color:#000;border-color:#eee}
+.tabs{
+ display:flex;gap:18px;padding:0 16px;
+ border-bottom:1px solid #252525;height:43px;align-items:center
+}
+.tab{
+ height:100%;display:flex;align-items:center;
+ color:#888;font-size:13px;border-bottom:2px solid transparent;
+ cursor:pointer
+}
+.tab.active{color:#fff;border-color:#fff}
+.artifact-body{flex:1;min-height:0;position:relative}
+#codeView,#previewView{height:100%;width:100%}
+#codeView{display:flex;flex-direction:column}
+.code-toolbar{
+ padding:8px 12px;background:#0d0d0d;border-bottom:1px solid #222;
+ color:#888;font-size:12px;display:flex;justify-content:space-between
+}
+#codeEditor{
+ flex:1;width:100%;resize:none;border:0;outline:0;
+ background:#080808;color:#d6e6d6;padding:17px;
+ font:13px/1.65 Consolas,Monaco,monospace;
+ tab-size:2;white-space:pre;overflow:auto
+}
+#previewView{display:none;background:#fff}
+#previewFrame{width:100%;height:100%;border:0;background:#fff}
+.empty-preview{
+ height:100%;display:flex;align-items:center;justify-content:center;
+ color:#777;background:#101010;font-size:14px
+}
+.status{
+ padding:8px 13px;border-top:1px solid #222;
+ color:#777;font-size:11px;display:flex;justify-content:space-between
+}
+.typing{color:#888;font-size:13px;margin:10px 0}
 @media(max-width:760px){
-  .sidebar{
-    position:fixed;top:0;bottom:0;left:0;width:min(290px,86vw);
-    transform:translateX(-105%);transition:transform .22s ease;
-    box-shadow:18px 0 50px rgba(0,0,0,.65)
-  }
-  .sidebar.open{transform:translateX(0)}
-  .mobile-menu{display:grid}
-  .topbar{padding:0 11px}
-  .top-subtitle{display:none}
-  .chat-scroll{padding:18px 12px 22px}
-  .composer-wrap{padding-right:11px;padding-left:11px}
-  .welcome{min-height:50vh}
-  .welcome h1{font-size:31px}
-  .message-text{font-size:13px}
-  .source-grid{grid-template-columns:1fr}
-  .image-grid{grid-template-columns:repeat(auto-fill,minmax(112px,1fr))}
-  .image-open img{height:120px}
-  .top-action{padding:7px 8px}
-}
-@media(max-width:390px){
-  .top-title{font-size:12px}
-  .composer-tool{padding:7px 8px}
-  .suggestion{padding:9px 10px}
-  .avatar{width:28px;height:28px;flex-basis:28px}
+ .workspace{position:relative}
+ .chat-area{width:100%}
+ .artifact{
+  position:absolute;inset:0;width:100%;max-width:none;
+  min-width:0;z-index:5;border-left:0
+ }
+ .artifact.open{display:flex}
+ .messages{padding:22px 16px}
+ .composer-wrap{padding:10px 12px 15px}
+ .welcome h1{font-size:25px}
 }
 </style>
 </head>
 
 <body>
 <div class="app">
-<aside class="sidebar" id="sidebar" aria-label="Main menu">
-  <div class="sidebar-head">
-    <div class="brand"><span class="brand-mark">V</span><span>VEX AI</span></div>
-    <button class="icon-button" id="closeSidebar" aria-label="Close menu">×</button>
+ <header class="topbar">
+  <div class="brand">VEX AI <span>ARTIFACTS</span></div>
+  <div class="top-actions">
+   <button class="icon-btn" id="newChat">＋ New chat</button>
   </div>
-  <button class="new-chat-button" id="newChatButton">＋　New chat</button>
-  <div class="side-tools">
-    <button class="side-tool" data-mode="search">⌕　Search</button>
-    <button class="side-tool" data-mode="images">▧　Images</button>
-    <button class="side-tool" data-mode="videos">▶　Videos</button>
-    <button class="side-tool" id="builderSideButton">⌘　Code Builder</button>
-  </div>
-  <div class="section-label">Recent chats</div>
-  <div class="history-list" id="historyList"></div>
-  <div class="sidebar-footer"><strong>VEX AI</strong><br>Independent project<br>Built by Avee Sharma</div>
-</aside>
+ </header>
 
-<main class="main">
-<header class="topbar">
-  <div class="topbar-left">
-    <button class="icon-button mobile-menu" id="openSidebar" aria-label="Open menu">☰</button>
-    <div class="top-title">VEX AI <span class="top-subtitle">Knowledge Assistant</span></div>
-  </div>
-  <div class="topbar-right">
-    <button class="top-action" id="shareChatButton">↗ Share</button>
-    <button class="top-action" id="clearChatButton">Clear chat</button>
-  </div>
-</header>
-
-<section class="chat-scroll" id="chatScroll" aria-live="polite">
-<div class="chat-inner">
-  <div class="welcome" id="welcome">
-    <div class="welcome-logo">V</div>
-    <h1>What can I help with?</h1>
-    <p>Ask a question, search the web, explore images or find videos.</p>
-    <div class="suggestions">
-      <button class="suggestion" data-prompt="Explain artificial intelligence in simple words">Explain AI</button>
-      <button class="suggestion" data-prompt="Latest discoveries in space">Space discoveries</button>
-      <button class="suggestion" data-prompt="How does the internet work?">Technology</button>
-      <button class="suggestion" data-prompt="Explain quantum computing">Science</button>
+ <main class="workspace">
+  <section class="chat-area">
+   <div class="messages" id="messages">
+    <div class="welcome" id="welcome">
+     <h1>What are we building?</h1>
+     <p>Ask VEX to create a website, app design, or code.</p>
     </div>
-  </div>
-  <div class="messages" id="messages"></div>
-</div>
-</section>
+   </div>
 
-<footer class="composer-wrap">
-  <div class="composer">
-    <textarea id="prompt" rows="1" maxlength="500" placeholder="Message VEX AI..." aria-label="Message VEX AI"></textarea>
-    <button class="send-button" id="sendButton" aria-label="Send message" disabled>↑</button>
-  </div>
-  <div class="composer-tools">
-    <button class="composer-tool" data-mode="search">⌕ Web search</button>
-    <button class="composer-tool" data-mode="images">▧ Images only</button>
-    <button class="composer-tool" data-mode="videos">▶ Videos only</button>
-  </div>
-  <div class="status-line" id="statusLine">Ready</div>
-  <div class="bottom-note">VEX AI can make mistakes. Check important information from original sources.</div>
-</footer>
-</main>
-</div>
+   <div class="composer-wrap">
+    <div class="composer">
+     <textarea id="prompt" rows="2"
+      placeholder="Ask VEX anything or describe what you want to build..."></textarea>
+     <div class="composer-bottom">
+      <span class="hint">Enter to send · Shift + Enter for new line</span>
+      <button class="send-btn" id="send" aria-label="Send">↑</button>
+     </div>
+    </div>
+   </div>
+  </section>
 
-<div class="media-viewer" id="mediaViewer" role="dialog" aria-modal="true" aria-label="Media viewer">
-  <button class="viewer-close" id="viewerClose" aria-label="Close media viewer">×</button>
-  <div class="viewer-content" id="viewerContent"></div>
+  <aside class="artifact" id="artifact">
+   <div class="artifact-head">
+    <div class="artifact-title" id="artifactTitle">Artifact</div>
+    <div class="artifact-controls">
+     <button class="small-btn" id="closeArtifact">Close</button>
+     <button class="small-btn" id="copyCode">Copy</button>
+     <button class="small-btn" id="downloadCode">Download</button>
+     <button class="small-btn primary" id="runCode">▶ Run</button>
+    </div>
+   </div>
+
+   <div class="tabs">
+    <div class="tab active" data-tab="code">Code</div>
+    <div class="tab" data-tab="preview">Preview</div>
+   </div>
+
+   <div class="artifact-body">
+    <div id="codeView">
+     <div class="code-toolbar">
+      <span id="fileName">index.html</span>
+      <span>Editable code</span>
+     </div>
+     <textarea id="codeEditor" spellcheck="false"
+      aria-label="Artifact code"></textarea>
+    </div>
+
+    <div id="previewView">
+     <div class="empty-preview" id="previewEmpty">
+      Press Run to preview your artifact.
+     </div>
+     <iframe id="previewFrame"
+      title="Artifact preview"
+      sandbox="allow-scripts allow-forms"
+      style="display:none"></iframe>
+    </div>
+   </div>
+
+   <div class="status">
+    <span id="artifactStatus">Ready</span>
+    <span>VEX Artifact</span>
+   </div>
+  </aside>
+ </main>
 </div>
 
 <script>
-(() => {
-'use strict';
+const messages = document.getElementById("messages");
+const promptBox = document.getElementById("prompt");
+const sendBtn = document.getElementById("send");
+const welcome = document.getElementById("welcome");
+const artifact = document.getElementById("artifact");
+const codeEditor = document.getElementById("codeEditor");
+const previewFrame = document.getElementById("previewFrame");
+const previewEmpty = document.getElementById("previewEmpty");
 
-const $ = id => document.getElementById(id);
-const promptBox=$('prompt'),sendButton=$('sendButton'),messagesBox=$('messages');
-const chatScroll=$('chatScroll'),historyList=$('historyList'),statusLine=$('statusLine');
-const sidebar=$('sidebar'),mediaViewer=$('mediaViewer'),viewerContent=$('viewerContent');
+let requestCounter = 0;
+let activeRequest = null;
+let currentFileName = "index.html";
 
-const STORAGE_KEY='vex_ai_conversations_v4';
-const REQUEST_TIMEOUT=90000,MAX_HISTORY=35,MAX_QUERY_LENGTH=500;
-let conversations=[],activeConversationId=null,activeMessages=[];
-let requestCounter=0,busy=false,selectedMode='chat';
-const pendingRequests=new Map();
-
-function safeText(value){return String(value==null?'':value)}
-function safeURL(value){
-  try{
-    const u=new URL(value);
-    return ['https:','http:'].includes(u.protocol)?u.href:'';
-  }catch(_){return ''}
-}
-function hostName(value){
-  try{return new URL(value).hostname.replace(/^www\./,'')}
-  catch(_){return 'Web source'}
-}
-function scrollToBottom(){
-  requestAnimationFrame(()=>{chatScroll.scrollTop=chatScroll.scrollHeight})
-}
-function setStatus(value){statusLine.textContent=safeText(value)}
-function resizePrompt(){
-  promptBox.style.height='auto';
-  promptBox.style.height=Math.min(promptBox.scrollHeight,145)+'px'
-}
-function makeId(){
-  requestCounter++;
-  return 'vex_'+Date.now()+'_'+requestCounter
-}
-function setBusy(value){
-  busy=Boolean(value);
-  sendButton.disabled=busy||!promptBox.value.trim();
-  promptBox.disabled=busy;
-  document.querySelectorAll('[data-mode]').forEach(b=>b.disabled=busy)
-}
-function saveConversations(){
-  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(conversations.slice(0,MAX_HISTORY)))}
-  catch(e){console.warn(e);setStatus('Chat history could not be saved.')}
-}
-function loadConversations(){
-  try{
-    const data=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
-    conversations=Array.isArray(data)?data:[]
-  }catch(_){conversations=[]}
-  renderHistory()
-}
-function getConversationTitle(){
-  const m=activeMessages.find(x=>x.role==='user');
-  return m?m.text.slice(0,48):'New chat'
-}
-function persistConversation(){
-  if(!activeMessages.length)return;
-  if(!activeConversationId)activeConversationId=makeId();
-  const record={id:activeConversationId,title:getConversationTitle(),messages:activeMessages,updatedAt:Date.now()};
-  conversations=[record,...conversations.filter(x=>x.id!==activeConversationId)].slice(0,MAX_HISTORY);
-  saveConversations();renderHistory()
-}
-function renderHistory(){
-  historyList.textContent='';
-  conversations.forEach(c=>{
-    const b=document.createElement('button');
-    b.type='button';b.className='history-item'+(c.id===activeConversationId?' selected':'');
-    b.textContent=c.title||'Chat';b.title=c.title||'Chat';
-    b.addEventListener('click',()=>openConversation(c.id));
-    historyList.appendChild(b)
-  })
-}
-function openConversation(id){
-  const c=conversations.find(x=>x.id===id);if(!c)return;
-  activeConversationId=c.id;activeMessages=Array.isArray(c.messages)?c.messages:[];
-  renderMessages();closeSidebar();renderHistory()
-}
-function startNewChat(){
-  if(busy)return;
-  activeConversationId=null;activeMessages=[];renderMessages();
-  promptBox.value='';resizePrompt();setStatus('New chat');closeSidebar();promptBox.focus()
-}
-function clearCurrentChat(){
-  if(busy)return;
-  if(activeConversationId)conversations=conversations.filter(x=>x.id!==activeConversationId);
-  activeMessages=[];activeConversationId=null;renderMessages();saveConversations();renderHistory();
-  setStatus('Chat cleared');promptBox.focus()
-}
-function addUserMessage(text){
-  activeMessages.push({role:'user',text:safeText(text)});
-  renderMessages();persistConversation()
-}
-function addAssistantMessage(data){
-  activeMessages.push({
-    role:'assistant',
-    text:safeText(data.answer||''),
-    results:Array.isArray(data.results)?data.results:[],
-    images:Array.isArray(data.images)?data.images:[],
-    videos:Array.isArray(data.videos)?data.videos:[],
-    mode:data.mode||'chat',
-    followups:Array.isArray(data.followups)?data.followups:[]
-  });
-  renderMessages();persistConversation()
-}
-function renderMessages(){
-  $('welcome').style.display=activeMessages.length?'none':'flex';
-  messagesBox.textContent='';
-  activeMessages.forEach(m=>{
-    const row=document.createElement('article');
-    row.className='message '+(m.role==='user'?'user':'assistant');
-    const avatar=document.createElement('div');
-    avatar.className='avatar';avatar.textContent=m.role==='user'?'YOU':'V';
-    const body=document.createElement('div');body.className='message-body';
-    const role=document.createElement('div');role.className='message-role';
-    role.textContent=m.role==='user'?'You':'VEX AI';
-    const content=document.createElement('div');content.className='message-text';
-    content.textContent=m.text||'';
-    body.append(role,content);
-    if(m.role==='assistant'){
-      if(m.mode==='images')renderImageResults(body,m.images);
-      else if(m.mode==='videos')renderVideoResults(body,m.videos,m.results);
-      else{
-        renderSources(body,m.results);
-        if(m.images.length)renderImageResults(body,m.images);
-        if(m.videos.length)renderVideoResults(body,m.videos,[]);
-        if(m.followups.length)renderFollowups(body,m.followups)
-      }
-      renderMessageActions(body,m.text)
-    }
-    row.append(avatar,body);messagesBox.appendChild(row)
-  });
-  scrollToBottom()
-}
-function renderMessageActions(parent,text){
-  const group=document.createElement('div');group.className='message-actions';
-  const copy=document.createElement('button');copy.type='button';copy.className='message-action';
-  copy.textContent='Copy answer';
-  copy.addEventListener('click',async()=>{
-    try{await copyText(text);copy.textContent='Copied';setTimeout(()=>copy.textContent='Copy answer',1300)}
-    catch(_){copy.textContent='Copy unavailable'}
-  });
-  group.appendChild(copy);parent.appendChild(group)
-}
-function showLoading(){
-  const row=document.createElement('div');row.className='message assistant';row.id='vexLoadingMessage';
-  const avatar=document.createElement('div');avatar.className='avatar';avatar.textContent='V';
-  const body=document.createElement('div');body.className='message-body';
-  const role=document.createElement('div');role.className='message-role';role.textContent='VEX AI';
-  const loading=document.createElement('div');loading.className='loading-row';
-  const dot=document.createElement('span');dot.className='loading-dot';
-  const label=document.createElement('span');label.id='vexLoadingText';label.textContent='Connecting to VEX search...';
-  loading.append(dot,label);body.append(role,loading);row.append(avatar,body);
-  messagesBox.appendChild(row);scrollToBottom();return row
-}
-function updateLoading(text){
-  const target=$('vexLoadingText');if(target)target.textContent=safeText(text);
-  setStatus(text);scrollToBottom()
-}
-function removeLoading(){$('vexLoadingMessage')?.remove()}
-
-function renderSources(parent,results){
-  const valid=(results||[]).filter(x=>safeURL(x.url||x.href));
-  if(!valid.length)return;
-  const label=document.createElement('div');label.className='content-label';label.textContent='Web sources';
-  const grid=document.createElement('div');grid.className='source-grid';
-  valid.slice(0,8).forEach(item=>{
-    const url=safeURL(item.url||item.href);
-    const link=document.createElement('a');link.className='source-card';
-    link.href=url;link.target='_blank';link.rel='noopener noreferrer';
-    const site=document.createElement('span');site.className='source-site';
-    site.textContent=item.source||hostName(url);
-    const title=document.createElement('span');title.className='source-title';
-    title.textContent=item.title||'Web result';
-    const desc=document.createElement('span');desc.className='source-description';
-    desc.textContent=item.description||item.snippet||'';
-    link.append(site,title,desc);grid.appendChild(link)
-  });
-  parent.append(label,grid)
-}
-function normalizeImage(item){
-  if(typeof item==='string')item={image:item};
-  const image=safeURL(item.image||item.image_url||item.thumbUrl||item.thumbnail||item.url);
-  if(!image)return null;
-  return{
-    title:safeText(item.title||'Related image'),
-    image,
-    page:safeURL(item.sourceUrl||item.page_url||item.pageUrl||item.source_url||item.url)||image,
-    source:safeText(item.source||item.publisher||'')
-  }
-}
-function renderImageResults(parent,images){
-  const valid=(images||[]).map(normalizeImage).filter(Boolean);
-  const label=document.createElement('div');label.className='content-label';label.textContent='Images';
-  parent.appendChild(label);
-  if(!valid.length){
-    const empty=document.createElement('div');empty.className='empty-state';
-    empty.textContent='No images were returned. Try another keyword.';
-    parent.appendChild(empty);return
-  }
-  const grid=document.createElement('div');grid.className='image-grid';
-  valid.slice(0,12).forEach(item=>{
-    const card=document.createElement('div');card.className='image-card';
-    const button=document.createElement('button');button.type='button';button.className='image-open';
-    button.addEventListener('click',()=>openImageViewer(item));
-    const img=document.createElement('img');img.src=item.image;img.alt=item.title;
-    img.loading='lazy';img.referrerPolicy='no-referrer';
-    img.addEventListener('error',()=>card.remove(),{once:true});
-    const caption=document.createElement('span');caption.className='image-caption';caption.textContent=item.title;
-    button.append(img,caption);card.appendChild(button);grid.appendChild(card)
-  });
-  parent.appendChild(grid)
-}
-function openImageViewer(item){
-  viewerContent.textContent='';
-  const img=document.createElement('img');img.src=item.image;img.alt=item.title;img.referrerPolicy='no-referrer';
-  const caption=document.createElement('div');caption.className='viewer-caption';caption.textContent=item.title;
-  const link=document.createElement('a');link.className='viewer-link';
-  link.href=item.page;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Open original image source';
-  viewerContent.append(img,caption,link);mediaViewer.classList.add('open')
-}
-function youtubeInfo(value){
-  try{
-    const u=new URL(value);let id='';
-    if(u.hostname.includes('youtu.be'))id=u.pathname.slice(1).split('/')[0];
-    if(u.hostname.includes('youtube.com')){
-      if(u.pathname==='/watch')id=u.searchParams.get('v')||'';
-      if(u.pathname.startsWith('/shorts/'))id=u.pathname.split('/')[2]||'';
-      if(u.pathname.startsWith('/embed/'))id=u.pathname.split('/')[2]||''
-    }
-    if(!id)return null;
-    return{
-      id,
-      embed:'https://www.youtube-nocookie.com/embed/'+encodeURIComponent(id),
-      thumbnail:'https://i.ytimg.com/vi/'+encodeURIComponent(id)+'/hqdefault.jpg'
-    }
-  }catch(_){return null}
-}
-function isDirectVideo(url){
-  try{return /\.(mp4|webm|ogg|m4v)(?:$|[?#])/i.test(new URL(url).pathname+new URL(url).search)}
-  catch(_){return false}
-}
-function normalizeVideos(videos,results){
-  const all=[];
-  (videos||[]).forEach(x=>all.push(x));
-  (results||[]).forEach(x=>all.push(x));
-  const seen=new Set();
-  return all.map(item=>{
-    if(typeof item==='string')item={url:item};
-    const url=safeURL(item.url||item.href||item.content);
-    if(!url||seen.has(url))return null;
-    const yt=youtubeInfo(url);
-    const explicitEmbed=safeURL(item.embed_url||item.embed||item.embedUrl);
-    const thumbnail=safeURL(item.thumbnail||item.image||item.image_url||item.thumbUrl||item.images?.[0]?.url||item.images?.thumbnail);
-    if(!yt&&!explicitEmbed&&!isDirectVideo(url)&&!thumbnail&&
-       !/\b(video|watch|stream|trailer|documentary|clip)\b/i.test(safeText(item.title)+' '+safeText(item.description)))return null;
-    seen.add(url);
-    return{
-      title:safeText(item.title||'Video result'),
-      url,
-      description:safeText(item.description||item.snippet||''),
-      thumbnail:thumbnail||(yt?yt.thumbnail:''),
-      embed:yt?yt.embed:explicitEmbed,
-      duration:safeText(item.duration||''),
-      publisher:safeText(item.publisher||item.source||'')
-    }
-  }).filter(Boolean).slice(0,10)
-}
-function renderVideoResults(parent,videos,results){
-  const valid=normalizeVideos(videos,results);
-  const label=document.createElement('div');label.className='content-label';label.textContent='Videos';
-  parent.appendChild(label);
-  if(!valid.length){
-    const empty=document.createElement('div');empty.className='empty-state';
-    empty.textContent='No playable video result was returned. Try another search phrase.';
-    parent.appendChild(empty);return
-  }
-  const grid=document.createElement('div');grid.className='video-grid';
-  valid.forEach(item=>{
-    const card=document.createElement('div');card.className='video-card';
-    const button=document.createElement('button');button.type='button';button.className='video-open';
-    button.addEventListener('click',()=>openVideoViewer(item));
-    if(item.thumbnail){
-      const img=document.createElement('img');img.className='video-thumb';
-      img.src=item.thumbnail;img.alt=item.title;img.loading='lazy';img.referrerPolicy='no-referrer';
-      img.addEventListener('error',()=>img.style.display='none',{once:true});
-      button.appendChild(img)
-    }
-    const title=document.createElement('span');title.className='video-title';title.textContent=item.title;
-    button.appendChild(title);
-    const source=document.createElement('a');source.className='video-source';
-    source.href=item.url;source.target='_blank';source.rel='noopener noreferrer';
-    source.textContent=item.publisher||'Open original video page ↗';
-    card.append(button,source);grid.appendChild(card)
-  });
-  parent.appendChild(grid)
-}
-function openVideoViewer(item){
-  viewerContent.textContent='';
-  const caption=document.createElement('div');caption.className='viewer-caption';caption.textContent=item.title;
-  if(isDirectVideo(item.url)){
-    const video=document.createElement('video');video.controls=true;video.autoplay=true;
-    video.playsInline=true;video.preload='metadata';video.src=item.url;
-    video.onerror=()=>{video.remove();showUnsupportedVideo(item,caption)};
-    viewerContent.append(video,caption)
-  }else if(item.embed){
-    const frame=document.createElement('iframe');frame.src=item.embed;frame.title=item.title;
-    frame.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-    frame.allowFullscreen=true;frame.referrerPolicy='strict-origin-when-cross-origin';
-    viewerContent.append(frame,caption)
-  }else{
-    showUnsupportedVideo(item,caption)
-  }
-  mediaViewer.classList.add('open')
-}
-function showUnsupportedVideo(item,caption){
-  const note=document.createElement('div');note.className='empty-state';
-  note.textContent='This website does not allow in-app playback. You can open the original video page.';
-  const link=document.createElement('a');link.className='viewer-link';
-  link.href=item.url;link.target='_blank';link.rel='noopener noreferrer';
-  link.textContent='Open original video page ↗';
-  viewerContent.append(caption,note,link)
-}
-function closeViewer(){
-  mediaViewer.classList.remove('open');
-  viewerContent.querySelectorAll('video,iframe').forEach(x=>{
-    if(x.tagName==='VIDEO'){x.pause();x.removeAttribute('src');x.load()}
-    else x.src='about:blank'
-  });
-  viewerContent.textContent=''
-}
-function renderFollowups(parent,followups){
-  if(!followups.length)return;
-  const label=document.createElement('div');label.className='content-label';label.textContent='Related questions';
-  const group=document.createElement('div');group.className='followups';
-  followups.slice(0,2).forEach(q=>{
-    const b=document.createElement('button');b.type='button';b.className='followup-button';
-    b.textContent=q;b.addEventListener('click',()=>submitQuestion(q,'chat'));group.appendChild(b)
-  });
-  parent.append(label,group)
-}
-function buildFollowups(query){
-  const topic=safeText(query).replace(/[?!.]+$/g,'').trim();
-  if(!topic)return [];
-  return['Explain '+topic+' with a simple example','What are the practical uses of '+topic+'?']
+function escapeHTML(value){
+ return String(value).replace(/[&<>"']/g, char => ({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[char]));
 }
 
-function nativeSearch(query,onProgress,mode){
-  return new Promise((resolve,reject)=>{
-    const id=makeId();
-    const timer=setTimeout(()=>{
-      pendingRequests.delete(id);
-      reject(new Error('VEX search did not respond. Close and reopen the app, then try again.'))
-    },REQUEST_TIMEOUT);
-    pendingRequests.set(id,{resolve,reject,timer,onProgress});
-    try{
-      console.log('VEX_NATIVE_SEARCH:'+JSON.stringify({id,query,mode:mode||'chat'}))
-    }catch(e){
-      clearTimeout(timer);pendingRequests.delete(id);
-      reject(new Error('Could not send the search request to Android.'))
-    }
-  })
+function addMessage(text, role){
+ if(welcome) welcome.style.display="none";
+
+ const wrapper=document.createElement("div");
+ wrapper.className="message "+(role==="user"?"user-message":"assistant-message");
+
+ if(role!=="user"){
+  const label=document.createElement("div");
+  label.className="assistant-label";
+  label.textContent="VEX AI";
+  wrapper.appendChild(label);
+ }
+
+ const content=document.createElement("div");
+ content.className="message-content";
+ content.textContent=text;
+ wrapper.appendChild(content);
+ messages.appendChild(wrapper);
+ messages.scrollTop=messages.scrollHeight;
+ return content;
 }
-window.addEventListener('vex-native-progress',event=>{
-  const d=event.detail||{},p=pendingRequests.get(String(d.id||''));
-  if(p&&typeof p.onProgress==='function')p.onProgress(d.stage||'Working...')
-});
-window.addEventListener('vex-native-result',event=>{
-  const d=event.detail||{},id=String(d.id||''),p=pendingRequests.get(id);
-  if(!p)return;
-  clearTimeout(p.timer);pendingRequests.delete(id);
-  if(d.error)p.reject(new Error(d.error));else p.resolve(d.data||{})
+
+function setTyping(show){
+ const old=document.getElementById("typing");
+ if(old) old.remove();
+ if(show){
+  const el=document.createElement("div");
+  el.id="typing";
+  el.className="typing";
+  el.textContent="VEX is working...";
+  messages.appendChild(el);
+  messages.scrollTop=messages.scrollHeight;
+ }
+}
+
+function showArtifact(code, language){
+ codeEditor.value=code;
+ artifact.classList.add("open");
+
+ const ext={
+  html:"html",htm:"html",css:"css",javascript:"js",
+  js:"js",python:"py",py:"py",json:"json",
+  jsx:"jsx",typescript:"ts",ts:"ts",java:"java",
+  cpp:"cpp",c:"c"
+ };
+
+ const extension=ext[(language||"html").toLowerCase()]||"txt";
+ currentFileName="index."+extension;
+ document.getElementById("fileName").textContent=currentFileName;
+ document.getElementById("artifactTitle").textContent="Artifact";
+ document.getElementById("artifactStatus").textContent="Code ready";
+ selectTab("code");
+}
+
+function extractArtifact(text){
+ const match=text.match(/```([a-zA-Z0-9_-]*)\s*\n([\s\S]*?)```/);
+ if(!match) return null;
+
+ const language=(match[1]||"html").toLowerCase();
+ const code=match[2].trim();
+
+ const supported=[
+  "html","htm","css","javascript","js",
+  "jsx","typescript","ts","python","py",
+  "json","java","cpp","c"
+ ];
+
+ if(!supported.includes(language)) return null;
+ return {language,code};
+}
+
+function selectTab(tab){
+ document.querySelectorAll(".tab").forEach(el=>{
+  el.classList.toggle("active",el.dataset.tab===tab);
+ });
+ document.getElementById("codeView").style.display=
+  tab==="code"?"flex":"none";
+ document.getElementById("previewView").style.display=
+  tab==="preview"?"block":"none";
+}
+
+document.querySelectorAll(".tab").forEach(el=>{
+ el.addEventListener("click",()=>selectTab(el.dataset.tab));
 });
 
-function cleanMediaQuery(query){
-  return safeText(query)
-    .replace(/\b(only|just|show|find|give|send|display|me|please)\b/gi,' ')
-    .replace(/\b(images?|pictures?|photos?|videos?|clips?)\b/gi,' ')
-    .replace(/\s+/g,' ').trim()||safeText(query).trim()
-}
-function detectMode(query,requested){
-  if(requested&&requested!=='chat'&&requested!=='search')return requested;
-  const q=query.toLowerCase();
-  if(/\b(images?|pictures?|photos?)\b/.test(q)&&/\b(only|just|show|find|give|send|display)\b/.test(q))return 'images';
-  if(/\b(videos?|clips?)\b/.test(q)&&/\b(only|just|show|find|give|send|play)\b/.test(q))return 'videos';
-  return requested==='search'?'search':'chat'
-}
-function makeNativeQuery(query,mode){
-  const topic=(mode==='images'||mode==='videos')?cleanMediaQuery(query):query.trim();
-  if(mode==='videos')return topic+' video watch tutorial';
-  return topic
-}
-function normalizeResults(data){
-  const list=Array.isArray(data.results)?data.results:Array.isArray(data.sources)?data.sources:[];
-  return list.map(x=>({
-    title:safeText(x.title||'Web result'),
-    url:safeURL(x.url||x.href||x.content),
-    description:safeText(x.description||x.snippet||''),
-    source:safeText(x.source||x.publisher||'')
-  })).filter(x=>x.url)
-}
-function normalizeImages(data){
-  return(Array.isArray(data.images)?data.images:[]).map(normalizeImage).filter(Boolean)
-}
-function normalizeVideoData(data,results){
-  const videos=Array.isArray(data.videos)?data.videos:[];
-  return normalizeVideos(videos,results)
-}
-async function performSearch(query,mode,progress){
-  const data=await nativeSearch(makeNativeQuery(query,mode),progress,mode);
-  const results=normalizeResults(data);
-  const images=normalizeImages(data);
-  const videos=normalizeVideoData(data,results);
-  if(mode==='images')return{mode,answer:'',results:[],images,videos:[],followups:[]};
-  if(mode==='videos')return{mode,answer:'',results:[],images:[],videos,followups:[]};
-  return{
-    mode:'chat',
-    answer:safeText(data.answer||'I found web results, but no explanation was returned. Open the source links below.'),
-    results,
-    images,
-    videos:/\b(video|videos|watch|clip|trailer|documentary)\b/i.test(query)?videos:[],
-    followups:Array.isArray(data.followups)&&data.followups.length?data.followups.slice(0,2):buildFollowups(query)
-  }
-}
-async function submitQuestion(question,requestedMode){
-  const query=safeText(question).trim();
-  if(!query||busy)return;
-  if(query.length>MAX_QUERY_LENGTH){setStatus('Please keep your question under 500 characters.');return}
-  const mode=detectMode(query,requestedMode||selectedMode);
-  selectedMode='chat';updateModeButtons();promptBox.value='';resizePrompt();
-  setBusy(true);addUserMessage(query);
-  const loading=showLoading();
-  updateLoading(mode==='images'?'Searching images...':mode==='videos'?'Searching videos...':'Searching and preparing your answer...');
-  try{
-    const data=await performSearch(query,mode,updateLoading);
-    loading.remove();addAssistantMessage(data);setStatus('Complete')
-  }catch(error){
-    loading.remove();
-    addAssistantMessage({
-      answer:'VEX could not complete this search.\n\n'+safeText(error&&error.message?error.message:'Connection error')+
-      '\n\nOpen the VEX AI Android app and check that the native search bridge is available.'
-    });
-    setStatus('Search connection error');console.error('VEX search error:',error)
-  }finally{
-    setBusy(false);promptBox.focus()
-  }
-}
-function updateModeButtons(){
-  document.querySelectorAll('[data-mode]').forEach(b=>{
-    b.classList.toggle('active',b.dataset.mode===selectedMode&&selectedMode!=='chat')
-  })
-}
-function sendFromComposer(){
-  const q=promptBox.value.trim();if(q)submitQuestion(q,selectedMode)
-}
-async function copyText(text){
-  if(navigator.clipboard&&window.isSecureContext){
-    await navigator.clipboard.writeText(safeText(text));return
-  }
-  const area=document.createElement('textarea');area.value=safeText(text);
-  area.style.position='fixed';area.style.left='-9999px';document.body.appendChild(area);
-  area.select();const copied=document.execCommand('copy');area.remove();
-  if(!copied)throw new Error('Copy unavailable')
-}
-async function shareChat(){
-  const transcript=activeMessages.map(m=>(m.role==='user'?'You':'VEX AI')+':\n'+m.text).join('\n\n');
-  if(!transcript){setStatus('There is no chat to share yet.');return}
-  try{
-    if(navigator.share)await navigator.share({title:'VEX AI chat',text:transcript});
-    else{await copyText(transcript);setStatus('Chat copied. Paste it wherever you want to share.')}
-  }catch(e){if(e.name!=='AbortError')setStatus('Could not share this chat.')}
-}
-function closeSidebar(){sidebar.classList.remove('open')}
-function toggleSidebar(){sidebar.classList.toggle('open')}
-function setMode(mode){
-  selectedMode=mode;updateModeButtons();
-  const labels={
-    chat:'Message VEX AI...',
-    search:'Search the web...',
-    images:'Describe images to find...',
-    videos:'Describe videos to find...'
-  };
-  promptBox.placeholder=labels[mode]||labels.chat;promptBox.focus()
+function makePreviewDocument(){
+ const code=codeEditor.value;
+ const ext=currentFileName.split(".").pop().toLowerCase();
+
+ if(ext==="html"||ext==="htm"){
+  return code;
+ }
+ if(ext==="css"){
+  return "<!DOCTYPE html><html><head><style>"+code+
+   "</style></head><body><h2>CSS Preview</h2></body></html>";
+ }
+ if(ext==="js"){
+  return "<!DOCTYPE html><html><body><h2>JavaScript Preview</h2><pre id='out'></pre><script>"+
+   code.replace(/<\/script/gi,"<\\/script")+
+   "<\/script></body></html>";
+ }
+
+ return null;
 }
 
-sendButton.addEventListener('click',sendFromComposer);
-promptBox.addEventListener('input',()=>{
-  resizePrompt();sendButton.disabled=busy||!promptBox.value.trim()
-});
-promptBox.addEventListener('keydown',e=>{
-  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendFromComposer()}
-});
-$('newChatButton').addEventListener('click',startNewChat);
-$('clearChatButton').addEventListener('click',clearCurrentChat);
-$('shareChatButton').addEventListener('click',shareChat);
-$('openSidebar').addEventListener('click',toggleSidebar);
-$('closeSidebar').addEventListener('click',closeSidebar);
-$('viewerClose').addEventListener('click',closeViewer);
-mediaViewer.addEventListener('click',e=>{if(e.target===mediaViewer)closeViewer()});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeViewer()});
-document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
-document.querySelectorAll('.suggestion').forEach(b=>b.addEventListener('click',()=>submitQuestion(b.dataset.prompt,'chat')));
-$('builderSideButton').addEventListener('click',()=>{
-  const launch=$('vexBuilderLaunch');
-  if(launch)launch.click();
-  else setStatus('Code Builder is not loaded. Check vex_builder.js beside index.html.');
-  closeSidebar()
+document.getElementById("runCode").addEventListener("click",()=>{
+ const doc=makePreviewDocument();
+
+ if(!doc){
+  document.getElementById("artifactStatus").textContent=
+   "Live preview supports HTML, CSS and JavaScript.";
+  return;
+ }
+
+ previewFrame.srcdoc=doc;
+ previewFrame.style.display="block";
+ previewEmpty.style.display="none";
+ selectTab("preview");
+ document.getElementById("artifactStatus").textContent="Preview running";
 });
 
-loadConversations();renderMessages();setMode('chat');setStatus('Ready');
-})();
-</script>
+document.getElementById("copyCode").addEventListener("click",async()=>{
+ try{
+  await navigator.clipboard.writeText(codeEditor.value);
+  document.getElementById("artifactStatus").textContent="Copied";
+ }catch(e){
+  codeEditor.select();
+  document.execCommand("copy");
+  document.getElementById("artifactStatus").textContent="Copied";
+ }
+});
 
-<!-- Keep vex_builder.js beside index.html in the GitHub repository root. -->
-<script
-  id="vexBuilderScript"
-  src="./vex_builder.js?v=5"
-  defer
-  onerror="document.getElementById('statusLine').textContent='Code Builder script could not load. Check the vex_builder.js file path.';">
+document.getElementById("downloadCode").addEventListener("click",()=>{
+ const blob=new Blob([codeEditor.value],{type:"text/plain;charset=utf-8"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;
+ a.download=currentFileName;
+ a.click();
+ URL.revokeObjectURL(url);
+});
+
+document.getElementById("closeArtifact").addEventListener("click",()=>{
+ artifact.classList.remove("open");
+});
+
+function sendRequest(){
+ const query=promptBox.value.trim();
+ if(!query||activeRequest) return;
+
+ promptBox.value="";
+ promptBox.style.height="auto";
+ addMessage(query,"user");
+
+ const id="vex_"+Date.now()+"_"+(++requestCounter);
+ activeRequest=id;
+ sendBtn.disabled=true;
+ setTyping(true);
+
+ const request={
+  id:id,
+  query:query,
+  mode:"chat"
+ };
+
+ if(window.VEX_NATIVE && typeof window.VEX_NATIVE.search==="function"){
+  window.VEX_NATIVE.search(request);
+ }else{
+  console.log("VEX_NATIVE_SEARCH:"+JSON.stringify(request));
+ }
+}
+
+sendBtn.addEventListener("click",sendRequest);
+
+promptBox.addEventListener("keydown",e=>{
+ if(e.key==="Enter"&&!e.shiftKey){
+  e.preventDefault();
+  sendRequest();
+ }
+});
+
+promptBox.addEventListener("input",()=>{
+ promptBox.style.height="auto";
+ promptBox.style.height=Math.min(promptBox.scrollHeight,160)+"px";
+});
+
+document.getElementById("newChat").addEventListener("click",()=>{
+ messages.innerHTML="";
+ if(welcome){
+  welcome.style.display="block";
+  messages.appendChild(welcome);
+ }
+ artifact.classList.remove("open");
+ activeRequest=null;
+ setTyping(false);
+ sendBtn.disabled=false;
+});
+
+window.addEventListener("vex-native-progress",e=>{
+ const data=e.detail||{};
+ if(data.id!==activeRequest) return;
+ const typing=document.getElementById("typing");
+ if(typing) typing.textContent=data.stage||"VEX is working...";
+});
+
+window.addEventListener("vex-native-result",e=>{
+ const payload=e.detail||{};
+ if(payload.id!==activeRequest) return;
+
+ activeRequest=null;
+ sendBtn.disabled=false;
+ setTyping(false);
+
+ if(payload.error){
+  addMessage("Error: "+payload.error,"assistant");
+  return;
+ }
+
+ const data=payload.data||{};
+ const answer=String(data.answer||"");
+
+ const artifactData=extractArtifact(answer);
+
+ if(artifactData){
+  const cleanAnswer=answer.replace(
+   /```[a-zA-Z0-9_-]*\s*\n[\s\S]*?```/,
+   "I've created an artifact for you."
+  ).trim();
+
+  addMessage(cleanAnswer||"I've created an artifact for you.", "assistant");
+  showArtifact(artifactData.code,artifactData.language);
+ }else{
+  addMessage(answer||"I couldn't generate a response.","assistant");
+ }
+
+ messages.scrollTop=messages.scrollHeight;
+});
+
 </script>
 </body>
 </html>
